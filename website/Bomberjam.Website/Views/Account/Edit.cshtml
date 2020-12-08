@@ -1,0 +1,13 @@
+﻿@model AccountEditViewModel
+
+@{
+    ViewData["Title"] = "Edit profile";
+}
+
+<form asp-controller="Account" asp-action="Edit" method="post">
+    <label asp-for="UserName" class="control-label"></label>
+    <input asp-for="UserName" value="@Model.UserName"/>
+    <span asp-validation-for="UserName" class="text-danger"></span>
+
+    <button class="btn btn-lg btn-success m-1" type="submit">Save username</button>
+</form>

@@ -1,0 +1,12 @@
+﻿@model User
+
+@{
+    ViewData["Title"] = "Account";
+}
+
+<div class="jumbotron">
+    <p>
+        Welcome, @Model.UserName!
+        Click <a asp-controller="Account" asp-action="Edit">here</a> to edit your account.
+    </p>
+</div>

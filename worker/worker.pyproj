@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{d2ef0ccf-8ce3-4f93-870f-c62aad783a73}</ProjectGuid>
+    <ProjectTypeGuids>{888888a0-9f3d-457c-b088-3a5042f75d52}</ProjectTypeGuids>
+  </PropertyGroup>
+  <ItemGroup>
+    <Content Include="cgconfig.conf" />
+    <Content Include="main.sh" />
+    <Content Include="requirements.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="archive.py" />
+    <Compile Include="backend.py" />
+    <Compile Include="compiler.py" />
+    <Compile Include="test.py" />
+    <Compile Include="util.py" />
+    <Compile Include="worker.py" />
+  </ItemGroup>
+</Project>

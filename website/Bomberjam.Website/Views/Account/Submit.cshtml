@@ -1,0 +1,14 @@
+﻿@model AccountSubmitViewModel
+
+@{
+    ViewData["Title"] = "Submit a bot";
+}
+
+<h1>Submit a bot</h1>
+
+<form asp-controller="Account" asp-action="Submit" method="post" enctype="multipart/form-data">
+    <label asp-for="BotFile" class="control-label"></label>
+    <input asp-for="BotFile"/>
+    <span asp-validation-for="BotFile" class="text-danger"></span>
+    <button class="btn btn-lg btn-success m-1" type="submit">Submit</button>
+</form>

@@ -1,0 +1,32 @@
+root = true
+
+[*]
+indent_style = space
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = false
+
+[*.cs]
+indent_size = 4
+tab_width = 4
+max_line_length = off
+
+[*.csproj]
+indent_size = 2
+
+[*.py]
+insert_final_newline = true
+max_line_length = 140
+end_of_line = lf
+
+[*.sh]
+end_of_line = lf
+
+[cgconfig.conf]
+insert_final_newline = true
+end_of_line = lf
+indent_size = 4
+tab_width = 4
+
+[Dockerfile]
+end_of_line = lf

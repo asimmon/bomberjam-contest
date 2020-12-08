@@ -1,0 +1,65 @@
+﻿@model List<User>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="jumbotron">
+    @if (User?.Identity?.IsAuthenticated ?? false)
+    {
+        <h1>Welcome, @User.Identity.Name</h1>
+
+        @foreach (var claim in Context.User.Claims)
+        {
+            <div>
+                <code>@claim.Type</code>: <strong>@claim.Value</strong>
+            </div>
+        }
+
+        <a class="btn btn-lg btn-danger" asp-area="" asp-controller="Authentication" asp-action="SignOut">Sign out</a>
+    }
+    else
+    {
+        <h1>Welcome, anonymous</h1>
+        <a class="btn btn-lg btn-success" asp-area="" asp-controller="Authentication" asp-action="SignIn">Sign in</a>
+    }
+</div>
+
+<h2>@Model.Count registered users</h2>
+
+<div class="table-responsive">
+    <table class="table table-sm table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Email</th>
+            <th>UserName</th>
+            <th>Created</th>
+            <th>Updated</th>
+            <th>GameCount</th>
+            <th>SubmitCount</th>
+            <th>Compiled</th>
+            <th>Compiling</th>
+            <th>Errors</th>
+            <th>Language</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td style="white-space:nowrap">@user.Id</td>
+                <td style="white-space:nowrap">@user.Email</td>
+                <td style="white-space:nowrap">@user.UserName</td>
+                <td style="white-space:nowrap">@user.Created</td>
+                <td style="white-space:nowrap">@user.Updated</td>
+                <td style="white-space:nowrap">@user.GameCount</td>
+                <td style="white-space:nowrap">@user.SubmitCount</td>
+                <td style="white-space:nowrap">@user.IsCompiled</td>
+                <td style="white-space:nowrap">@user.IsCompiling</td>
+                <td style="white-space:nowrap">@user.CompilationErrors</td>
+                <td style="white-space:nowrap">@user.BotLanguage</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,21 @@
+version: "3"
+services:
+  web:
+    image: bomberjam-website
+    restart: unless-stopped
+    ports:
+      - "8080:443"
+    environment:
+      - SecretAuth__Secret=verysecret
+      - ASPNETCORE_URLS=https://+;http://+
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=mysuperpassword
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
+    volumes:
+      - "./https/:/https/"
+  worker:
+    image: bomberjam-worker
+    restart: unless-stopped
+    privileged: true
+    environment:
+      - API_BASE_URL=https://web/api/
+      - API_AUTH=verysecret
