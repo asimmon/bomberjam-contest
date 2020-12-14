@@ -1,17 +1,16 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class Bonus
     {
-        [JsonProperty("x")]
+        [JsonPropertyName("x")]
         public int X { get; set; }
 
-        [JsonProperty("y")]
+        [JsonPropertyName("y")]
         public int Y { get; set; }
 
-        [JsonProperty("kind")]
+        [JsonPropertyName("kind")]
         public string Kind { get; set; } = Constants.Bomb;
     }
 }

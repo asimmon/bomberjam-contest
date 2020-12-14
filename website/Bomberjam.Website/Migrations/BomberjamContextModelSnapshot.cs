@@ -25,8 +25,17 @@ namespace Bomberjam.Website.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Errors")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsFinished")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("WinnerId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -42,6 +51,9 @@ namespace Bomberjam.Website.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Errors")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Updated")

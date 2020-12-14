@@ -1,23 +1,22 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class Bomb
     {
-        [JsonProperty("x")]
+        [JsonPropertyName("x")]
         public int X { get; set; }
 
-        [JsonProperty("y")]
+        [JsonPropertyName("y")]
         public int Y { get; set; }
 
-        [JsonProperty("playerId")]
+        [JsonPropertyName("playerId")]
         public string PlayerId { get; set; } = string.Empty;
 
-        [JsonProperty("countdown")]
+        [JsonPropertyName("countdown")]
         public int Countdown { get; set; }
 
-        [JsonProperty("range")]
+        [JsonPropertyName("range")]
         public int Range { get; set; }
     }
 }

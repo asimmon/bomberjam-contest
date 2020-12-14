@@ -20,5 +20,8 @@ namespace Bomberjam.Website.Database
         Task MarkTaskAsStarted(int taskId);
         Task MarkTaskAsFinished(int taskId);
         Task<bool> DoesUserHaveActiveCompileTask(int userId);
+
+        Task<int> AddGame(ICollection<int> userIds);
+        Task<Game> GetGame(int id);
     }
 }

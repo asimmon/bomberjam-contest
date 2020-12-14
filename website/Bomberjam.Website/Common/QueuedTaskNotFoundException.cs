@@ -9,4 +9,12 @@ namespace Bomberjam.Website.Common
         {
         }
     }
+
+    [Serializable]
+    public class GameNotFoundException : BomberjamException
+    {
+        public GameNotFoundException(string message) : base(message)
+        {
+        }
+    }
 }

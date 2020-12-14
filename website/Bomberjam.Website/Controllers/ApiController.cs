@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.Json.Serialization;
@@ -155,6 +157,33 @@ namespace Bomberjam.Website.Controllers
             }
         }
 
+        [HttpGet("game/start/{userIdsStr}")]
+        public async Task<IActionResult> CreateGame(string userIdsStr)
+        {
+            var userIds = new List<int>(4);
+
+            foreach (var userIdStr in userIdsStr.Split(","))
+            {
+                if (int.TryParse(userIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var userId))
+                {
+                    userIds.Add(userId);
+                }
+            }
+
+            if (userIds.Count != 4)
+                throw new Exception("Expected four players");
+
+            var gameId = await this.Repository.AddGame(userIds);
+            return this.Ok(gameId);
+        }
+
+        [HttpGet("game/{gameId}")]
+        public async Task<IActionResult> GetGame(int gameId)
+        {
+            var game = await this.Repository.GetGame(gameId);
+            return this.Ok(game);
+        }
+
         [HttpGet("user/{userId}/game")]
         public async Task<IActionResult> StartYoloGame(int userId)
         {
@@ -186,6 +215,13 @@ namespace Bomberjam.Website.Controllers
 
         [JsonPropertyName("errors")]
         public string Errors { get; set; }
+    }
+
+    public sealed class GameResult
+    {
+        [Required]
+        [JsonPropertyName("id")]
+        public int Id { get; set; }
     }
 
     public sealed class QueuedTask

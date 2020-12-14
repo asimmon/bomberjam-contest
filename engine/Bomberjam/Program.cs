@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.IO;
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace Bomberjam
 {
@@ -35,8 +35,9 @@ namespace Bomberjam
                 try
                 {
                     var fileContents = File.ReadAllText(configPath);
-                    return JsonConvert.DeserializeObject<GameConfiguration>(fileContents);
-
+                    var configuration = JsonSerializer.Deserialize<GameConfiguration>(fileContents);
+                    if (configuration == null)
+                        throw new Exception($"Could not read configuration file '{configPath}'");
                 }
                 catch (Exception ex)
                 {
@@ -49,7 +50,7 @@ namespace Bomberjam
 
         private static FileInfo? GetOutputFile(string? nullableOutputPathPattern, int gameIteration)
         {
-            if (nullableOutputPathPattern?.Trim() is { } outputPathPattern && outputPathPattern.Length > 0)
+            if (nullableOutputPathPattern?.Trim() is { Length: > 0 } outputPathPattern)
             {
                 var outputPath = outputPathPattern.Replace("#n", gameIteration.ToString(CultureInfo.InvariantCulture), StringComparison.OrdinalIgnoreCase);
 

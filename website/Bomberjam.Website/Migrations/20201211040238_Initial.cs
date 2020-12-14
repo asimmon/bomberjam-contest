@@ -14,7 +14,10 @@ namespace Bomberjam.Website.Migrations
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Updated = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    IsFinished = table.Column<bool>(type: "INTEGER", nullable: false),
+                    WinnerId = table.Column<int>(type: "INTEGER", nullable: true),
+                    Errors = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,7 +70,8 @@ namespace Bomberjam.Website.Migrations
                     GameId = table.Column<int>(type: "INTEGER", nullable: false),
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    Updated = table.Column<DateTime>(type: "TEXT", nullable: false)
+                    Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Errors = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {

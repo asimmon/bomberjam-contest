@@ -1,49 +1,48 @@
 ﻿using System;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class GameConfiguration
     {
         private static readonly Func<int, bool> GreaterThanZero = n => n > 0;
         private static readonly Func<int, bool> AnyInteger = _ => true;
         private static readonly Func<bool, bool> AnyBoolean = _ => true;
 
-        [JsonProperty("defaultBombRange")]
+        [JsonPropertyName("defaultBombRange")]
         public int? DefaultBombRange { get; set; } = 2;
 
-        [JsonProperty("defaultBombCountDown")]
+        [JsonPropertyName("defaultBombCountDown")]
         public int? DefaultBombCountDown { get; set; } = 8;
 
-        [JsonProperty("defaultBombBonusCount")]
+        [JsonPropertyName("defaultBombBonusCount")]
         public int? DefaultBombBonusCount { get; set; } = 8;
 
-        [JsonProperty("defaultFireBonusCount")]
+        [JsonPropertyName("defaultFireBonusCount")]
         public int? DefaultFireBonusCount { get; set; } = 8;
 
-        [JsonProperty("suddenDeathCountdown")]
+        [JsonPropertyName("suddenDeathCountdown")]
         public int? SuddenDeathCountdown { get; set; } = 240;
 
-        [JsonProperty("respawnTime")]
+        [JsonPropertyName("respawnTime")]
         public int? RespawnTime { get; set; } = 10;
 
-        [JsonProperty("shufflePlayerPositions")]
+        [JsonPropertyName("shufflePlayerPositions")]
         public bool? ShufflePlayerPositions { get; set; } = true;
 
-        [JsonProperty("pointsPerAliveTick")]
+        [JsonPropertyName("pointsPerAliveTick")]
         public int? PointsPerAliveTick { get; set; } = 0;
 
-        [JsonProperty("pointsBlockDestroyed")]
+        [JsonPropertyName("pointsBlockDestroyed")]
         public int? PointsBlockDestroyed { get; set; } = 5;
 
-        [JsonProperty("pointsKilledPlayer")]
+        [JsonPropertyName("pointsKilledPlayer")]
         public int? PointsKilledPlayer { get; set; } = 20;
 
-        [JsonProperty("pointsDeath")]
+        [JsonPropertyName("pointsDeath")]
         public int? PointsDeath { get; set; } = -10;
 
-        [JsonProperty("pointsLastSurvivor")]
+        [JsonPropertyName("pointsLastSurvivor")]
         public int? PointsLastSurvivor { get; set; } = 50;
 
         public GameConfiguration()

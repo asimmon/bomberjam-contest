@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     internal class TickHistory
     {
         public TickHistory(State state, Dictionary<string, string?> actions)
@@ -12,10 +11,10 @@ namespace Bomberjam
             this.Actions = actions;
         }
 
-        [JsonProperty("state")]
+        [JsonPropertyName("state")]
         public State State { get; set; }
 
-        [JsonProperty("actions")]
+        [JsonPropertyName("actions")]
         public Dictionary<string, string?> Actions { get; set; }
     }
 }

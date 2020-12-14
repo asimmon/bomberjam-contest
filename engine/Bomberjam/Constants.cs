@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace Bomberjam
 {
@@ -26,5 +27,10 @@ namespace Bomberjam
         internal static readonly Regex ProcessMessageRegex = new Regex(
             "^(?<tick>[0-9]{1,5}):(?<message>[a-zA-Z0-9\\-_]{1,32})$",
             RegexOptions.Compiled);
+
+        internal static readonly JsonWriterOptions DefaultJsonWriterOptions = new JsonWriterOptions
+        {
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
     }
 }

@@ -104,11 +104,21 @@ namespace Bomberjam
             this._process.StandardInput.WriteLine(text);
         }
 
-        public ProcessMessage? ReadLine(CancellationToken token)
+        public ProcessMessage? ReadLineForTick(int tick, CancellationToken token)
         {
             try
             {
-                return this._messages.Take(token);
+                do
+                {
+                    var message = this._messages.Take(token);
+                    if (message.Tick == tick)
+                    {
+                        return message;
+                    }
+                }
+                while (!token.IsCancellationRequested);
+
+                return null;
             }
             catch (InvalidOperationException)
             {

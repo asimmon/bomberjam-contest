@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     internal sealed class GameHistory
     {
         public GameHistory(GameConfiguration configuration)
@@ -13,13 +12,13 @@ namespace Bomberjam
             this.Errors = new List<PlayerErrorHistory>();
         }
 
-        [JsonProperty("configuration")]
+        [JsonPropertyName("configuration")]
         public GameConfiguration Configuration { get; private set; }
 
-        [JsonProperty("errors")]
+        [JsonPropertyName("errors")]
         public IList<PlayerErrorHistory> Errors { get; private set; }
 
-        [JsonProperty("ticks")]
+        [JsonPropertyName("ticks")]
         public IList<TickHistory> Ticks { get; private set; }
 
         public void Add(GameState gameState, IEnumerable<PlayerAction> actions)

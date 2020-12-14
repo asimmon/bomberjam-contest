@@ -95,6 +95,16 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.DoesUserHaveActiveCompileTask(userId);
         }
 
+        public Task<int> AddGame(ICollection<int> userIds)
+        {
+            return this._underlyingRepository.AddGame(userIds);
+        }
+
+        public Task<Game> GetGame(int id)
+        {
+            return this._underlyingRepository.GetGame(id);
+        }
+
         private static string FormatKey(string keyFormat, params object[] objects)
         {
             return string.Format(CultureInfo.InvariantCulture, keyFormat, objects);

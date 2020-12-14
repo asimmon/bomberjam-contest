@@ -5,18 +5,14 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
-using Newtonsoft.Json;
 
 namespace Bomberjam
 {
     internal sealed class Worker : IDisposable
     {
         private static readonly Random Rng = new Random();
-        private static readonly JsonSerializer JsonSerializer = new JsonSerializer
-        {
-            Formatting = Formatting.None
-        };
 
         private static readonly ISet<string> ValidPlayerActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
@@ -78,7 +74,7 @@ namespace Bomberjam
 
         private void SaveHistoryOutput()
         {
-            if (this._opts.Output is { } file && file.Directory is { } parentDir)
+            if (this._opts.Output is { Directory: { } parentDir } file)
             {
                 try
                 {
@@ -90,11 +86,9 @@ namespace Bomberjam
                     }
 
                     using (var fileStream = File.OpenWrite(file.FullName))
-                    using (var writer = new StreamWriter(fileStream))
-                    using (var jsonWriter = new JsonTextWriter(writer))
+                    using (var jsonWriter = new Utf8JsonWriter(fileStream, Constants.DefaultJsonWriterOptions))
                     {
                         JsonSerializer.Serialize(jsonWriter, this._simulator.History);
-                        jsonWriter.Flush();
                     }
                 }
                 catch (Exception ex)
@@ -179,7 +173,7 @@ namespace Bomberjam
 
         private void AddPlayer(ThreadState x, CancellationToken threadGroupToken)
         {
-            var playerName = x.Process.ReadLine(threadGroupToken);
+            var playerName = x.Process.ReadLineForTick(0, threadGroupToken);
             if (playerName == null || x.Process.HasExited)
             {
                 throw new Exception($"Player {x.PlayerId} did not sent a name in time");
@@ -286,7 +280,7 @@ namespace Bomberjam
             x.Process.WriteLine(x.GameState.ToJson());
 
             watch.Start();
-            var action = x.Process.ReadLine(threadGroupToken);
+            var action = x.Process.ReadLineForTick(x.GameState.Tick, threadGroupToken);
             watch.Stop();
 
             if (action == null)
@@ -295,15 +289,8 @@ namespace Bomberjam
             }
             else
             {
-                if (action.Tick != x.GameState.Tick)
-                {
-                    this.Debug(x, $"Sent an action for tick {action.Tick} but current game is at tick {x.GameState.Tick} ({watch.Elapsed.TotalSeconds:F4} seconds)");
-                }
-                else
-                {
-                    this.Debug(x, $"Read player action: {action.Message} ({watch.Elapsed.TotalSeconds:F4} seconds)");
-                    x.ProcessOutput[x.PlayerId] = action.Message;
-                }
+                this.Debug(x, $"Read player action: {action.Message} ({watch.Elapsed.TotalSeconds:F4} seconds)");
+                x.ProcessOutput[x.PlayerId] = action.Message;
             }
         }
 

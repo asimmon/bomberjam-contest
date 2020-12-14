@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
-    [Migration("20201205163051_Initial")]
+    [Migration("20201211040238_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -27,8 +27,17 @@ namespace Bomberjam.Website.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Errors")
+                        .HasColumnType("TEXT");
+
+                    b.Property<bool>("IsFinished")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("WinnerId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 
@@ -44,6 +53,9 @@ namespace Bomberjam.Website.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Created")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Errors")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Updated")

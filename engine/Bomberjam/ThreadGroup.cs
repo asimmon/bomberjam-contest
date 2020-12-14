@@ -98,7 +98,7 @@ namespace Bomberjam
                     {
                         if (thread.IsAlive)
                         {
-                            thread.Abort();
+                            thread.Interrupt();
                         }
                     }
                     catch

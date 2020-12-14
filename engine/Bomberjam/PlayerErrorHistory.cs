@@ -1,8 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     internal class PlayerErrorHistory
     {
         public PlayerErrorHistory(string playerId, int tick, string error)
@@ -12,13 +11,13 @@ namespace Bomberjam
             this.Error = error;
         }
 
-        [JsonProperty("playerId")]
+        [JsonPropertyName("playerId")]
         public string PlayerId { get; set; }
 
-        [JsonProperty("tick")]
+        [JsonPropertyName("tick")]
         public int Tick { get; set; }
 
-        [JsonProperty("error")]
+        [JsonPropertyName("error")]
         public string Error { get; set; }
     }
 }

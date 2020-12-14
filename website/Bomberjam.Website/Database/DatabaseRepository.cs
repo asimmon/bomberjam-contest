@@ -43,7 +43,7 @@ namespace Bomberjam.Website.Database
             return MapUser(dbUser);
         }
 
-        private static User MapUser(DbUser dbUser) => new()
+        private static TUser MapUser<TUser>(DbUser dbUser) where TUser : User, new() => new()
         {
             Id = dbUser.Id,
             Created = dbUser.Created,
@@ -57,6 +57,8 @@ namespace Bomberjam.Website.Database
             CompilationErrors = dbUser.CompilationErrors,
             BotLanguage = dbUser.BotLanguage,
         };
+
+        private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
 
         public async Task AddUser(string email, string username)
         {
@@ -204,5 +206,68 @@ namespace Bomberjam.Website.Database
                 .Where(t => t.Data == userIdString)
                 .AnyAsync();
         }
+
+        public async Task<int> AddGame(ICollection<int> userIds)
+        {
+            var dbGame = new DbGame
+            {
+                IsFinished = true,
+                WinnerId = null,
+                Errors = string.Empty
+            };
+
+            this._dbContext.Games.Add(dbGame);
+
+            foreach (var userId in new HashSet<int>(userIds))
+            {
+                var dbGameUser = new DbGameUser
+                {
+                    Game = dbGame,
+                    UserId = userId,
+                    Errors = string.Empty
+                };
+
+                this._dbContext.GameUsers.Add(dbGameUser);
+            }
+
+            await this._dbContext.SaveChangesAsync();
+
+            return dbGame.Id;
+        }
+
+        public async Task<Game> GetGame(int id)
+        {
+            var dbGame = await this._dbContext.Games.FirstOrDefaultAsync(g => g.Id == id);
+            if (dbGame == null)
+                throw new GameNotFoundException($"Game '{id}' not found");
+
+            var game = MapGame(dbGame);
+
+            var dbGameUsers = await this._dbContext.GameUsers
+                .Include(gu => gu.User)
+                .Where(gu => gu.GameId == dbGame.Id)
+                .ToListAsync();
+
+            foreach (var dbGameUser in dbGameUsers)
+            {
+                var gameUser = MapUser<GameUser>(dbGameUser.User);
+                gameUser.Errors = dbGameUser.Errors;
+
+                game.Users.Add(gameUser);
+            }
+
+            return game;
+        }
+
+        private static Game MapGame(DbGame dbGame) => new()
+        {
+            Id = dbGame.Id,
+            Created = dbGame.Created,
+            Updated = dbGame.Updated,
+            IsFinished = dbGame.IsFinished,
+            WinnerId = dbGame.WinnerId,
+            Errors = dbGame.Errors,
+            Users = new List<GameUser>(4)
+        };
     }
 }

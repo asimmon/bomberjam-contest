@@ -1,47 +1,46 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Bomberjam
 {
-    [JsonObject(MemberSerialization.OptIn)]
     public class Player
     {
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public string Id { get; set; } = string.Empty;
 
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
 
-        [JsonProperty("x")]
+        [JsonPropertyName("x")]
         public int X { get; set; }
 
-        [JsonProperty("y")]
+        [JsonPropertyName("y")]
         public int Y { get; set; }
 
-        [JsonProperty("startingCorner")]
+        [JsonPropertyName("startingCorner")]
         public string StartingCorner { get; set; } = Constants.TopLeft;
 
-        [JsonProperty("bombsLeft")]
+        [JsonPropertyName("bombsLeft")]
         public int BombsLeft { get; set; }
 
-        [JsonProperty("maxBombs")]
+        [JsonPropertyName("maxBombs")]
         public int MaxBombs { get; set; }
 
-        [JsonProperty("bombRange")]
+        [JsonPropertyName("bombRange")]
         public int BombRange { get; set; }
 
-        [JsonProperty("isAlive")]
+        [JsonPropertyName("isAlive")]
         public bool IsAlive { get; set; }
 
-        [JsonProperty("respawning")]
+        [JsonPropertyName("respawning")]
         public int Respawning { get; set; }
 
-        [JsonProperty("score")]
+        [JsonPropertyName("score")]
         public int Score { get; set; }
 
-        [JsonProperty("color")]
+        [JsonPropertyName("color")]
         public int Color { get; set; }
 
-        [JsonProperty("hasWon")]
+        [JsonPropertyName("hasWon")]
         public bool HasWon { get; set; }
     }
 }

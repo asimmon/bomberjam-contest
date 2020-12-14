@@ -156,7 +156,7 @@ def run_game(user_ids):
         game_result_path = os.path.join(temp_dir, 'game.json')
 
         shutil.copy(BOMBERJAM_EXEC_NAME, bomberjam_exec_path)
-        command = [bomberjam_exec_path, "-o", game_result_path]
+        command = [bomberjam_exec_path, '-q', '-o', game_result_path]
 
         # Make sure bots have access to the temp dir as a whole
         # Otherwise, Python can't import modules from the bot dir
