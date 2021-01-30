@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
     public class Player
     {
@@ -17,7 +17,7 @@ namespace Bomberjam
         public int Y { get; set; }
 
         [JsonPropertyName("startingCorner")]
-        public string StartingCorner { get; set; } = Constants.TopLeft;
+        public string StartingCorner { get; set; } = string.Empty;
 
         [JsonPropertyName("bombsLeft")]
         public int BombsLeft { get; set; }

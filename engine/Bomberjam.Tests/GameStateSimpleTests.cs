@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Bomberjam.Common;
 using FluentAssertions;
 using Xunit;
 

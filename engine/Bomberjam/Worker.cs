@@ -7,12 +7,13 @@ using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
+using Bomberjam.Common;
 
 namespace Bomberjam
 {
     internal sealed class Worker : IDisposable
     {
-        private static readonly Random Rng = new Random();
+        private static readonly Random Rng = new();
 
         private static readonly ISet<string> ValidPlayerActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {

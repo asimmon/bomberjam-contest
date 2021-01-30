@@ -1,12 +1,17 @@
 ﻿using System.Collections.Generic;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Xml;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
     public class State
     {
+        private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
+        {
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
         [JsonIgnore]
         public string Id { get; set; } = string.Empty;
 
@@ -20,13 +25,13 @@ namespace Bomberjam
         public bool IsFinished { get; set; }
 
         [JsonPropertyName("players")]
-        public Dictionary<string, Player> Players { get; set; } = new Dictionary<string, Player>();
+        public Dictionary<string, Player> Players { get; set; } = new();
 
         [JsonPropertyName("bombs")]
-        public Dictionary<string, Bomb> Bombs { get; set; } = new Dictionary<string, Bomb>();
+        public Dictionary<string, Bomb> Bombs { get; set; } = new();
 
         [JsonPropertyName("bonuses")]
-        public Dictionary<string, Bonus> Bonuses { get; set; } = new Dictionary<string, Bonus>();
+        public Dictionary<string, Bonus> Bonuses { get; set; } = new();
 
         [JsonPropertyName("width")]
         public int Width { get; set; }
@@ -42,7 +47,7 @@ namespace Bomberjam
 
         public string ToJson()
         {
-            return JsonSerializer.Serialize(this);
+            return JsonSerializer.Serialize(this, DefaultJsonSerializerOptions);
         }
     }
 }

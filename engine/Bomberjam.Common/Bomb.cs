@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
     public class Bomb
     {

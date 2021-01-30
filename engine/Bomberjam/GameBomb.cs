@@ -1,4 +1,5 @@
 ﻿using System;
+using Bomberjam.Common;
 
 namespace Bomberjam
 {

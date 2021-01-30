@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.Json.Serialization;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
     public class GameConfiguration
     {
@@ -57,23 +57,23 @@ namespace Bomberjam
             }
         }
 
-        internal void Merge(GameConfiguration other)
+        private void Merge(GameConfiguration other)
         {
-            this.OverrideProperty(x => this.DefaultBombRange = x, other.DefaultBombRange, GreaterThanZero);
-            this.OverrideProperty(x => this.DefaultBombCountDown = x, other.DefaultBombCountDown, GreaterThanZero);
-            this.OverrideProperty(x => this.DefaultBombBonusCount = x, other.DefaultBombBonusCount, GreaterThanZero);
-            this.OverrideProperty(x => this.DefaultFireBonusCount = x, other.DefaultFireBonusCount, GreaterThanZero);
-            this.OverrideProperty(x => this.SuddenDeathCountdown = x, other.SuddenDeathCountdown, GreaterThanZero);
-            this.OverrideProperty(x => this.RespawnTime = x, other.RespawnTime, GreaterThanZero);
-            this.OverrideProperty(x => this.ShufflePlayerPositions = x, other.ShufflePlayerPositions, AnyBoolean);
-            this.OverrideProperty(x => this.PointsPerAliveTick = x, other.PointsPerAliveTick, AnyInteger);
-            this.OverrideProperty(x => this.PointsBlockDestroyed = x, other.PointsBlockDestroyed, AnyInteger);
-            this.OverrideProperty(x => this.PointsKilledPlayer = x, other.PointsKilledPlayer, AnyInteger);
-            this.OverrideProperty(x => this.PointsDeath = x, other.PointsDeath, AnyInteger);
-            this.OverrideProperty(x => this.PointsLastSurvivor = x, other.PointsLastSurvivor, AnyInteger);
+            OverrideProperty(x => this.DefaultBombRange = x, other.DefaultBombRange, GreaterThanZero);
+            OverrideProperty(x => this.DefaultBombCountDown = x, other.DefaultBombCountDown, GreaterThanZero);
+            OverrideProperty(x => this.DefaultBombBonusCount = x, other.DefaultBombBonusCount, GreaterThanZero);
+            OverrideProperty(x => this.DefaultFireBonusCount = x, other.DefaultFireBonusCount, GreaterThanZero);
+            OverrideProperty(x => this.SuddenDeathCountdown = x, other.SuddenDeathCountdown, GreaterThanZero);
+            OverrideProperty(x => this.RespawnTime = x, other.RespawnTime, GreaterThanZero);
+            OverrideProperty(x => this.ShufflePlayerPositions = x, other.ShufflePlayerPositions, AnyBoolean);
+            OverrideProperty(x => this.PointsPerAliveTick = x, other.PointsPerAliveTick, AnyInteger);
+            OverrideProperty(x => this.PointsBlockDestroyed = x, other.PointsBlockDestroyed, AnyInteger);
+            OverrideProperty(x => this.PointsKilledPlayer = x, other.PointsKilledPlayer, AnyInteger);
+            OverrideProperty(x => this.PointsDeath = x, other.PointsDeath, AnyInteger);
+            OverrideProperty(x => this.PointsLastSurvivor = x, other.PointsLastSurvivor, AnyInteger);
         }
 
-        private void OverrideProperty<T>(Action<T> setter, T? value, Func<T, bool> asserter) where T : struct
+        private static void OverrideProperty<T>(Action<T> setter, T? value, Func<T, bool> asserter) where T : struct
         {
             if (value.HasValue && asserter(value.Value))
             {

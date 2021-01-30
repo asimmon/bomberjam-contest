@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
-    internal class TickHistory
+    public class TickHistory
     {
         public TickHistory(State state, Dictionary<string, string?> actions)
         {

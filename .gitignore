@@ -13,3 +13,7 @@ $RECYCLE.BIN/
 
 # VS Code
 .vs/
+
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user

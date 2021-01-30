@@ -1,4 +1,6 @@
-﻿namespace Bomberjam
+﻿using Bomberjam.Common;
+
+namespace Bomberjam
 {
     internal sealed class GamePlayer : IHasXY, IToDto<Player>
     {

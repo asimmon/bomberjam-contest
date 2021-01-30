@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
     public class Bonus
     {
@@ -11,6 +11,6 @@ namespace Bomberjam
         public int Y { get; set; }
 
         [JsonPropertyName("kind")]
-        public string Kind { get; set; } = Constants.Bomb;
+        public string Kind { get; set; } = string.Empty;
     }
 }
