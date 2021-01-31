@@ -237,7 +237,7 @@ namespace Bomberjam
         {
             if (this._players.Count > 0)
             {
-                this.History.Add(this, actions);
+                this.History.AddState(this, actions);
             }
         }
 

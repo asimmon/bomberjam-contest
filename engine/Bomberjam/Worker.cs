@@ -38,7 +38,7 @@ namespace Bomberjam
             this._processes = new Dictionary<string, BotProcess>(4);
             this._playerIds = new List<string>();
             this._watch = new Stopwatch();
-            this._playerInitialisationDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromMinutes(1);
+            this._playerInitialisationDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(20);
             this._tickDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(2);
         }
 
@@ -174,15 +174,11 @@ namespace Bomberjam
 
         private void AddPlayer(ThreadState x, CancellationToken threadGroupToken)
         {
+            // TODO register warning in player logs if something wrong happens
             var playerName = x.Process.ReadLineForTick(0, threadGroupToken);
-            if (playerName == null || x.Process.HasExited)
+            if (playerName == null)
             {
-                throw new Exception($"Player {x.PlayerId} did not sent a name in time");
-            }
-
-            if (playerName.Tick != 0)
-            {
-                throw new Exception($"Player {x.PlayerId} sent its name with a tick non-equal to zero: {playerName.Tick}");
+                playerName = new ProcessMessage(0, GetDefaultPlayerName(x.PlayerId));
             }
 
             var sanitizePlayerName = SanitizePlayerName(x.PlayerId, playerName.Message);
@@ -191,6 +187,11 @@ namespace Bomberjam
 
             this.Debug(x, "Sending player ID");
             x.Process.WriteLine(x.PlayerId.ToString(CultureInfo.InvariantCulture));
+        }
+
+        private static string GetDefaultPlayerName(string playerId)
+        {
+            return SanitizePlayerName(playerId, string.Empty);
         }
 
         private static string SanitizePlayerName(string playerId, string playerName)
@@ -269,7 +270,7 @@ namespace Bomberjam
                 var error = this._processes[playerId].Error.Trim();
                 if (error.Length > 0)
                 {
-                    this._simulator.History.AddError(playerId, this._simulator.State.Tick, error);
+                    this._simulator.History.AddPlayerError(playerId, this._simulator.State.Tick, error);
                     Debug(this._simulator.State.Tick, playerId, error);
                 }
             }

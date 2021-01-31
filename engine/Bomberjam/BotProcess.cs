@@ -4,12 +4,18 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 namespace Bomberjam
 {
     internal sealed class BotProcess : IDisposable
     {
+        // Only accept process messages that looks like 5:up, 0:mypseudo, etc.
+        private static readonly Regex ProcessMessageRegex = new Regex(
+            "^(?<tick>[0-9]{1,5}):(?<message>[a-zA-Z0-9\\-_]{1,32})$",
+            RegexOptions.Compiled);
+
         private readonly string _command;
         private readonly BlockingCollection<ProcessMessage> _messages;
         private readonly StringBuilder _errorLines;
@@ -77,7 +83,7 @@ namespace Bomberjam
                 return;
             }
 
-            if (Constants.ProcessMessageRegex.Match(args.Data.Trim()) is { } match && match.Success)
+            if (ProcessMessageRegex.Match(args.Data.Trim()) is { Success: true } match)
             {
                 var tick = int.Parse(match.Groups["tick"].Value, NumberStyles.Integer);
                 var message = new ProcessMessage(tick, match.Groups["message"].Value);
