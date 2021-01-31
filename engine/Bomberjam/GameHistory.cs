@@ -22,23 +22,17 @@ namespace Bomberjam
         [JsonPropertyName("ticks")]
         public IList<TickHistory> Ticks { get; private set; }
 
-        public void Add(GameState gameState, IEnumerable<PlayerAction> actions)
+        public void Add(GameState gameState, IDictionary<string, PlayerAction> actions)
         {
             var state = gameState.Convert();
 
             var stringActions = new Dictionary<string, string?>();
 
-            foreach (var action in actions)
-            {
-                stringActions[action.PlayerId] = action.Action.ToString().ToLowerInvariant();
-            }
-
             foreach (var playerId in state.Players.Keys)
             {
-                if (!stringActions.TryGetValue(playerId, out _))
-                {
-                    stringActions[playerId] = null;
-                }
+                stringActions[playerId] = actions.TryGetValue(playerId, out var action)
+                    ? action.Action.ToString().ToLowerInvariant()
+                    : null;
             }
 
             var tickHistory = new TickHistory(state, stringActions);

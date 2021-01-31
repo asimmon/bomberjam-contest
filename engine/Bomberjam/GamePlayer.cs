@@ -28,6 +28,7 @@ namespace Bomberjam
         public int MaxBombs { get; set; }
         public int BombRange { get; set; }
         public bool IsAlive { get; set; }
+        public bool IsTimedOut { get; set; }
         public int Score { get; set; }
         public bool HasWon { get; set; }
         public bool MustRespawn { get; set; }
@@ -57,6 +58,7 @@ namespace Bomberjam
             MaxBombs = this.MaxBombs,
             BombRange = this.BombRange,
             IsAlive = this.IsAlive,
+            IsTimedOut = this.IsTimedOut,
             Score = this.Score,
             HasWon = this.HasWon,
             Respawning = this.Respawning,

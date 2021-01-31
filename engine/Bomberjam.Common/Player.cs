@@ -31,6 +31,9 @@ namespace Bomberjam.Common
         [JsonPropertyName("isAlive")]
         public bool IsAlive { get; set; }
 
+        [JsonPropertyName("timedOut")]
+        public bool IsTimedOut { get; set; }
+
         [JsonPropertyName("respawning")]
         public int Respawning { get; set; }
 

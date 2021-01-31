@@ -64,7 +64,7 @@ namespace Bomberjam
             this._tiles = new List<TileKind>();
             this._players = new Dictionary<string, GamePlayer>();
             this._bombs = new Dictionary<string, GameBomb>();
-            this._bonuses  = new Dictionary<string, GameBonus>();
+            this._bonuses = new Dictionary<string, GameBonus>();
             this._configuration = new GameConfiguration(configuration);
             this._suddenDeathCountDown = this._configuration.SuddenDeathCountdown!.Value;
             this.History = new GameHistory(this._configuration);
@@ -72,7 +72,7 @@ namespace Bomberjam
             this.LoadAsciiMap(map);
             this.PlanStartingPositions();
             this.PlanBonusPositions();
-            this.ExecuteTick(new PlayerAction[0]);
+            this.ExecuteTick(new Dictionary<string, PlayerAction>());
         }
 
         public GameHistory History { get; }
@@ -199,7 +199,7 @@ namespace Bomberjam
             this.MovePlayerToItsSpawnLocation(player);
         }
 
-        public void ExecuteTick(PlayerAction[] actions)
+        public void ExecuteTick(IDictionary<string, PlayerAction> actions)
         {
             if (this._isFinished)
             {
@@ -217,7 +217,7 @@ namespace Bomberjam
 
                 if (this._isFinished)
                 {
-                    this.AppendTickToHistory(Enumerable.Empty<PlayerAction>());
+                    this.AppendTickToHistory(new Dictionary<string, PlayerAction>());
                 }
             }
 
@@ -233,7 +233,7 @@ namespace Bomberjam
             }
         }
 
-        private void AppendTickToHistory(IEnumerable<PlayerAction> actions)
+        private void AppendTickToHistory(IDictionary<string, PlayerAction> actions)
         {
             if (this._players.Count > 0)
             {
@@ -549,16 +549,24 @@ namespace Bomberjam
             }
         }
 
-        private void ApplyPlayerMoves(IEnumerable<PlayerAction> moves)
+        private void ApplyPlayerMoves(IDictionary<string, PlayerAction> moves)
         {
-            foreach (var move in moves)
-                if (this._players.TryGetValue(move.PlayerId, out var player) && player.IsAlive)
+            foreach (var (playerId, player) in this._players)
+            {
+                player.IsTimedOut = false;
+
+                if (player.IsAlive && moves.TryGetValue(playerId, out var move))
                 {
                     if (move.Action == ActionCode.Bomb)
                         this.DropBomb(player);
                     else
                         this.MovePlayer(player, move.Action);
                 }
+                else
+                {
+                    player.IsTimedOut = true;
+                }
+            }
         }
 
         private void DropBomb(GamePlayer player)

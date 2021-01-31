@@ -48,19 +48,23 @@ namespace Bomberjam
 
         public State ExecuteTick(IDictionary<string, string> actions)
         {
-            this._gameState.ExecuteTick(ParseActions(actions).ToArray());
+            this._gameState.ExecuteTick(ParseActions(actions));
             return this.State = this._gameState.Convert();
         }
 
-        private static IEnumerable<PlayerAction> ParseActions(IDictionary<string, string> actions)
+        private static IDictionary<string, PlayerAction> ParseActions(IDictionary<string, string> actions)
         {
+            var parsedActions = new Dictionary<string, PlayerAction>();
+
             foreach (var (playerId, action) in actions)
             {
                 if (Translator.StringToActionCodeMappings.TryGetValue(action, out var actionCode))
                 {
-                    yield return new PlayerAction(playerId, actionCode);
+                    parsedActions[playerId] = new PlayerAction(playerId, actionCode);
                 }
             }
+
+            return parsedActions;
         }
 
         public void KillPlayer(string playerId)
