@@ -45,6 +45,7 @@ RUN groupadd bots && \
 WORKDIR /home/worker/
 
 COPY ["engine/Bomberjam/", "engine/"]
+COPY ["engine/Bomberjam.Common/", "engine/"]
 RUN dotnet publish --nologo -c Release engine/Bomberjam.csproj -o . && \
     chmod 0500 bomberjam && \
     chown worker:worker bomberjam && \
