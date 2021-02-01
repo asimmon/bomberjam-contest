@@ -29,6 +29,8 @@ namespace Bomberjam
         private readonly TimeSpan _playerInitialisationDuration;
         private readonly TimeSpan _tickDuration;
 
+        private bool _isCancellationRequested;
+
         public Worker(WorkerOptions opts)
         {
             this._opts = opts;
@@ -38,7 +40,7 @@ namespace Bomberjam
             this._processes = new Dictionary<string, BotProcess>(4);
             this._playerIds = new List<string>();
             this._watch = new Stopwatch();
-            this._playerInitialisationDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(20);
+            this._playerInitialisationDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(2);
             this._tickDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(2);
         }
 
@@ -137,6 +139,27 @@ namespace Bomberjam
                 this.Debug(this._simulator.State.Tick, null, $"Received {playerNames.Count} names in {threadGroup.Elapsed.TotalSeconds:F4} seconds");
             }
 
+            var playerIdsWithNameWarnings = new HashSet<string>();
+
+            foreach (var playerId in playerNames.Keys.ToList())
+            {
+                var playerName = playerNames[playerId];
+
+                if (string.IsNullOrWhiteSpace(playerName))
+                {
+                    playerIdsWithNameWarnings.Add(playerId);
+                    playerName = GetDefaultPlayerName(playerId);
+                }
+
+                // Player name is overriden by program options
+                if (this._opts.PlayerNames.TryGetValue(playerId, out var playerNameOverride) && !string.IsNullOrWhiteSpace(playerNameOverride))
+                {
+                    playerName = SanitizePlayerName(playerId, playerNameOverride);
+                }
+
+                playerNames[playerId] = playerName;
+            }
+
             var playerNameUses = playerNames.Aggregate(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase), (acc, kvp) =>
             {
                 var (_, playerName) = kvp;
@@ -169,26 +192,19 @@ namespace Bomberjam
 
                 this._simulator.AddPlayer(playerId.ToString(CultureInfo.InvariantCulture), suffixedUniquePlayerName);
                 this._playerIds.Add(playerId);
+
+                if (playerIdsWithNameWarnings.Contains(playerId))
+                {
+                    this.AddPlayerError(playerId, "An invalid bot name has been provided");
+                }
             }
         }
 
         private void AddPlayer(ThreadState x, CancellationToken threadGroupToken)
         {
-            var playerName = x.Process.ReadLineForTick(0, threadGroupToken);
-            if (playerName == null)
-            {
-                playerName = new ProcessMessage(0, GetDefaultPlayerName(x.PlayerId));
-            }
-
-            // Player name is overriden by program options
-            if (x.ProcessOutput.TryGetValue(x.PlayerId, out var existingPlayerName) && !string.IsNullOrWhiteSpace(existingPlayerName))
-            {
-                playerName = new ProcessMessage(0, existingPlayerName);
-            }
-
-            var sanitizePlayerName = SanitizePlayerName(x.PlayerId, playerName.Message);
-            this.Debug(x, $"Read player name: {sanitizePlayerName}");
-            x.ProcessOutput[x.PlayerId] = sanitizePlayerName;
+            var playerName = x.Process.ReadLineForTick(0, threadGroupToken)?.Message ?? string.Empty;
+            this.Debug(x, $"Read player name: {playerName}");
+            x.ProcessOutput[x.PlayerId] = playerName;
 
             this.Debug(x, "Sending player ID");
             x.Process.WriteLine(x.PlayerId.ToString(CultureInfo.InvariantCulture));
@@ -207,7 +223,7 @@ namespace Bomberjam
 
         private void ExecuteTicks()
         {
-            while (!this._simulator.State.IsFinished)
+            while (!this._simulator.State.IsFinished && !this._isCancellationRequested)
             {
                 this.ExecuteTick();
             }
@@ -286,7 +302,7 @@ namespace Bomberjam
                 if (error.Length > 0)
                 {
                     this.Debug(this._simulator.State.Tick, playerId, error);
-                    var truncatedError = error.Substring(0, Math.Min(error.Length, 255));
+                    var truncatedError = error.Substring(0, Math.Min(error.Length, 512));
                     this.AddPlayerError(playerId, "Process has exited: " + truncatedError);
                 }
                 else

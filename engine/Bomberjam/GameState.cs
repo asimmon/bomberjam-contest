@@ -197,6 +197,7 @@ namespace Bomberjam
             var player = new GamePlayer(id, name, startingPosition, this._configuration.DefaultBombRange!.Value);
             this._players.Add(player.Id, player);
             this.MovePlayerToItsSpawnLocation(player);
+            this.History.AddPlayer(id, name);
         }
 
         public void ExecuteTick(IDictionary<string, PlayerAction> actions)
