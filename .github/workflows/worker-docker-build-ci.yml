@@ -12,4 +12,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the worker Docker image
-      run: docker build . --file worker.Dockerfile --tag bomberjam-worker:$(date +%s)
+      run: docker build . --no-cache --file worker.Dockerfile --tag bomberjam-worker:$(date +%s)
