@@ -29,8 +29,6 @@ namespace Bomberjam
         private readonly TimeSpan _playerInitialisationDuration;
         private readonly TimeSpan _tickDuration;
 
-        private bool _isCancellationRequested;
-
         public Worker(WorkerOptions opts)
         {
             this._opts = opts;
@@ -223,7 +221,7 @@ namespace Bomberjam
 
         private void ExecuteTicks()
         {
-            while (!this._simulator.State.IsFinished && !this._isCancellationRequested)
+            while (!this._simulator.State.IsFinished)
             {
                 this.ExecuteTick();
             }

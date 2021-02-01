@@ -25,7 +25,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{9D337C
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bomberjam.Common", "engine\Bomberjam.Common\Bomberjam.Common.csproj", "{08BECAC9-CB61-4C30-9732-3B045CA49BFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bomberjam.RandomBot", "engine\Bomberjam.RandomBot\Bomberjam.RandomBot.csproj", "{352A421E-7B20-4324-9261-B31929E9D044}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyBot", "engine\MyBot\MyBot.csproj", "{352A421E-7B20-4324-9261-B31929E9D044}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

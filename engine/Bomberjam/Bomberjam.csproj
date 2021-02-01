@@ -10,9 +10,10 @@
     <AssemblyName>bomberjam</AssemblyName>
     <DebugType>None</DebugType>
     <PublishTrimmed>true</PublishTrimmed>
-    <PublishReadyToRun>true</PublishReadyToRun>
+    <PublishReadyToRun>false</PublishReadyToRun>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRunShowWarnings>false</PublishReadyToRunShowWarnings>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
     <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
   </PropertyGroup>
   
