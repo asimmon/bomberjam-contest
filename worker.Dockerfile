@@ -44,9 +44,9 @@ RUN groupadd bots && \
 # Copy bomberjam engine and worker scripts
 WORKDIR /home/worker/
 
-COPY ["engine/Bomberjam/", "engine/"]
-COPY ["engine/Bomberjam.Common/", "engine/"]
-RUN dotnet publish --nologo -c Release engine/Bomberjam.csproj -o . && \
+COPY ["engine/Bomberjam/", "engine/Bomberjam/"]
+COPY ["engine/Bomberjam.Common/", "engine/Bomberjam.Common/"]
+RUN dotnet publish --nologo -c Release engine/Bomberjam/Bomberjam.csproj -o . && \
     chmod 0500 bomberjam && \
     chown worker:worker bomberjam && \
     rm -rf engine/ && ls -la
