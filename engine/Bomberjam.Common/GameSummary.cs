@@ -8,6 +8,9 @@ namespace Bomberjam.Common
         [JsonPropertyName("players")]
         public Dictionary<string, GamePlayerSummary> Players { get; set; } = new();
 
+        [JsonPropertyName("winnerId")]
+        public string? WinnerId { get; set; }
+
         [JsonPropertyName("errors")]
         public string Errors { get; set; } = string.Empty;
     }

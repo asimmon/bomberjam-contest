@@ -105,7 +105,7 @@ namespace Bomberjam
 
             if (this._opts.TotalIterations > 1)
             {
-                Debug(this._simulator.State.Tick, null, $"================ Game {this._opts.CurrentIteration} / {this._opts.TotalIterations} begins ================");
+                this.Debug(this._simulator.State.Tick, null, $"================ Game {this._opts.CurrentIteration} / {this._opts.TotalIterations} begins ================");
             }
 
             for (var playerId = 0; playerId < this._botCommands.Length; playerId++)
@@ -132,9 +132,9 @@ namespace Bomberjam
                     threadGroup.ExecuteThread(this.AddPlayer, threadState);
                 }
 
-                Debug(this._simulator.State.Tick, null, "Waiting for all players to send their names");
+                this.Debug(this._simulator.State.Tick, null, "Waiting for all players to send their names");
                 threadGroup.WaitForCompletion(this._playerInitialisationDuration);
-                Debug(this._simulator.State.Tick, null, $"Received {playerNames.Count} names in {threadGroup.Elapsed.TotalSeconds:F4} seconds");
+                this.Debug(this._simulator.State.Tick, null, $"Received {playerNames.Count} names in {threadGroup.Elapsed.TotalSeconds:F4} seconds");
             }
 
             var playerNameUses = playerNames.Aggregate(new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase), (acc, kvp) =>
@@ -233,7 +233,7 @@ namespace Bomberjam
                     }
                 }
 
-                Debug(this._simulator.State.Tick, null, "Waiting for all players to send their actions");
+                this.Debug(this._simulator.State.Tick, null, "Waiting for all players to send their actions");
                 threadGroup.WaitForCompletion(this._tickDuration);
 
                 var validPlayerActions = new Dictionary<string, string>();
@@ -246,6 +246,11 @@ namespace Bomberjam
                         {
                             validPlayerActions[playerId] = playerAction;
                         }
+                        else
+                        {
+                            var error = string.IsNullOrEmpty(playerAction) ? "Did not receive action in time (1)" : "Not a valid action: " + playerAction.Trim();
+                            this.AddPlayerError(playerId, error);
+                        }
                     }
                     else if (this._processes[playerId].HasExited)
                     {
@@ -253,25 +258,35 @@ namespace Bomberjam
                     }
                 }
 
-                Debug(this._simulator.State.Tick, null, $"Executing tick with {validPlayerActions.Count} valid player actions after waiting {threadGroup.Elapsed.TotalSeconds:F4} seconds");
+                this.Debug(this._simulator.State.Tick, null, $"Executing tick with {validPlayerActions.Count} valid player actions after waiting {threadGroup.Elapsed.TotalSeconds:F4} seconds");
                 this._simulator.ExecuteTick(validPlayerActions);
 
-                Debug(this._simulator.State.Tick, null, "Tiles: " + this._simulator.State.Tiles);
+                this.Debug(this._simulator.State.Tick, null, "Tiles: " + this._simulator.State.Tiles);
             }
+        }
+
+        private void AddPlayerError(string playerId, string error)
+        {
+            this._simulator.History.AddPlayerError(playerId, this._simulator.State.Tick, error);
         }
 
         private void HandleExitedProcess(string playerId)
         {
             if (this._simulator.State.Players.TryGetValue(playerId, out var player) && player.IsAlive)
             {
-                Debug(this._simulator.State.Tick, playerId, "Process has exited, killing player");
+                this.Debug(this._simulator.State.Tick, playerId, "Process has exited, killing player");
                 this._simulator.KillPlayer(playerId);
 
                 var error = this._processes[playerId].Error.Trim();
                 if (error.Length > 0)
                 {
-                    this._simulator.History.AddPlayerError(playerId, this._simulator.State.Tick, error);
-                    Debug(this._simulator.State.Tick, playerId, error);
+                    this.Debug(this._simulator.State.Tick, playerId, error);
+                    var truncatedError = error.Substring(0, Math.Min(error.Length, 255));
+                    this.AddPlayerError(playerId, "Process has exited: " + truncatedError);
+                }
+                else
+                {
+                    this.AddPlayerError(playerId, "Process has exited");
                 }
             }
         }
@@ -298,7 +313,7 @@ namespace Bomberjam
 
         private void SendFinalState()
         {
-            Debug(this._simulator.State.Tick, null, "Sending final game state");
+            this.Debug(this._simulator.State.Tick, null, "Sending final game state");
 
             using (var threadGroup = new ThreadGroup())
             {
@@ -315,16 +330,16 @@ namespace Bomberjam
             }
 
             var endScoresMessage = string.Join(", ", this._simulator.State.Players.Values.Select(p => p.Name + ": " + p.Score.ToString(CultureInfo.InvariantCulture)));
-            Debug(this._simulator.State.Tick, null, $"Scores: {endScoresMessage}");
+            this.Debug(this._simulator.State.Tick, null, $"Scores: {endScoresMessage}");
 
             var endGameMessage = this._simulator.State.Players.Values.Where(p => p.HasWon).Select(p => p.Name).FirstOrDefault() is { } winner
                 ? $"Game ended, '{winner}' is the last player alive"
                 : "Game ended, no winner";
 
-            Debug(this._simulator.State.Tick, null, endGameMessage);
+            this.Debug(this._simulator.State.Tick, null, endGameMessage);
 
             this._watch.Stop();
-            Debug(this._simulator.State.Tick, null, $"Game {this._opts.CurrentIteration} / {this._opts.TotalIterations} ended after {this._watch.Elapsed.TotalSeconds:F4} seconds");
+            this.Debug(this._simulator.State.Tick, null, $"Game {this._opts.CurrentIteration} / {this._opts.TotalIterations} ended after {this._watch.Elapsed.TotalSeconds:F4} seconds");
         }
 
         private static void SendFinalState(ThreadState x, CancellationToken _)
@@ -356,7 +371,7 @@ namespace Bomberjam
 
         private void Debug(ThreadState x, string text)
         {
-            Debug(x.GameState.Tick, x.PlayerId, text);
+            this.Debug(x.GameState.Tick, x.PlayerId, text);
         }
 
         private sealed class ThreadState

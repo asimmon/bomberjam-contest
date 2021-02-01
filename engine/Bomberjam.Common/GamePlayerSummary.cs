@@ -13,9 +13,6 @@ namespace Bomberjam.Common
         [JsonPropertyName("score")]
         public int Score { get; set; } = 0;
 
-        [JsonPropertyName("hasWon")]
-        public bool HasWon { get; set; } = false;
-
         [JsonPropertyName("errors")]
         public string Errors { get; set; } = string.Empty;
     }

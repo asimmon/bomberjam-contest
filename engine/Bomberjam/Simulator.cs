@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Bomberjam.Common;
 
 namespace Bomberjam
@@ -29,7 +28,7 @@ namespace Bomberjam
             this.State = this._gameState.Convert();
         }
 
-        public Simulator(GameConfiguration? configuration) : this(DefaultAsciiMap, new GameConfiguration())
+        public Simulator(GameConfiguration? configuration) : this(DefaultAsciiMap, configuration)
         {
         }
 
