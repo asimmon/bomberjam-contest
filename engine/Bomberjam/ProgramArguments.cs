@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Mono.Options;
 
@@ -16,6 +17,7 @@ namespace Bomberjam
         {
             this._options = new OptionSet
             {
+                { "n|names=", "Override player names", x => this.PlayerNames.AddRange(ParsePlayerNames(x)) },
                 { "r|repeat=", "The number of games to play", (int x) => this.RepeatCount = x },
                 { "o|output=", "Path of saved games, use placeholder #n to insert game number", x => this.OutputPath = x },
                 { "t|no-timeout", "Disabe all timeouts for debugging", x => this.NoTimeout = x != null },
@@ -26,6 +28,7 @@ namespace Bomberjam
         }
 
         public List<string> Commands { get; } = new List<string>();
+        public List<string> PlayerNames { get; } = new List<string>();
         public int RepeatCount { get; private set; } = 1;
         public bool IsQuiet { get; private set; } = false;
         public bool NoTimeout { get; private set; } = false;
@@ -62,6 +65,12 @@ namespace Bomberjam
             }
 
             return this;
+        }
+
+        private static IEnumerable<string> ParsePlayerNames(string? playerNamesStr)
+        {
+            playerNamesStr = playerNamesStr ?? string.Empty;
+            return playerNamesStr.Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Take(4);
         }
 
         public bool ShowHelp

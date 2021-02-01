@@ -122,7 +122,7 @@ namespace Bomberjam
 
         private void AddPlayers()
         {
-            var playerNames = new ConcurrentDictionary<string, string>();
+            var playerNames = new ConcurrentDictionary<string, string>(this._opts.PlayerNames);
 
             using (var threadGroup = new ThreadGroup())
             {
@@ -174,11 +174,16 @@ namespace Bomberjam
 
         private void AddPlayer(ThreadState x, CancellationToken threadGroupToken)
         {
-            // TODO register warning in player logs if something wrong happens
             var playerName = x.Process.ReadLineForTick(0, threadGroupToken);
             if (playerName == null)
             {
                 playerName = new ProcessMessage(0, GetDefaultPlayerName(x.PlayerId));
+            }
+
+            // Player name is overriden by program options
+            if (x.ProcessOutput.TryGetValue(x.PlayerId, out var existingPlayerName) && !string.IsNullOrWhiteSpace(existingPlayerName))
+            {
+                playerName = new ProcessMessage(0, existingPlayerName);
             }
 
             var sanitizePlayerName = SanitizePlayerName(x.PlayerId, playerName.Message);

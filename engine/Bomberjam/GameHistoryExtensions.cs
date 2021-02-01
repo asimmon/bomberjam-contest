@@ -47,7 +47,7 @@ namespace Bomberjam
 
         public static void AddPlayerError(this GameHistory history, string playerId, int tick, string error)
         {
-            history.Summary.Players[playerId].Errors += $"[{tick}] {error}" + Environment.NewLine;
+            history.Summary.Players[playerId].Errors += $"Tick#{tick} {error}{Environment.NewLine}";
         }
     }
 }

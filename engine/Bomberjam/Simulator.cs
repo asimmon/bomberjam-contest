@@ -69,6 +69,7 @@ namespace Bomberjam
         public void KillPlayer(string playerId)
         {
             this._gameState.KillPlayer(playerId);
+            this.State = this._gameState.Convert();
         }
     }
 }

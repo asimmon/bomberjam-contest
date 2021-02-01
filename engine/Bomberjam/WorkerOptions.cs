@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Bomberjam.Common;
@@ -10,6 +11,12 @@ namespace Bomberjam
     {
         public WorkerOptions(ProgramArguments args, int currentIteration, FileInfo? output, GameConfiguration? configuration)
         {
+            this.PlayerNames = args.PlayerNames.Aggregate(new Dictionary<string, string>(), (acc, name) =>
+            {
+                acc[acc.Count.ToString(CultureInfo.InvariantCulture)] = name;
+                return acc;
+            });
+
             this.Commands = EnsureFourBotCommands(args.Commands);
             this.Quiet = args.IsQuiet;
             this.NoTimeout = args.NoTimeout;
@@ -19,6 +26,7 @@ namespace Bomberjam
             this.CurrentIteration = currentIteration;
         }
 
+        public IReadOnlyDictionary<string, string> PlayerNames { get; }
         public IReadOnlyCollection<string> Commands { get; }
         public bool Quiet { get; }
         public bool NoTimeout { get; }
