@@ -21,11 +21,6 @@ while (true)
     var stateStr = Console.In.ReadLine();
     if (stateStr != null && JsonSerializer.Deserialize<JsonElement>(stateStr) is { } state && state.GetProperty("tick") is { } tick)
     {
-        if (myPlayerId == "1" && tick.ToString() == "5")
-        {
-            throw new Exception("Something wrong");
-        }
-
         try
         {
             // 4. Send your desired action

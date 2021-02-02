@@ -184,18 +184,11 @@ namespace Bomberjam.Website.Controllers
             return this.Ok(game);
         }
 
-        [HttpGet("user/{userId}/game")]
-        public async Task<IActionResult> StartYoloGame(int userId)
+        [HttpGet("game/yolo")]
+        public async Task<IActionResult> StartYoloGame()
         {
-            try
-            {
-                await this.Repository.AddGameTask(new[] { userId, userId, userId, userId });
-                return this.Ok();
-            }
-            catch (QueuedTaskNotFoundException)
-            {
-                return this.NotFound();
-            }
+            await this.Repository.AddGameTask(new[] { 1, 2, 3, 4 });
+            return this.Ok();
         }
     }
 

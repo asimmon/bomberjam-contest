@@ -199,7 +199,7 @@ def handle_game_task(user_ids):
     logging.debug("Running game with users: %s" % ", ".join(map(str, user_ids)))
     run_game(user_ids)
 
-    # Make sure game processes exit
+    # Make sure game processes exit (9 = SIGKILL)
     subprocess.run(["pkill", "--signal", "9", "-f", "cgexec"])
 
 

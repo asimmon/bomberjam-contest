@@ -62,22 +62,19 @@ namespace Bomberjam.Website
                 return new CachedRepository(repository, objectCache);
             });
 
-            if (fileBotStorage.GetFileCount() == 0)
+            var zippedBotFileStream = typeof(Startup).Assembly.GetManifestResourceStream("Bomberjam.Website.MyBot.zip");
+            if (zippedBotFileStream != null)
             {
-                var zippedBotFileStream = typeof(Startup).Assembly.GetManifestResourceStream("Bomberjam.Website.MyBot.zip");
-                if (zippedBotFileStream != null)
+                using (zippedBotFileStream)
+                using (var zippedBotFileMs = new MemoryStream())
                 {
-                    using (zippedBotFileStream)
-                    using (var zippedBotFileMs = new MemoryStream())
-                    {
-                        zippedBotFileStream.CopyTo(zippedBotFileMs);
-                        var zippedBotFileBytes = zippedBotFileMs.ToArray();
+                    zippedBotFileStream.CopyTo(zippedBotFileMs);
+                    var zippedBotFileBytes = zippedBotFileMs.ToArray();
 
-                        fileBotStorage.UploadBotSourceCode(1, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                        fileBotStorage.UploadBotSourceCode(2, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                        fileBotStorage.UploadBotSourceCode(3, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                        fileBotStorage.UploadBotSourceCode(4, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    }
+                    fileBotStorage.UploadBotSourceCode(1, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(2, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(3, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(4, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
                 }
             }
         }

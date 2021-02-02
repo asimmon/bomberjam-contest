@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Globalization;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -107,7 +108,17 @@ namespace Bomberjam
 
         public void WriteLine(string text)
         {
-            this._process.StandardInput.WriteLine(text);
+            try
+            {
+                if (!this.HasExited)
+                {
+                    this._process.StandardInput.WriteLine(text);
+                }
+            }
+            catch (IOException ioex)
+            {
+                // TODO throw and catch error above
+            }
         }
 
         public ProcessMessage? ReadLineForTick(int tick, CancellationToken token)
