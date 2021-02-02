@@ -96,6 +96,44 @@ namespace Bomberjam.Website.Migrations
                     b.HasIndex("Type");
 
                     b.ToTable("Tasks");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7154),
+                            Data = "1",
+                            Status = 1,
+                            Type = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7340)
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7951),
+                            Data = "2",
+                            Status = 1,
+                            Type = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7953)
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7955),
+                            Data = "3",
+                            Status = 1,
+                            Type = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7956)
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7988),
+                            Data = "4",
+                            Status = 1,
+                            Type = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7989)
+                        });
                 });
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbUser", b =>
@@ -140,6 +178,64 @@ namespace Bomberjam.Website.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            BotLanguage = "",
+                            CompilationErrors = "",
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(7321),
+                            Email = "simmon.anthony@gmail.com",
+                            GameCount = 0,
+                            IsCompiled = false,
+                            IsCompiling = false,
+                            SubmitCount = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(7510),
+                            Username = "Askaiser"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            BotLanguage = "",
+                            CompilationErrors = "",
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8676),
+                            Email = "falgar@gmail.com",
+                            GameCount = 0,
+                            IsCompiled = false,
+                            IsCompiling = false,
+                            SubmitCount = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8678),
+                            Username = "Falgar"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            BotLanguage = "",
+                            CompilationErrors = "",
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8680),
+                            Email = "xenure@gmail.com",
+                            GameCount = 0,
+                            IsCompiled = false,
+                            IsCompiling = false,
+                            SubmitCount = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8681),
+                            Username = "Xenure"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            BotLanguage = "",
+                            CompilationErrors = "",
+                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8683),
+                            Email = "minty@gmail.com",
+                            GameCount = 0,
+                            IsCompiled = false,
+                            IsCompiling = false,
+                            SubmitCount = 1,
+                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8683),
+                            Username = "Minty"
+                        });
                 });
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbGameUser", b =>

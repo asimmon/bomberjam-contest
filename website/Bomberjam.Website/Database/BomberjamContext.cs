@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
-        public BomberjamContext (DbContextOptions<BomberjamContext> options)
+        public BomberjamContext(DbContextOptions<BomberjamContext> options)
             : base(options)
         {
             this.ChangeTracker.Tracked += ChangeTrackerOnTracked;
@@ -31,6 +32,18 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Created);
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Type).HasConversion<int>();
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Status).HasConversion<int>();
+
+            modelBuilder.Entity<DbUser>().HasData(
+                CreateInitialUser(1, "Askaiser", "simmon.anthony@gmail.com"),
+                CreateInitialUser(2, "Falgar", "falgar@gmail.com"),
+                CreateInitialUser(3, "Xenure", "xenure@gmail.com"),
+                CreateInitialUser(4, "Minty", "minty@gmail.com"));
+
+            modelBuilder.Entity<DbQueuedTask>().HasData(
+                CreateInitialCompileTask(1, 1),
+                CreateInitialCompileTask(2, 2),
+                CreateInitialCompileTask(3, 3),
+                CreateInitialCompileTask(4, 4));
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)
@@ -78,6 +91,32 @@ namespace Bomberjam.Website.Database
             this.ChangeTracker.StateChanged -= ChangeTrackerOnStateChanged;
             return base.DisposeAsync();
         }
+
+        private static DbUser CreateInitialUser(int id, string username, string email) => new DbUser
+        {
+            Id = id,
+            Created = DateTime.UtcNow,
+            Updated = DateTime.UtcNow,
+            Username = username,
+            Email = email,
+            SubmitCount = 1,
+            GameCount = 0,
+            IsCompiling = false,
+            IsCompiled = false,
+            CompilationErrors = string.Empty,
+            BotLanguage = string.Empty
+        };
+
+        private static DbQueuedTask CreateInitialCompileTask(int taskId, int userId) => new DbQueuedTask
+        {
+            Id = taskId,
+            Created = DateTime.UtcNow,
+            Updated = DateTime.UtcNow,
+            Type = QueuedTaskType.Compile,
+            Data = userId.ToString(CultureInfo.InvariantCulture),
+            Status = QueuedTaskStatus.Created,
+
+        };
     }
 
     public class DbUser : ITimestampable

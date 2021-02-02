@@ -31,7 +31,7 @@ Building the image:
 
 ```
 cd <project root path>
-docker build --tag bomberjam-worker -f worker.Dockerfile .
+docker build --no-cache --tag bomberjam-worker -f worker.Dockerfile .
 ```
 
 The worker Docker container requires specific environment variables to communicate with the Bomberjam API.

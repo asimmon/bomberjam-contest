@@ -10,7 +10,13 @@ namespace Bomberjam.Website.Storage
 
         public LocalFileBotStorage(string basePath)
         {
-            this._basePath = basePath;
+            this._basePath = Path.Combine(basePath, "Bomberjam");
+            Directory.CreateDirectory(this._basePath);
+        }
+
+        public int GetFileCount()
+        {
+            return Directory.GetFiles(this._basePath).Length;
         }
 
         public Task UploadBotSourceCode(int userId, Stream fileStream)
