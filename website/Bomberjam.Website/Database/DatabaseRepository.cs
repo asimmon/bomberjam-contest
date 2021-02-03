@@ -120,9 +120,9 @@ namespace Bomberjam.Website.Database
             return this.AddTask(QueuedTaskType.Compile, data);
         }
 
-        public Task AddGameTask(int[] userIds)
+        public Task AddGameTask(IDictionary<int, string> userIdAndNames)
         {
-            var data = string.Join(",", userIds.Select(id => id.ToString(CultureInfo.InvariantCulture)));
+            var data = string.Join(",", userIdAndNames.Select(kvp => kvp.Key.ToString(CultureInfo.InvariantCulture) + ":" + kvp.Value));
             return this.AddTask(QueuedTaskType.Game, data);
         }
 

@@ -75,9 +75,9 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.AddCompilationTask(userId);
         }
 
-        public Task AddGameTask(int[] userIds)
+        public Task AddGameTask(IDictionary<int, string> userIdAndNames)
         {
-            return this._underlyingRepository.AddGameTask(userIds);
+            return this._underlyingRepository.AddGameTask(userIdAndNames);
         }
 
         public Task MarkTaskAsStarted(int taskId)

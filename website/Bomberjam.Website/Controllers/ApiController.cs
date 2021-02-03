@@ -187,7 +187,15 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("game/yolo")]
         public async Task<IActionResult> StartYoloGame()
         {
-            await this.Repository.AddGameTask(new[] { 1, 2, 3, 4 });
+            var dict = new Dictionary<int, string>
+            {
+                [1] = "foo",
+                [2] = "bar",
+                [3] = "qux",
+                [4] = "baz",
+            };
+
+            await this.Repository.AddGameTask(dict);
             return this.Ok();
         }
     }
