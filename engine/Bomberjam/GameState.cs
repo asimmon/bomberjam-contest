@@ -185,7 +185,7 @@ namespace Bomberjam
             return bonus != null;
         }
 
-        internal void AddPlayer(string id, string name)
+        internal void AddPlayer(string id, string name, int? websitePlayerId)
         {
             if (this._players.Count >= this._startingPositions.Count)
                 throw new Exception("More players than starting spots");
@@ -197,7 +197,7 @@ namespace Bomberjam
             var player = new GamePlayer(id, name, startingPosition, this._configuration.DefaultBombRange!.Value);
             this._players.Add(player.Id, player);
             this.MovePlayerToItsSpawnLocation(player);
-            this.History.AddPlayer(id, name);
+            this.History.AddPlayer(id, name, websitePlayerId);
         }
 
         public void ExecuteTick(IDictionary<string, PlayerAction> actions)

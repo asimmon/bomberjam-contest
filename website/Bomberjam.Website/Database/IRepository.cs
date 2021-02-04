@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Bomberjam.Common;
 using Bomberjam.Website.Controllers;
 using Bomberjam.Website.Models;
 
@@ -21,7 +22,8 @@ namespace Bomberjam.Website.Database
         Task MarkTaskAsFinished(int taskId);
         Task<bool> DoesUserHaveActiveCompileTask(int userId);
 
-        Task<int> AddGame(ICollection<int> userIds);
+        Task<IEnumerable<Game>> GetGames();
+        Task<int> AddGame(GameSummary gameSummary);
         Task<Game> GetGame(int id);
     }
 }

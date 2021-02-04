@@ -15,9 +15,12 @@ namespace Bomberjam.Website.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    IsFinished = table.Column<bool>(type: "INTEGER", nullable: false),
                     WinnerId = table.Column<int>(type: "INTEGER", nullable: true),
-                    Errors = table.Column<string>(type: "TEXT", nullable: true)
+                    Errors = table.Column<string>(type: "TEXT", nullable: true),
+                    InitDuration = table.Column<double>(type: "REAL", nullable: true),
+                    GameDuration = table.Column<double>(type: "REAL", nullable: true),
+                    Stdout = table.Column<string>(type: "TEXT", nullable: true),
+                    Stderr = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -71,6 +74,7 @@ namespace Bomberjam.Website.Migrations
                     UserId = table.Column<int>(type: "INTEGER", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
+                    Score = table.Column<int>(type: "INTEGER", nullable: false),
                     Errors = table.Column<string>(type: "TEXT", nullable: true)
                 },
                 constraints: table =>
@@ -93,42 +97,42 @@ namespace Bomberjam.Website.Migrations
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 1, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7154), "1", 1, 1, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7340) });
+                values: new object[] { 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(2940), "1", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3126) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 2, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7951), "2", 1, 1, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7953) });
+                values: new object[] { 2, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3706), "2", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3707) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 3, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7955), "3", 1, 1, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7956) });
+                values: new object[] { 3, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3709), "3", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3710) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 4, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7988), "4", 1, 1, new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7989) });
+                values: new object[] { 4, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3712), "4", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3713) });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 1, "", "", new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(7321), "simmon.anthony@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(7510), "Askaiser" });
+                values: new object[] { 1, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3128), "simmon.anthony@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3323), "Askaiser" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 2, "", "", new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8676), "falgar@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8678), "Falgar" });
+                values: new object[] { 2, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4685), "falgar@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4688), "Falgar" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 3, "", "", new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8680), "xenure@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8681), "Xenure" });
+                values: new object[] { 3, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4690), "xenure@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4691), "Xenure" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 4, "", "", new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8683), "minty@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8683), "Minty" });
+                values: new object[] { 4, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4692), "minty@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4693), "Minty" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GameUsers_UserId",

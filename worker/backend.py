@@ -72,6 +72,23 @@ def send_compilation_result(user_id, did_compile, language, errors=None):
     logging.debug("Sent compilation result: %s" % r.text)
 
 
+def send_game_result(game):
+    logging.debug("Sending game result")
+
+    request_url = API_BASE_URL + "game"
+    request_headers = {
+        'Authorization': 'Secret ' + API_AUTH,
+        'Content-Type': 'application/json'
+    }
+    r = requests.post(request_url, headers=request_headers, verify=False, json={
+        'serializedHistory': game.game_result,
+        'standardOutput': game.game_stdout,
+        'standardError': game.game_stderr
+    })
+    r.raise_for_status()
+    logging.debug("Sent game result: %s" % r.text)
+
+
 def get_next_task():
     """Gets either a game run or a compile task from the API"""
     logging.debug(f"Retrieving the next task to execute...")

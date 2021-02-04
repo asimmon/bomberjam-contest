@@ -1,4 +1,4 @@
-﻿@model List<User>
+﻿@model Bomberjam.Website.Controllers.HomeModel
 @{
     ViewData["Title"] = "Home Page";
 }
@@ -24,7 +24,7 @@
     }
 </div>
 
-<h2>@Model.Count registered users</h2>
+<h2>@Model.Users.Count registered users</h2>
 
 <div class="table-responsive">
     <table class="table table-sm table-bordered">
@@ -44,7 +44,7 @@
         </tr>
         </thead>
         <tbody>
-        @foreach (var user in Model)
+        @foreach (var user in Model.Users)
         {
             <tr>
                 <td style="white-space:nowrap">@user.Id</td>
@@ -58,6 +58,30 @@
                 <td style="white-space:nowrap">@user.IsCompiling</td>
                 <td style="white-space:nowrap">@user.CompilationErrors</td>
                 <td style="white-space:nowrap">@user.BotLanguage</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+
+<h2>@Model.Games.Count games</h2>
+
+<div class="table-responsive">
+    <table class="table table-sm table-bordered">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Created</th>
+            <th>Updated</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var game in Model.Games)
+        {
+            <tr>
+                <td style="white-space:nowrap">@game.Id</td>
+                <td style="white-space:nowrap">@game.Created</td>
+                <td style="white-space:nowrap">@game.Updated</td>
             </tr>
         }
         </tbody>

@@ -28,8 +28,17 @@ namespace Bomberjam.Website.Migrations
                     b.Property<string>("Errors")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsFinished")
-                        .HasColumnType("INTEGER");
+                    b.Property<double?>("GameDuration")
+                        .HasColumnType("REAL");
+
+                    b.Property<double?>("InitDuration")
+                        .HasColumnType("REAL");
+
+                    b.Property<string>("Stderr")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Stdout")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
@@ -55,6 +64,9 @@ namespace Bomberjam.Website.Migrations
 
                     b.Property<string>("Errors")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Score")
+                        .HasColumnType("INTEGER");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
@@ -101,38 +113,38 @@ namespace Bomberjam.Website.Migrations
                         new
                         {
                             Id = 1,
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7154),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(2940),
                             Data = "1",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7340)
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3126)
                         },
                         new
                         {
                             Id = 2,
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7951),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3706),
                             Data = "2",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7953)
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3707)
                         },
                         new
                         {
                             Id = 3,
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7955),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3709),
                             Data = "3",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7956)
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3710)
                         },
                         new
                         {
                             Id = 4,
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7988),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3712),
                             Data = "4",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 984, DateTimeKind.Utc).AddTicks(7989)
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3713)
                         });
                 });
 
@@ -185,13 +197,13 @@ namespace Bomberjam.Website.Migrations
                             Id = 1,
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(7321),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3128),
                             Email = "simmon.anthony@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(7510),
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3323),
                             Username = "Askaiser"
                         },
                         new
@@ -199,13 +211,13 @@ namespace Bomberjam.Website.Migrations
                             Id = 2,
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8676),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4685),
                             Email = "falgar@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8678),
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4688),
                             Username = "Falgar"
                         },
                         new
@@ -213,13 +225,13 @@ namespace Bomberjam.Website.Migrations
                             Id = 3,
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8680),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4690),
                             Email = "xenure@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8681),
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4691),
                             Username = "Xenure"
                         },
                         new
@@ -227,13 +239,13 @@ namespace Bomberjam.Website.Migrations
                             Id = 4,
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8683),
+                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4692),
                             Email = "minty@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 2, 3, 19, 54, 983, DateTimeKind.Utc).AddTicks(8683),
+                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4693),
                             Username = "Minty"
                         });
                 });

@@ -15,6 +15,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\engine\Bomberjam.Common\Bomberjam.Common.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Remove="MyBot.zip" />
     <EmbeddedResource Include="MyBot.zip" />
   </ItemGroup>

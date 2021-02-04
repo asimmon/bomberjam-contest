@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
+using Bomberjam.Common;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Controllers;
 using Bomberjam.Website.Models;
@@ -207,24 +208,36 @@ namespace Bomberjam.Website.Database
                 .AnyAsync();
         }
 
-        public async Task<int> AddGame(ICollection<int> userIds)
+        public async Task<IEnumerable<Game>> GetGames()
         {
-            var dbGame = new DbGame
+            return await this._dbContext.Games.Select(u => MapGame(u)).ToListAsync();
+        }
+
+        public async Task<int> AddGame(GameSummary gameSummary)
+        {
+            var dbGame = new DbGame();
+
+            if (gameSummary.WebsiteWinnerId.HasValue)
             {
-                IsFinished = true,
-                WinnerId = null,
-                Errors = string.Empty
-            };
+                dbGame.WinnerId = gameSummary.WebsiteWinnerId.Value;
+            }
+
+            dbGame.Errors = gameSummary.Errors;
+            dbGame.InitDuration = gameSummary.InitDuration;
+            dbGame.GameDuration = gameSummary.GameDuration;
+            dbGame.Stdout = gameSummary.StandardOutput;
+            dbGame.Stderr = gameSummary.StandardError;
 
             this._dbContext.Games.Add(dbGame);
 
-            foreach (var userId in new HashSet<int>(userIds))
+            foreach (var (_, playerSummary) in gameSummary.Players)
             {
                 var dbGameUser = new DbGameUser
                 {
                     Game = dbGame,
-                    UserId = userId,
-                    Errors = string.Empty
+                    UserId = playerSummary.WebsiteId!.Value,
+                    Score = playerSummary.Score,
+                    Errors = playerSummary.Errors
                 };
 
                 this._dbContext.GameUsers.Add(dbGameUser);
@@ -264,7 +277,6 @@ namespace Bomberjam.Website.Database
             Id = dbGame.Id,
             Created = dbGame.Created,
             Updated = dbGame.Updated,
-            IsFinished = dbGame.IsFinished,
             WinnerId = dbGame.WinnerId,
             Errors = dbGame.Errors,
             Users = new List<GameUser>(4)

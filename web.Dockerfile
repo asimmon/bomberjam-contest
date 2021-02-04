@@ -6,9 +6,11 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 
 WORKDIR /src
-COPY ["website/Bomberjam.Website/", "Bomberjam.Website/"]
-RUN dotnet restore "Bomberjam.Website/Bomberjam.Website.csproj"
-WORKDIR "/src/Bomberjam.Website"
+COPY ["engine/Bomberjam.Common/", "engine/Bomberjam.Common/"]
+COPY ["website/Bomberjam.Website/", "website/Bomberjam.Website/"]
+RUN dotnet restore "engine/Bomberjam.Common/Bomberjam.Common.csproj"
+RUN dotnet restore "website/Bomberjam.Website/Bomberjam.Website.csproj"
+WORKDIR "/src/website/Bomberjam.Website"
 RUN dotnet build "Bomberjam.Website.csproj" -c Debug -o /app/build
 
 FROM build AS publish

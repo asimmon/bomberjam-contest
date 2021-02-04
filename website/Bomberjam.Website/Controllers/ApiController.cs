@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+using Bomberjam.Common;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
@@ -157,26 +158,6 @@ namespace Bomberjam.Website.Controllers
             }
         }
 
-        [HttpGet("game/start/{userIdsStr}")]
-        public async Task<IActionResult> CreateGame(string userIdsStr)
-        {
-            var userIds = new List<int>(4);
-
-            foreach (var userIdStr in userIdsStr.Split(","))
-            {
-                if (int.TryParse(userIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var userId))
-                {
-                    userIds.Add(userId);
-                }
-            }
-
-            if (userIds.Count != 4)
-                throw new Exception("Expected four players");
-
-            var gameId = await this.Repository.AddGame(userIds);
-            return this.Ok(gameId);
-        }
-
         [HttpGet("game/{gameId}")]
         public async Task<IActionResult> GetGame(int gameId)
         {
@@ -196,6 +177,32 @@ namespace Bomberjam.Website.Controllers
             };
 
             await this.Repository.AddGameTask(dict);
+            return this.Ok();
+        }
+
+        [HttpPost("game")]
+        public async Task<IActionResult> AddGameResult([FromBody] GameResult gameResult)
+        {
+            if (!this.ModelState.IsValid)
+                return this.BadRequest(GetAllErrors(this.ModelState));
+
+            GameHistory gameHistory;
+            try
+            {
+                gameHistory = JsonSerializer.Deserialize<GameHistory>(gameResult.SerializedHistory);
+                if (gameHistory == null)
+                    throw new Exception("JSON game result parsing returned null");
+            }
+            catch (Exception ex)
+            {
+                return this.BadRequest("Not a valid JSON game result: " + ex);
+            }
+
+            gameHistory.Summary.StandardOutput = gameResult.StandardOutput ?? string.Empty;
+            gameHistory.Summary.StandardError = gameResult.StandardError ?? string.Empty;
+
+            await this.Repository.AddGame(gameHistory.Summary);
+
             return this.Ok();
         }
     }
@@ -221,8 +228,14 @@ namespace Bomberjam.Website.Controllers
     public sealed class GameResult
     {
         [Required]
-        [JsonPropertyName("id")]
-        public int Id { get; set; }
+        [JsonPropertyName("serializedHistory")]
+        public string SerializedHistory { get; set; }
+
+        [JsonPropertyName("standardOutput")]
+        public string StandardOutput { get; set; }
+
+        [JsonPropertyName("standardError")]
+        public string StandardError { get; set; }
     }
 
     public sealed class QueuedTask

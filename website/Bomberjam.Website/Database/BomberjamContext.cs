@@ -139,9 +139,12 @@ namespace Bomberjam.Website.Database
         public int Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public bool IsFinished { get; set; }
         public int? WinnerId { get; set; }
         public string Errors { get; set; }
+        public double? InitDuration { get; set; }
+        public double? GameDuration { get; set; }
+        public string Stdout { get; set; }
+        public string Stderr { get; set; }
     }
 
     public class DbGameUser : ITimestampable
@@ -152,6 +155,7 @@ namespace Bomberjam.Website.Database
         public int UserId { get; set; }
         public DbGame Game { get; set; }
         public DbUser User { get; set; }
+        public int Score { get; set; }
         public string Errors { get; set; }
     }
 

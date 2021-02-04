@@ -15,5 +15,8 @@ namespace Bomberjam.Common
 
         [JsonPropertyName("errors")]
         public string Errors { get; set; } = string.Empty;
+
+        [JsonPropertyName("websiteId")]
+        public int? WebsiteId { get; set; }
     }
 }

@@ -39,9 +39,9 @@ namespace Bomberjam
             get => this._gameState.History;
         }
 
-        public void AddPlayer(string id, string name)
+        public void AddPlayer(string id, string name, int? websitePlayerId)
         {
-            this._gameState.AddPlayer(id, name);
+            this._gameState.AddPlayer(id, name, websitePlayerId);
             this.State = this._gameState.Convert();
         }
 
@@ -49,6 +49,12 @@ namespace Bomberjam
         {
             this._gameState.ExecuteTick(ParseActions(actions));
             return this.State = this._gameState.Convert();
+        }
+
+        public void KillPlayer(string playerId)
+        {
+            this._gameState.KillPlayer(playerId);
+            this.State = this._gameState.Convert();
         }
 
         private static IDictionary<string, PlayerAction> ParseActions(IDictionary<string, string> actions)
@@ -64,12 +70,6 @@ namespace Bomberjam
             }
 
             return parsedActions;
-        }
-
-        public void KillPlayer(string playerId)
-        {
-            this._gameState.KillPlayer(playerId);
-            this.State = this._gameState.Convert();
         }
     }
 }

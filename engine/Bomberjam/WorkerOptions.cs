@@ -17,6 +17,12 @@ namespace Bomberjam
                 return acc;
             });
 
+            this.PlayerWebsiteIds = args.PlayerIds.Aggregate(new Dictionary<string, int>(), (acc, id) =>
+            {
+                acc[acc.Count.ToString(CultureInfo.InvariantCulture)] = id;
+                return acc;
+            });
+
             this.Commands = EnsureFourBotCommands(args.Commands);
             this.Quiet = args.IsQuiet;
             this.NoTimeout = args.NoTimeout;
@@ -27,6 +33,7 @@ namespace Bomberjam
         }
 
         public IReadOnlyDictionary<string, string> PlayerNames { get; }
+        public IReadOnlyDictionary<string, int> PlayerWebsiteIds { get; }
         public IReadOnlyCollection<string> Commands { get; }
         public bool Quiet { get; }
         public bool NoTimeout { get; }

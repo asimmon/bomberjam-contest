@@ -122,6 +122,7 @@ namespace Bomberjam
 
         private void AddPlayers()
         {
+            var watch = Stopwatch.StartNew();
             var playerNames = new ConcurrentDictionary<string, string>(this._opts.PlayerNames);
 
             using (var threadGroup = new ThreadGroup())
@@ -137,6 +138,14 @@ namespace Bomberjam
                 this.Debug(this._simulator.State.Tick, null, $"Received {playerNames.Count} names in {threadGroup.Elapsed.TotalSeconds:F4} seconds");
             }
 
+            this.FixPlayerNames(playerNames);
+
+            watch.Stop();
+            this._simulator.History.Summary.InitDuration = watch.Elapsed.TotalSeconds;
+        }
+
+        private void FixPlayerNames(ConcurrentDictionary<string, string> playerNames)
+        {
             var playerIdsWithNameWarnings = new HashSet<string>();
 
             foreach (var playerId in playerNames.Keys.ToList())
@@ -188,7 +197,8 @@ namespace Bomberjam
                     suffixedUniquePlayerName = playerName;
                 }
 
-                this._simulator.AddPlayer(playerId.ToString(CultureInfo.InvariantCulture), suffixedUniquePlayerName);
+                int? websitePlayerId = this._opts.PlayerWebsiteIds.TryGetValue(playerId, out var id) ? id : null;
+                this._simulator.AddPlayer(playerId.ToString(CultureInfo.InvariantCulture), suffixedUniquePlayerName, websitePlayerId);
                 this._playerIds.Add(playerId);
 
                 if (playerIdsWithNameWarnings.Contains(playerId))
@@ -221,10 +231,15 @@ namespace Bomberjam
 
         private void ExecuteTicks()
         {
+            var watch = Stopwatch.StartNew();
+
             while (!this._simulator.State.IsFinished)
             {
                 this.ExecuteTick();
             }
+
+            watch.Stop();
+            this._simulator.History.Summary.GameDuration = watch.Elapsed.TotalSeconds;
         }
 
         private void ExecuteTick()

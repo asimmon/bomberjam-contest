@@ -45,3 +45,31 @@ def setup_logging():
     stdout_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s]: %(message)s'))
     logging.getLogger().setLevel(logging.DEBUG)
     logging.getLogger().addHandler(stdout_handler)
+
+
+class Bot:
+    def __init__(self, bot_index, bot_id, bot_name):
+        self.bot_index = bot_index
+        self.bot_id = bot_id
+        self.bot_name = bot_name
+        self.bot_dir = ''
+        self.bot_logs = ''
+
+
+class Game:
+    # serialized_bot_data format: id:name,id:name,etc
+    # Example: 1:foo,5:bar,6:qux,4:baz
+    def __init__(self, serialized_bot_data):
+        self.bots = []
+        self.game_result = ''
+        self.game_stdout = ''
+        self.game_stderr = ''
+        self.exception = ''
+
+        bot_data = {k: str(v) for k, v in [i.split(':') for i in serialized_bot_data.split(',')]}
+        for bot_index, bot_id in enumerate(bot_data):
+            self.add_player(bot_index, bot_id, bot_data[bot_id])
+
+    def add_player(self, bot_index, bot_id, bot_name):
+        bot = Bot(bot_index, bot_id, bot_name)
+        self.bots.append(bot)

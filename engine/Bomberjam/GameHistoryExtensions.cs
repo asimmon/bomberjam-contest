@@ -6,13 +6,14 @@ namespace Bomberjam
 {
     internal static class GameHistoryExtensions
     {
-        public static void AddPlayer(this GameHistory history, string playerId, string playerName)
+        public static void AddPlayer(this GameHistory history, string playerId, string playerName, int? websitePlayerId)
         {
             if (!history.Summary.Players.TryGetValue(playerId, out var playerSummary))
             {
                 playerSummary = history.Summary.Players[playerId] = new GamePlayerSummary();
                 playerSummary.Id = playerId;
                 playerSummary.Name = playerName;
+                playerSummary.WebsiteId = websitePlayerId;
             }
         }
 
@@ -34,7 +35,14 @@ namespace Bomberjam
 
             foreach (var (playerId, player) in state.Players)
             {
-                if (!history.Summary.Players.TryGetValue(playerId, out var playerSummary))
+                if (history.Summary.Players.TryGetValue(playerId, out var playerSummary))
+                {
+                    if (player.HasWon)
+                    {
+                        history.Summary.WebsiteWinnerId = playerSummary.WebsiteId;
+                    }
+                }
+                else
                 {
                     playerSummary = history.Summary.Players[playerId] = new GamePlayerSummary();
                     playerSummary.Id = player.Id;
@@ -42,11 +50,6 @@ namespace Bomberjam
                 }
 
                 playerSummary.Score = player.Score;
-
-                if (player.HasWon)
-                {
-                    history.Summary.WinnerId = player.Id;
-                }
             }
         }
 

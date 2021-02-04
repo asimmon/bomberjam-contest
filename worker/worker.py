@@ -33,34 +33,6 @@ For our reference, here is the trace of the error:
 BOT_COMMAND = "cgexec -g cpu,memory,devices:{cgroup} sudo -Hiu {bot_user} bash -c 'cd \"{bot_dir}\" && ./{runfile}'"
 
 
-class Bot:
-    def __init__(self, bot_index, bot_id, bot_name):
-        self.bot_index = bot_index
-        self.bot_id = bot_id
-        self.bot_name = bot_name
-        self.bot_dir = ''
-        self.bot_logs = ''
-
-
-class Game:
-    # serialized_bot_data format: id:name,id:name,etc
-    # Example: 1:foo,5:bar,6:qux,4:baz
-    def __init__(self, serialized_bot_data):
-        self.bots = []
-        self.game_result = ''
-        self.game_stdout = ''
-        self.game_stderr = ''
-        self.exception = ''
-
-        bot_data = {k: str(v) for k, v in [i.split(':') for i in serialized_bot_data.split(',')]}
-        for bot_index, bot_id in enumerate(bot_data):
-            self.add_player(bot_index, bot_id, bot_data[bot_id])
-
-    def add_player(self, bot_index, bot_id, bot_name):
-        bot = Bot(bot_index, bot_id, bot_name)
-        self.bots.append(bot)
-
-
 def handle_compile_task(user_id):
     """Downloads and compiles a bot, then posts the compiled bot archive back through the API"""
     errors = []
@@ -176,9 +148,10 @@ def run_game(game):
             bomberjam_exec_path = os.path.join(temp_dir, BOMBERJAM_EXEC_NAME)
             game_result_path = os.path.join(temp_dir, 'game.json')
             bot_names_override = ','.join([x.bot_name for x in game.bots])
+            bot_ids_override = ','.join([x.bot_id for x in game.bots])
 
             shutil.copy(BOMBERJAM_EXEC_NAME, bomberjam_exec_path)
-            command = [bomberjam_exec_path, '-q', '-o', game_result_path, '-n', bot_names_override]
+            command = [bomberjam_exec_path, '-q', '-o', game_result_path, '-n', bot_names_override, '-i', bot_ids_override]
 
             # Make sure bots have access to the temp dir as a whole
             # Otherwise, Python can't import modules from the bot dir
@@ -195,7 +168,7 @@ def run_game(game):
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             try:
-                timeout_seconds = 10*60
+                timeout_seconds = 10 * 60
                 logging.debug("Reading process stdout and stderr")
                 out_bytes, err_bytes = process.communicate(timeout=timeout_seconds)
                 game.game_stdout = out_bytes.decode('utf-8')
@@ -223,9 +196,9 @@ def run_game(game):
 
 
 def handle_game_task(game):
+    """Downloads compiled bots, runs a game, and posts the results of the game"""
     try:
-        """Downloads compiled bots, runs a game, and posts the results of the game"""
-        logging.debug("Running game with bots: %s" % ", ".join([str(x.bot_name) for x in game.bots]))
+        logging.debug("Running game with bots: %s" % ", ".join(["%s (%s)" % (x.bot_name, x.bot_id) for x in game.bots]))
         game = run_game(game)
     except:
         game.exception = traceback.format_exc()
@@ -233,8 +206,8 @@ def handle_game_task(game):
         # Make sure game processes exit (9 = SIGKILL)
         subprocess.run(["pkill", "--signal", "9", "-f", "cgexec"])
 
-    # TODO send result to backend
     logging.debug("Game result: %s" % json.dumps(game, default=lambda x: x.__dict__))
+    backend.send_game_result(game)
 
 
 def handle_any_task(task):
@@ -249,7 +222,7 @@ def handle_any_task(task):
             handle_compile_task(user_id)
 
         elif task_type == 2:
-            game_data = Game(task['data'])
+            game_data = util.Game(task['data'])
             handle_game_task(game_data)
     finally:
         backend.mark_task_finished(task_id)

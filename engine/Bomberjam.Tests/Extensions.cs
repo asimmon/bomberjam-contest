@@ -8,7 +8,7 @@ namespace Bomberjam.Tests
         {
             foreach (var playerId in playerIds)
             {
-                simulator.AddPlayer(playerId, playerId.ToString(CultureInfo.InvariantCulture));
+                simulator.AddPlayer(playerId, playerId.ToString(CultureInfo.InvariantCulture), null);
             }
         }
     }

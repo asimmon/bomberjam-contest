@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
+using Bomberjam.Common;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Controllers;
 using Bomberjam.Website.Models;
@@ -95,9 +96,14 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.DoesUserHaveActiveCompileTask(userId);
         }
 
-        public Task<int> AddGame(ICollection<int> userIds)
+        public Task<IEnumerable<Game>> GetGames()
         {
-            return this._underlyingRepository.AddGame(userIds);
+            return this._underlyingRepository.GetGames();
+        }
+
+        public Task<int> AddGame(GameSummary gameSummary)
+        {
+            return this._underlyingRepository.AddGame(gameSummary);
         }
 
         public Task<Game> GetGame(int id)
