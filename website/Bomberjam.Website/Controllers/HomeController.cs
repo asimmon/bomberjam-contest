@@ -11,14 +11,14 @@ namespace Bomberjam.Website.Controllers
 {
     public class HomeModel
     {
-        public HomeModel(IReadOnlyList<User> users, IReadOnlyList<Game> games)
+        public HomeModel(IReadOnlyList<User> users, IReadOnlyList<GameInfo> games)
         {
             this.Users = users;
             this.Games = games;
         }
 
         public IReadOnlyList<User> Users { get; }
-        public IReadOnlyList<Game> Games { get; }
+        public IReadOnlyList<GameInfo> Games { get; }
     }
 
     public class HomeController : BaseWebController<HomeController>

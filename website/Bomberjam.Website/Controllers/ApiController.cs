@@ -155,13 +155,6 @@ namespace Bomberjam.Website.Controllers
             }
         }
 
-        [HttpGet("game/{gameId}")]
-        public async Task<IActionResult> GetGame(Guid gameId)
-        {
-            var game = await this.Repository.GetGame(gameId);
-            return this.Ok(game);
-        }
-
         [HttpGet("game/yolo")]
         public async Task<IActionResult> StartYoloGame()
         {

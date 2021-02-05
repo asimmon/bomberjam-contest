@@ -96,7 +96,7 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.GetUserActiveCompileTask(userId);
         }
 
-        public Task<IEnumerable<Game>> GetGames()
+        public Task<IEnumerable<GameInfo>> GetGames()
         {
             return this._underlyingRepository.GetGames();
         }
@@ -104,11 +104,6 @@ namespace Bomberjam.Website.Database
         public Task<Guid> AddGame(GameSummary gameSummary)
         {
             return this._underlyingRepository.AddGame(gameSummary);
-        }
-
-        public Task<Game> GetGame(Guid id)
-        {
-            return this._underlyingRepository.GetGame(id);
         }
 
         private static string FormatKey(string keyFormat, params object[] objects)

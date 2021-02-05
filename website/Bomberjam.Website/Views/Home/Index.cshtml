@@ -72,7 +72,7 @@
         <tr>
             <th>ID</th>
             <th>Created</th>
-            <th>Updated</th>
+            <th>Players</th>
         </tr>
         </thead>
         <tbody>
@@ -81,7 +81,7 @@
             <tr>
                 <td style="white-space:nowrap">@game.Id</td>
                 <td style="white-space:nowrap">@game.Created</td>
-                <td style="white-space:nowrap">@game.Updated</td>
+                <td style="white-space:nowrap">@{ string.Join(", ", game.UserNames.Values);}</td>
             </tr>
         }
         </tbody>

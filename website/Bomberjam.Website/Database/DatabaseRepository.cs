@@ -213,9 +213,58 @@ namespace Bomberjam.Website.Database
             return dbTask == null ? null : MapQueuedTask(dbTask);
         }
 
-        public async Task<IEnumerable<Game>> GetGames()
+        public async Task<IEnumerable<GameInfo>> GetGames()
         {
-            return await this._dbContext.Games.Select(u => MapGame(u)).ToListAsync();
+            var rows = await this._dbContext.Games
+                .Take(50)
+                .Join(
+                    this._dbContext.GameUsers,
+                    game => game.Id,
+                    gameUser => gameUser.GameId,
+                    (game, gameUser) => new
+                    {
+                        GameId = game.Id,
+                        GameCreated = game.Created,
+                        WinnerId = game.WinnerId,
+                        UserId = gameUser.UserId,
+                        UserScore = gameUser.Score
+                    }
+                )
+                .Join(
+                    this._dbContext.Users,
+                    tmp => tmp.UserId,
+                    user => user.Id,
+                    (tmp, user) => new
+                    {
+                        GameId = tmp.GameId,
+                        GameCreated = tmp.GameCreated,
+                        WinnerId = tmp.WinnerId,
+                        UserId = tmp.UserId,
+                        UserScore = tmp.UserScore,
+                        UserName = user.Username
+                    }
+                )
+                .ToListAsync();
+
+            return rows.Aggregate(new Dictionary<Guid, GameInfo>(), (acc, row) =>
+            {
+                if (!acc.TryGetValue(row.GameId, out var gameInfo))
+                {
+                    gameInfo = acc[row.GameId] = new GameInfo
+                    {
+                        Id = row.GameId,
+                        Created = row.GameCreated,
+                        WinnerId = row.WinnerId,
+                        UserNames = new Dictionary<Guid, string>(),
+                        UserScores = new Dictionary<Guid, int>()
+                    };
+                }
+
+                gameInfo.UserNames[row.UserId] = row.UserName;
+                gameInfo.UserScores[row.UserId] = row.UserScore;
+
+                return acc;
+            }).Values;
         }
 
         public async Task<Guid> AddGame(GameSummary gameSummary)
@@ -252,39 +301,5 @@ namespace Bomberjam.Website.Database
 
             return dbGame.Id;
         }
-
-        public async Task<Game> GetGame(Guid id)
-        {
-            var dbGame = await this._dbContext.Games.FirstOrDefaultAsync(g => g.Id == id);
-            if (dbGame == null)
-                throw new GameNotFoundException($"Game '{id}' not found");
-
-            var game = MapGame(dbGame);
-
-            var dbGameUsers = await this._dbContext.GameUsers
-                .Include(gu => gu.User)
-                .Where(gu => gu.GameId == dbGame.Id)
-                .ToListAsync();
-
-            foreach (var dbGameUser in dbGameUsers)
-            {
-                var gameUser = MapUser<GameUser>(dbGameUser.User);
-                gameUser.Errors = dbGameUser.Errors;
-
-                game.Users.Add(gameUser);
-            }
-
-            return game;
-        }
-
-        private static Game MapGame(DbGame dbGame) => new()
-        {
-            Id = dbGame.Id,
-            Created = dbGame.Created,
-            Updated = dbGame.Updated,
-            WinnerId = dbGame.WinnerId,
-            Errors = dbGame.Errors,
-            Users = new List<GameUser>(4)
-        };
     }
 }

@@ -3,14 +3,12 @@ using System.Collections.Generic;
 
 namespace Bomberjam.Website.Models
 {
-    public class Game
+    public class GameInfo
     {
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
-        public DateTime Updated { get; set; }
-        public bool IsFinished { get; set; }
         public Guid? WinnerId { get; set; }
-        public string Errors { get; set; }
-        public List<GameUser> Users { get; set; }
+        public IDictionary<Guid, string> UserNames { get; set; }
+        public IDictionary<Guid, int> UserScores { get; set; }
     }
 }
