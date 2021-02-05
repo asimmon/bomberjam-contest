@@ -191,9 +191,44 @@ namespace Bomberjam.Website.Controllers
             gameHistory.Summary.StandardOutput = gameResult.StandardOutput ?? string.Empty;
             gameHistory.Summary.StandardError = gameResult.StandardError ?? string.Empty;
 
-            await this.Repository.AddGame(gameHistory.Summary);
+            var gameId = await this.Repository.AddGame(gameHistory.Summary);
+
+            var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(RemoveWebsiteIds(gameHistory));
+
+            await this._botStorage.UploadGameResult(gameId, jsonGameHistoryStream);
 
             return this.Ok();
+        }
+
+        private static GameHistory RemoveWebsiteIds(GameHistory gh)
+        {
+            if (gh.Summary is { } summary)
+            {
+                summary.WebsiteWinnerId = null;
+
+                if (summary.Players is { } players)
+                {
+                    foreach (var (_, playerSummary) in players)
+                    {
+                        playerSummary.WebsiteId = null;
+                    }
+                }
+            }
+
+            return gh;
+        }
+
+        private static MemoryStream SerializeGameHistoryToJsonStream(GameHistory gh)
+        {
+            var memoryStream = new MemoryStream();
+
+            using (var jsonWriter = new Utf8JsonWriter(memoryStream, Bomberjam.Common.Constants.DefaultJsonWriterOptions))
+            {
+                JsonSerializer.Serialize(jsonWriter, gh);
+            }
+
+            memoryStream.Seek(0, SeekOrigin.Begin);
+            return memoryStream;
         }
     }
 }

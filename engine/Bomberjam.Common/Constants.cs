@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace Bomberjam
+namespace Bomberjam.Common
 {
     public static class Constants
     {
@@ -22,9 +22,14 @@ namespace Bomberjam
         public const string BottomLeft = "bl";
         public const string BottomRight = "br";
 
-        internal static readonly JsonWriterOptions DefaultJsonWriterOptions = new JsonWriterOptions
+        public static readonly JsonWriterOptions DefaultJsonWriterOptions = new()
         {
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+        };
+
+        public static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
+        {
+            Encoder = DefaultJsonWriterOptions.Encoder
         };
     }
 }

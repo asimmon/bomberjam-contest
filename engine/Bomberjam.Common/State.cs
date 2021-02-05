@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -7,11 +6,6 @@ namespace Bomberjam.Common
 {
     public class State
     {
-        private static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
-        {
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
-
         [JsonIgnore]
         public string Id { get; set; } = string.Empty;
 
@@ -47,7 +41,7 @@ namespace Bomberjam.Common
 
         public string ToJson()
         {
-            return JsonSerializer.Serialize(this, DefaultJsonSerializerOptions);
+            return JsonSerializer.Serialize(this, Constants.DefaultJsonSerializerOptions);
         }
     }
 }
