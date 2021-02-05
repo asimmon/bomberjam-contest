@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Threading.Tasks;
 using Bomberjam.Common;
 using Bomberjam.Website.Common;
-using Bomberjam.Website.Controllers;
 using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Database
@@ -39,7 +39,7 @@ namespace Bomberjam.Website.Database
             });
         }
 
-        public Task<User> GetUserById(int id)
+        public Task<User> GetUserById(Guid id)
         {
             return this._objectCache.GetOrSetAsync(FormatKey(GetUserByIdCacheKeyFormat, id), () =>
             {
@@ -66,34 +66,34 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.PopNextTask();
         }
 
-        public Task<QueuedTask> GetTask(int taskId)
+        public Task<QueuedTask> GetTask(Guid taskId)
         {
             return this._underlyingRepository.GetTask(taskId);
         }
 
-        public Task AddCompilationTask(int userId)
+        public Task AddCompilationTask(Guid userId)
         {
             return this._underlyingRepository.AddCompilationTask(userId);
         }
 
-        public Task AddGameTask(IDictionary<int, string> userIdAndNames)
+        public Task AddGameTask(ICollection<User> users)
         {
-            return this._underlyingRepository.AddGameTask(userIdAndNames);
+            return this._underlyingRepository.AddGameTask(users);
         }
 
-        public Task MarkTaskAsStarted(int taskId)
+        public Task MarkTaskAsStarted(Guid taskId)
         {
             return this._underlyingRepository.MarkTaskAsStarted(taskId);
         }
 
-        public Task MarkTaskAsFinished(int taskId)
+        public Task MarkTaskAsFinished(Guid taskId)
         {
             return this._underlyingRepository.MarkTaskAsFinished(taskId);
         }
 
-        public Task<bool> DoesUserHaveActiveCompileTask(int userId)
+        public Task<QueuedTask> GetUserActiveCompileTask(Guid userId)
         {
-            return this._underlyingRepository.DoesUserHaveActiveCompileTask(userId);
+            return this._underlyingRepository.GetUserActiveCompileTask(userId);
         }
 
         public Task<IEnumerable<Game>> GetGames()
@@ -101,12 +101,12 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.GetGames();
         }
 
-        public Task<int> AddGame(GameSummary gameSummary)
+        public Task<Guid> AddGame(GameSummary gameSummary)
         {
             return this._underlyingRepository.AddGame(gameSummary);
         }
 
-        public Task<Game> GetGame(int id)
+        public Task<Game> GetGame(Guid id)
         {
             return this._underlyingRepository.GetGame(id);
         }

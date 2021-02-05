@@ -12,6 +12,7 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
     volumes:
       - "./https/:/https/"
+      - "./tmp/:/tmp/"
   worker:
     image: bomberjam-worker
     restart: unless-stopped

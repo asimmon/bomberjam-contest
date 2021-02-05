@@ -6,7 +6,7 @@ namespace Bomberjam
 {
     internal static class GameHistoryExtensions
     {
-        public static void AddPlayer(this GameHistory history, string playerId, string playerName, int? websitePlayerId)
+        public static void AddPlayer(this GameHistory history, string playerId, string playerName, Guid? websitePlayerId)
         {
             if (!history.Summary.Players.TryGetValue(playerId, out var playerSummary))
             {

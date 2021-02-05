@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
@@ -53,7 +55,8 @@ namespace Bomberjam.Website
             services.AddSingleton<IBotStorage>(fileBotStorage);
             services.AddSingleton<IObjectCache, ObjectCache>();
 
-            services.AddDbContext<BomberjamContext>(options => options.UseSqlite(Configuration.GetConnectionString("BomberjamContext")));
+            var dbConnName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "BomberjamContextWin" : "BomberjamContextLin";
+            services.AddDbContext<BomberjamContext>(options => options.UseSqlite(Configuration.GetConnectionString(dbConnName)));
             services.AddScoped<DatabaseRepository>();
             services.AddScoped<IRepository, CachedRepository>(container =>
             {
@@ -71,10 +74,10 @@ namespace Bomberjam.Website
                     zippedBotFileStream.CopyTo(zippedBotFileMs);
                     var zippedBotFileBytes = zippedBotFileMs.ToArray();
 
-                    fileBotStorage.UploadBotSourceCode(1, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(2, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(3, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(4, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000001"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000002"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000003"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000004"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
                 }
             }
         }

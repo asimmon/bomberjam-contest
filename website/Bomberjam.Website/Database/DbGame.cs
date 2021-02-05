@@ -4,10 +4,10 @@ namespace Bomberjam.Website.Database
 {
     public class DbGame : ITimestampable
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public int? WinnerId { get; set; }
+        public Guid? WinnerId { get; set; }
         public string Errors { get; set; }
         public double? InitDuration { get; set; }
         public double? GameDuration { get; set; }

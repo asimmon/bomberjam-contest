@@ -11,11 +11,10 @@ namespace Bomberjam.Website.Migrations
                 name: "Games",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
-                    WinnerId = table.Column<int>(type: "INTEGER", nullable: true),
+                    WinnerId = table.Column<Guid>(type: "TEXT", nullable: true),
                     Errors = table.Column<string>(type: "TEXT", nullable: true),
                     InitDuration = table.Column<double>(type: "REAL", nullable: true),
                     GameDuration = table.Column<double>(type: "REAL", nullable: true),
@@ -31,8 +30,7 @@ namespace Bomberjam.Website.Migrations
                 name: "Tasks",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Type = table.Column<int>(type: "INTEGER", nullable: false),
@@ -48,8 +46,7 @@ namespace Bomberjam.Website.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
+                    Id = table.Column<Guid>(type: "TEXT", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Username = table.Column<string>(type: "TEXT", nullable: true),
@@ -70,8 +67,8 @@ namespace Bomberjam.Website.Migrations
                 name: "GameUsers",
                 columns: table => new
                 {
-                    GameId = table.Column<int>(type: "INTEGER", nullable: false),
-                    UserId = table.Column<int>(type: "INTEGER", nullable: false),
+                    GameId = table.Column<Guid>(type: "TEXT", nullable: false),
+                    UserId = table.Column<Guid>(type: "TEXT", nullable: false),
                     Created = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Updated = table.Column<DateTime>(type: "TEXT", nullable: false),
                     Score = table.Column<int>(type: "INTEGER", nullable: false),
@@ -97,42 +94,42 @@ namespace Bomberjam.Website.Migrations
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(2940), "1", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3126) });
+                values: new object[] { new Guid("a67e6efd-de5a-4424-99f9-54393795f8fe"), new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(8460), "00000000-0000-0000-0000-000000000001", 1, 1, new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(8657) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 2, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3706), "2", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3707) });
+                values: new object[] { new Guid("93777e82-a26d-475d-89ce-682f9c55269f"), new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9250), "00000000-0000-0000-0000-000000000002", 1, 1, new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9252) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 3, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3709), "3", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3710) });
+                values: new object[] { new Guid("637685ac-f0c0-4201-9b5a-89c48ac7d066"), new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9256), "00000000-0000-0000-0000-000000000003", 1, 1, new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9257) });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
-                values: new object[] { 4, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3712), "4", 1, 1, new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3713) });
+                values: new object[] { new Guid("93fa9939-c6f4-4538-89d8-25c7d60f7ae3"), new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9259), "00000000-0000-0000-0000-000000000004", 1, 1, new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9260) });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 1, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3128), "simmon.anthony@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3323), "Askaiser" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "", "", new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(8471), "simmon.anthony@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(8660), "Askaiser" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 2, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4685), "falgar@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4688), "Falgar" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000002"), "", "", new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9825), "falgar@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9827), "Falgar" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 3, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4690), "xenure@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4691), "Xenure" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000003"), "", "", new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9830), "xenure@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9831), "Xenure" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "IsCompiled", "IsCompiling", "SubmitCount", "Updated", "Username" },
-                values: new object[] { 4, "", "", new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4692), "minty@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4693), "Minty" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000004"), "", "", new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9834), "minty@gmail.com", 0, false, false, 1, new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9835), "Minty" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GameUsers_UserId",

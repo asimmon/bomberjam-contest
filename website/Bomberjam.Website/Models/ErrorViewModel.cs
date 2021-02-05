@@ -1,5 +1,3 @@
-using System;
-
 namespace Bomberjam.Website.Models
 {
     public class ErrorViewModel

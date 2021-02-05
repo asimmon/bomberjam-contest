@@ -60,7 +60,7 @@ namespace Bomberjam
             if (map == null)
                 throw new ArgumentNullException(nameof(map));
 
-            this._id = Guid.NewGuid().ToString("N");
+            this._id = Guid.NewGuid().ToString("D");
             this._tiles = new List<TileKind>();
             this._players = new Dictionary<string, GamePlayer>();
             this._bombs = new Dictionary<string, GameBomb>();
@@ -185,7 +185,7 @@ namespace Bomberjam
             return bonus != null;
         }
 
-        internal void AddPlayer(string id, string name, int? websitePlayerId)
+        internal void AddPlayer(string id, string name, Guid? websitePlayerId)
         {
             if (this._players.Count >= this._startingPositions.Count)
                 throw new Exception("More players than starting spots");

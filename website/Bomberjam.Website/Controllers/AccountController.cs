@@ -70,9 +70,9 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
 
             var user = await this.GetAuthenticatedUser();
+            var activeCompileTask = await this.Repository.GetUserActiveCompileTask(user.Id);
 
-            var hasActiveCompileTask = await this.Repository.DoesUserHaveActiveCompileTask(user.Id);
-            if (hasActiveCompileTask)
+            if (activeCompileTask is { Status: var s } && (s == QueuedTaskStatus.Pulled || s == QueuedTaskStatus.Started))
             {
                 this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You already have an active bot compilation task");
                 return this.View("Submit", viewModel);
@@ -87,7 +87,11 @@ namespace Bomberjam.Website.Controllers
             user.CompilationErrors = string.Empty;
 
             await this.Repository.UpdateUser(user);
-            await this.Repository.AddCompilationTask(user.Id);
+
+            if (activeCompileTask == null)
+            {
+                await this.Repository.AddCompilationTask(user.Id);
+            }
 
             return this.RedirectToAction("Index", "Account");
         }

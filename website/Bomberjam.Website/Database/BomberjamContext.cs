@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Threading.Tasks;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +8,11 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
+        private static readonly DbUser UserAskaiser = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000001"), "Askaiser", "simmon.anthony@gmail.com");
+        private static readonly DbUser UserFalgar = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000002"), "Falgar", "falgar@gmail.com");
+        private static readonly DbUser UserXenure = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000003"), "Xenure", "xenure@gmail.com");
+        private static readonly DbUser UserMinty = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000004"), "Minty", "minty@gmail.com");
+
         public BomberjamContext(DbContextOptions<BomberjamContext> options)
             : base(options)
         {
@@ -33,17 +37,13 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Type).HasConversion<int>();
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Status).HasConversion<int>();
 
-            modelBuilder.Entity<DbUser>().HasData(
-                CreateInitialUser(1, "Askaiser", "simmon.anthony@gmail.com"),
-                CreateInitialUser(2, "Falgar", "falgar@gmail.com"),
-                CreateInitialUser(3, "Xenure", "xenure@gmail.com"),
-                CreateInitialUser(4, "Minty", "minty@gmail.com"));
+            modelBuilder.Entity<DbUser>().HasData(UserAskaiser, UserFalgar, UserXenure, UserMinty);
 
             modelBuilder.Entity<DbQueuedTask>().HasData(
-                CreateInitialCompileTask(1, 1),
-                CreateInitialCompileTask(2, 2),
-                CreateInitialCompileTask(3, 3),
-                CreateInitialCompileTask(4, 4));
+                CreateInitialCompileTask(Guid.NewGuid(), UserAskaiser.Id),
+                CreateInitialCompileTask(Guid.NewGuid(), UserFalgar.Id),
+                CreateInitialCompileTask(Guid.NewGuid(), UserXenure.Id),
+                CreateInitialCompileTask(Guid.NewGuid(), UserMinty.Id));
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)
@@ -92,7 +92,7 @@ namespace Bomberjam.Website.Database
             return base.DisposeAsync();
         }
 
-        private static DbUser CreateInitialUser(int id, string username, string email) => new DbUser
+        private static DbUser CreateInitialUser(Guid id, string username, string email) => new DbUser
         {
             Id = id,
             Created = DateTime.UtcNow,
@@ -107,15 +107,14 @@ namespace Bomberjam.Website.Database
             BotLanguage = string.Empty
         };
 
-        private static DbQueuedTask CreateInitialCompileTask(int taskId, int userId) => new DbQueuedTask
+        private static DbQueuedTask CreateInitialCompileTask(Guid taskId, Guid userId) => new DbQueuedTask
         {
             Id = taskId,
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow,
             Type = QueuedTaskType.Compile,
-            Data = userId.ToString(CultureInfo.InvariantCulture),
+            Data = userId.ToString("D"),
             Status = QueuedTaskStatus.Created,
-
         };
     }
 }

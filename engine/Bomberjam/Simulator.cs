@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Bomberjam.Common;
 
 namespace Bomberjam
@@ -39,7 +40,7 @@ namespace Bomberjam
             get => this._gameState.History;
         }
 
-        public void AddPlayer(string id, string name, int? websitePlayerId)
+        public void AddPlayer(string id, string name, Guid? websitePlayerId)
         {
             this._gameState.AddPlayer(id, name, websitePlayerId);
             this.State = this._gameState.Convert();

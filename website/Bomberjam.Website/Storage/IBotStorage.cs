@@ -1,14 +1,18 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Bomberjam.Website.Storage
 {
     public interface IBotStorage
     {
-        int GetFileCount();
-        Task UploadBotSourceCode(int userId, Stream fileStream);
-        Task UploadCompiledBot(int userId, Stream fileStream);
-        Stream DownloadBotSourceCode(int userId);
-        Stream DownloadCompiledBot(int userId);
+        Task UploadBotSourceCode(Guid userId, Stream fileStream);
+        Stream DownloadBotSourceCode(Guid userId);
+
+        Task UploadCompiledBot(Guid userId, Stream fileStream);
+        Stream DownloadCompiledBot(Guid userId);
+
+        Task UploadGameResult(Guid gameId, Stream fileStream);
+        Stream DownloadGameResult(Guid gameId);
     }
 }

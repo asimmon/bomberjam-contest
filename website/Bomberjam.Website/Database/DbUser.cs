@@ -4,7 +4,7 @@ namespace Bomberjam.Website.Database
 {
     public class DbUser : ITimestampable
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
         public string Username { get; set; }

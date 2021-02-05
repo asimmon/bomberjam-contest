@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
-    [Migration("20210204042446_Initial")]
+    [Migration("20210205001530_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -20,9 +20,9 @@ namespace Bomberjam.Website.Migrations
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbGame", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
@@ -45,8 +45,8 @@ namespace Bomberjam.Website.Migrations
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("WinnerId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid?>("WinnerId")
+                        .HasColumnType("TEXT");
 
                     b.HasKey("Id");
 
@@ -55,11 +55,11 @@ namespace Bomberjam.Website.Migrations
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbGameUser", b =>
                 {
-                    b.Property<int>("GameId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("GameId")
+                        .HasColumnType("TEXT");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
@@ -82,9 +82,9 @@ namespace Bomberjam.Website.Migrations
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbQueuedTask", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<DateTime>("Created")
                         .HasColumnType("TEXT");
@@ -114,47 +114,47 @@ namespace Bomberjam.Website.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(2940),
-                            Data = "1",
+                            Id = new Guid("a67e6efd-de5a-4424-99f9-54393795f8fe"),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(8460),
+                            Data = "00000000-0000-0000-0000-000000000001",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3126)
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(8657)
                         },
                         new
                         {
-                            Id = 2,
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3706),
-                            Data = "2",
+                            Id = new Guid("93777e82-a26d-475d-89ce-682f9c55269f"),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9250),
+                            Data = "00000000-0000-0000-0000-000000000002",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3707)
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9252)
                         },
                         new
                         {
-                            Id = 3,
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3709),
-                            Data = "3",
+                            Id = new Guid("637685ac-f0c0-4201-9b5a-89c48ac7d066"),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9256),
+                            Data = "00000000-0000-0000-0000-000000000003",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3710)
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9257)
                         },
                         new
                         {
-                            Id = 4,
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3712),
-                            Data = "4",
+                            Id = new Guid("93fa9939-c6f4-4538-89d8-25c7d60f7ae3"),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9259),
+                            Data = "00000000-0000-0000-0000-000000000004",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 934, DateTimeKind.Utc).AddTicks(3713)
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 833, DateTimeKind.Utc).AddTicks(9260)
                         });
                 });
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbUser", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.Property<string>("BotLanguage")
                         .HasColumnType("TEXT");
@@ -196,58 +196,58 @@ namespace Bomberjam.Website.Migrations
                     b.HasData(
                         new
                         {
-                            Id = 1,
+                            Id = new Guid("00000000-0000-0000-0000-000000000001"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3128),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(8471),
                             Email = "simmon.anthony@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(3323),
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(8660),
                             Username = "Askaiser"
                         },
                         new
                         {
-                            Id = 2,
+                            Id = new Guid("00000000-0000-0000-0000-000000000002"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4685),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9825),
                             Email = "falgar@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4688),
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9827),
                             Username = "Falgar"
                         },
                         new
                         {
-                            Id = 3,
+                            Id = new Guid("00000000-0000-0000-0000-000000000003"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4690),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9830),
                             Email = "xenure@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4691),
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9831),
                             Username = "Xenure"
                         },
                         new
                         {
-                            Id = 4,
+                            Id = new Guid("00000000-0000-0000-0000-000000000004"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4692),
+                            Created = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9834),
                             Email = "minty@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 4, 4, 24, 45, 933, DateTimeKind.Utc).AddTicks(4693),
+                            Updated = new DateTime(2021, 2, 5, 0, 15, 29, 832, DateTimeKind.Utc).AddTicks(9835),
                             Username = "Minty"
                         });
                 });

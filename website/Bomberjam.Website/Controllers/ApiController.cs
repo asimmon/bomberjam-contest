@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
 using Bomberjam.Common;
@@ -36,15 +33,15 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("user/{userId}/bot/download")]
-        public async Task<IActionResult> DownloadBot(int userId, [FromQuery(Name = "compiled")] bool isCompiled)
+        public async Task<IActionResult> DownloadBot(Guid userId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
             var fileStream = isCompiled ? this._botStorage.DownloadCompiledBot(userId) : this._botStorage.DownloadBotSourceCode(userId);
             var fileBytes = await StreamToByteArray(fileStream);
-            return this.File(fileBytes, "application/octet-stream", $"bot-{userId}.zip");
+            return this.File(fileBytes, "application/octet-stream", $"bot-{userId:D}.zip");
         }
 
         [HttpPost("user/{userId}/bot/upload")]
-        public async Task<IActionResult> UploadBot(int userId)
+        public async Task<IActionResult> UploadBot(Guid userId)
         {
             await this._botStorage.UploadCompiledBot(userId, this.Request.Body);
             return this.Ok();
@@ -95,7 +92,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("task/{taskId}")]
-        public async Task<IActionResult> GetTask(int taskId)
+        public async Task<IActionResult> GetTask(Guid taskId)
         {
             try
             {
@@ -129,7 +126,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("task/{taskId}/started")]
-        public async Task<IActionResult> MarkTaskAsStarted(int taskId)
+        public async Task<IActionResult> MarkTaskAsStarted(Guid taskId)
         {
             try
             {
@@ -144,7 +141,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("task/{taskId}/finished")]
-        public async Task<IActionResult> MarkTaskAsFinished(int taskId)
+        public async Task<IActionResult> MarkTaskAsFinished(Guid taskId)
         {
             try
             {
@@ -159,7 +156,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("game/{gameId}")]
-        public async Task<IActionResult> GetGame(int gameId)
+        public async Task<IActionResult> GetGame(Guid gameId)
         {
             var game = await this.Repository.GetGame(gameId);
             return this.Ok(game);
@@ -168,15 +165,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("game/yolo")]
         public async Task<IActionResult> StartYoloGame()
         {
-            var dict = new Dictionary<int, string>
-            {
-                [1] = "foo",
-                [2] = "bar",
-                [3] = "qux",
-                [4] = "baz",
-            };
-
-            await this.Repository.AddGameTask(dict);
+            var users = await this.Repository.GetUsers();
+            await this.Repository.AddGameTask(users.Take(4).ToList());
             return this.Ok();
         }
 
@@ -205,57 +195,5 @@ namespace Bomberjam.Website.Controllers
 
             return this.Ok();
         }
-    }
-
-    public sealed class BotCompilationResult
-    {
-        [Required]
-        [JsonPropertyName("userId")]
-        public int UserId { get; set; }
-
-        [Required]
-        [JsonPropertyName("didCompile")]
-        public bool DidCompile { get; set; }
-
-        [Required]
-        [JsonPropertyName("language")]
-        public string Language { get; set; }
-
-        [JsonPropertyName("errors")]
-        public string Errors { get; set; }
-    }
-
-    public sealed class GameResult
-    {
-        [Required]
-        [JsonPropertyName("serializedHistory")]
-        public string SerializedHistory { get; set; }
-
-        [JsonPropertyName("standardOutput")]
-        public string StandardOutput { get; set; }
-
-        [JsonPropertyName("standardError")]
-        public string StandardError { get; set; }
-    }
-
-    public sealed class QueuedTask
-    {
-        [JsonPropertyName("id")]
-        public int Id { get; set; }
-
-        [JsonPropertyName("created")]
-        public DateTime Created { get; set; }
-
-        [JsonPropertyName("updated")]
-        public DateTime Updated { get; set; }
-
-        [JsonPropertyName("type")]
-        public QueuedTaskType Type { get; set; }
-
-        [JsonPropertyName("status")]
-        public QueuedTaskStatus Status { get; set; }
-
-        [JsonPropertyName("data")]
-        public string Data { get; set; }
     }
 }

@@ -211,14 +211,14 @@ def handle_game_task(game):
 
 
 def handle_any_task(task):
-    task_id = int(task['id'])
+    task_id = str(task['id'])
     task_type = int(task['type'])
 
     try:
         backend.mark_task_started(task_id)
 
         if task_type == 1:
-            user_id = int(task['data'])
+            user_id = str(task['data'])
             handle_compile_task(user_id)
 
         elif task_type == 2:
@@ -247,7 +247,8 @@ def main():
 
     while True:
         if not try_handle_next_task():
-            time.sleep(10)
+            for x in range(10):
+                time.sleep(1)
 
 
 if __name__ == "__main__":

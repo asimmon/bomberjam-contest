@@ -197,7 +197,7 @@ namespace Bomberjam
                     suffixedUniquePlayerName = playerName;
                 }
 
-                int? websitePlayerId = this._opts.PlayerWebsiteIds.TryGetValue(playerId, out var id) ? id : null;
+                Guid? websitePlayerId = this._opts.PlayerWebsiteIds.TryGetValue(playerId, out var id) ? id : null;
                 this._simulator.AddPlayer(playerId.ToString(CultureInfo.InvariantCulture), suffixedUniquePlayerName, websitePlayerId);
                 this._playerIds.Add(playerId);
 

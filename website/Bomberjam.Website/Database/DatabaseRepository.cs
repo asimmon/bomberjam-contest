@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Common;
 using Bomberjam.Website.Common;
-using Bomberjam.Website.Controllers;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +34,7 @@ namespace Bomberjam.Website.Database
             return MapUser(dbUser);
         }
 
-        public async Task<User> GetUserById(int id)
+        public async Task<User> GetUserById(Guid id)
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
             if (dbUser == null)
@@ -82,7 +81,7 @@ namespace Bomberjam.Website.Database
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(e => e.Id == changedUser.Id);
             if (dbUser == null)
-                throw new UserNotFoundException($"User '{changedUser.Email ?? changedUser.Id.ToString(CultureInfo.InvariantCulture)}' not found");
+                throw new UserNotFoundException($"User '{changedUser.Email ?? changedUser.Id.ToString("D")}' not found");
 
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
                 dbUser.Username = changedUser.UserName;
@@ -106,7 +105,7 @@ namespace Bomberjam.Website.Database
             await this._dbContext.SaveChangesAsync();
         }
 
-        public async Task<QueuedTask> GetTask(int taskId)
+        public async Task<QueuedTask> GetTask(Guid taskId)
         {
             var dbTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
             if (dbTask == null)
@@ -115,15 +114,19 @@ namespace Bomberjam.Website.Database
             return MapQueuedTask(dbTask);
         }
 
-        public Task AddCompilationTask(int userId)
+        public Task AddCompilationTask(Guid userId)
         {
-            var data = userId.ToString(CultureInfo.InvariantCulture);
+            var data = userId.ToString("D");
             return this.AddTask(QueuedTaskType.Compile, data);
         }
 
-        public Task AddGameTask(IDictionary<int, string> userIdAndNames)
+        public Task AddGameTask(ICollection<User> users)
         {
-            var data = string.Join(",", userIdAndNames.Select(kvp => kvp.Key.ToString(CultureInfo.InvariantCulture) + ":" + kvp.Value));
+            Debug.Assert(users != null);
+            Debug.Assert(users.Count == 4);
+
+            // <guid>:<name>,<guid:name>,<guid:name>,<guid:name>
+            var data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.UserName}"));
             return this.AddTask(QueuedTaskType.Game, data);
         }
 
@@ -163,7 +166,7 @@ namespace Bomberjam.Website.Database
             Data = task.Data
         };
 
-        public async Task MarkTaskAsStarted(int taskId)
+        public async Task MarkTaskAsStarted(Guid taskId)
         {
             var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
             if (queuedTask == null)
@@ -180,7 +183,7 @@ namespace Bomberjam.Website.Database
             }
         }
 
-        public async Task MarkTaskAsFinished(int taskId)
+        public async Task MarkTaskAsFinished(Guid taskId)
         {
             var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
             if (queuedTask == null)
@@ -197,15 +200,17 @@ namespace Bomberjam.Website.Database
             }
         }
 
-        public async Task<bool> DoesUserHaveActiveCompileTask(int userId)
+        public async Task<QueuedTask> GetUserActiveCompileTask(Guid userId)
         {
-            var userIdString = userId.ToString(CultureInfo.InvariantCulture);
+            var userIdString = userId.ToString("D");
 
-            return await this._dbContext.Tasks
+            var dbTask = await this._dbContext.Tasks
                 .Where(t => t.Type == QueuedTaskType.Compile)
                 .Where(t => t.Status != QueuedTaskStatus.Finished)
                 .Where(t => t.Data == userIdString)
-                .AnyAsync();
+                .FirstOrDefaultAsync();
+
+            return dbTask == null ? null : MapQueuedTask(dbTask);
         }
 
         public async Task<IEnumerable<Game>> GetGames()
@@ -213,7 +218,7 @@ namespace Bomberjam.Website.Database
             return await this._dbContext.Games.Select(u => MapGame(u)).ToListAsync();
         }
 
-        public async Task<int> AddGame(GameSummary gameSummary)
+        public async Task<Guid> AddGame(GameSummary gameSummary)
         {
             var dbGame = new DbGame();
 
@@ -248,7 +253,7 @@ namespace Bomberjam.Website.Database
             return dbGame.Id;
         }
 
-        public async Task<Game> GetGame(int id)
+        public async Task<Game> GetGame(Guid id)
         {
             var dbGame = await this._dbContext.Games.FirstOrDefaultAsync(g => g.Id == id);
             if (dbGame == null)

@@ -1,7 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Bomberjam.Common;
-using Bomberjam.Website.Controllers;
 using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Database
@@ -10,20 +10,20 @@ namespace Bomberjam.Website.Database
     {
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUserByEmail(string email);
-        Task<User> GetUserById(int id);
+        Task<User> GetUserById(Guid id);
         Task AddUser(string email, string username);
         Task UpdateUser(User changedUser);
 
         Task<QueuedTask> PopNextTask();
-        Task<QueuedTask> GetTask(int taskId);
-        Task AddCompilationTask(int userId);
-        Task AddGameTask(IDictionary<int, string> userIdAndNames);
-        Task MarkTaskAsStarted(int taskId);
-        Task MarkTaskAsFinished(int taskId);
-        Task<bool> DoesUserHaveActiveCompileTask(int userId);
+        Task<QueuedTask> GetTask(Guid taskId);
+        Task AddCompilationTask(Guid userId);
+        Task AddGameTask(ICollection<User> users);
+        Task MarkTaskAsStarted(Guid taskId);
+        Task MarkTaskAsFinished(Guid taskId);
+        Task<QueuedTask> GetUserActiveCompileTask(Guid userId);
 
         Task<IEnumerable<Game>> GetGames();
-        Task<int> AddGame(GameSummary gameSummary);
-        Task<Game> GetGame(int id);
+        Task<Guid> AddGame(GameSummary gameSummary);
+        Task<Game> GetGame(Guid id);
     }
 }

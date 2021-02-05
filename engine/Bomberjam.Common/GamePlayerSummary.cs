@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Bomberjam.Common
 {
@@ -17,6 +18,6 @@ namespace Bomberjam.Common
         public string Errors { get; set; } = string.Empty;
 
         [JsonPropertyName("websiteId")]
-        public int? WebsiteId { get; set; }
+        public Guid? WebsiteId { get; set; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -20,10 +19,10 @@ namespace Bomberjam
             {
                 // Hidden options
                 { "n|names=", "Override player names", x => this.PlayerNames.AddRange(ParsePlayerNames(x)), false },
-                { "i|ids=", "Override player real IDs", x => this.PlayerIds.AddRange(ParsePlayerIds(x)), false },
+                { "i|ids=", "Override player website IDs", x => this.PlayerWebsiteIds.AddRange(ParsePlayerWebsiteIds(x)), false },
                 // Public options
                 { "r|repeat=", "The number of games to play", (int x) => this.RepeatCount = x },
-                { "o|output=", "Path of saved games, use placeholder #n to insert game number", x => this.OutputPath = x },
+                { "o|output=", "Path of saved games, use placeholder #n to insert game index", x => this.OutputPath = x },
                 { "t|no-timeout", "Disabe all timeouts for debugging", x => this.NoTimeout = x != null },
                 { "c|config=", "Configuration file path", x => this.ConfigurationPath = x },
                 { "q|quiet", "Suppress output logging", x => this.IsQuiet = x != null },
@@ -33,10 +32,10 @@ namespace Bomberjam
 
         public List<string> Commands { get; } = new List<string>();
         public List<string> PlayerNames { get; } = new List<string>();
-        public List<int> PlayerIds { get; } = new List<int>();
+        public List<Guid> PlayerWebsiteIds { get; } = new List<Guid>();
         public int RepeatCount { get; private set; } = 1;
-        public bool IsQuiet { get; private set; } = false;
-        public bool NoTimeout { get; private set; } = false;
+        public bool IsQuiet { get; private set; }
+        public bool NoTimeout { get; private set; }
         public string? OutputPath { get; private set; }
         public string? ConfigurationPath { get; private set; }
 
@@ -78,15 +77,15 @@ namespace Bomberjam
             return playerNamesStr.Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries).Take(4);
         }
 
-        private static IEnumerable<int> ParsePlayerIds(string? playerIdsStr)
+        private static IEnumerable<Guid> ParsePlayerWebsiteIds(string? playerIdsStr)
         {
             return (playerIdsStr ?? string.Empty)
                 .Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries)
-                .Aggregate(new List<int>(), (acc, playerIdStr) =>
+                .Aggregate(new List<Guid>(), (acc, playerWebsiteIdStr) =>
                 {
-                    if (int.TryParse(playerIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var playerId))
+                    if (Guid.TryParse(playerWebsiteIdStr, out var playerWebsiteId))
                     {
-                        acc.Add(playerId);
+                        acc.Add(playerWebsiteId);
                     }
 
                     return acc;
