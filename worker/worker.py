@@ -183,6 +183,8 @@ def run_game(game):
             with open(game_result_path, 'r') as f:
                 game.game_result = f.read()
 
+            logging.debug("Game result json length: %s characters" % len(game.game_result))
+
             return game
         finally:
             # tempdir will automatically be cleaned up, but we need to do things
@@ -206,7 +208,6 @@ def handle_game_task(game):
         # Make sure game processes exit (9 = SIGKILL)
         subprocess.run(["pkill", "--signal", "9", "-f", "cgexec"])
 
-    logging.debug("Game result: %s" % json.dumps(game, default=lambda x: x.__dict__))
     backend.send_game_result(game)
 
 
@@ -247,8 +248,7 @@ def main():
 
     while True:
         if not try_handle_next_task():
-            for x in range(10):
-                time.sleep(1)
+            time.sleep(10)
 
 
 if __name__ == "__main__":

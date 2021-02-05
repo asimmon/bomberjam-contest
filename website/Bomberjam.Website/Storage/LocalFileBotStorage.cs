@@ -18,6 +18,7 @@ namespace Bomberjam.Website.Storage
         {
             this._botsDirPath = Path.Combine(basePath, BomberjamDirName, BotsDirName);
             this._gamesDirPath = Path.Combine(basePath, BomberjamDirName, GamesDirName);
+
             Directory.CreateDirectory(this._botsDirPath);
             Directory.CreateDirectory(this._gamesDirPath);
         }
@@ -34,9 +35,9 @@ namespace Bomberjam.Website.Storage
 
         private async Task UploadBotSourceCode(Guid userId, bool isCompiled, Stream fileStream)
         {
-            var filePath = Path.Join(this._botsDirPath, MakeBotFileName(userId, isCompiled));
             await using (fileStream)
             {
+                var filePath = Path.Join(this._botsDirPath, MakeBotFileName(userId, isCompiled));
                 await using var localFile = File.Open(filePath, FileMode.Create);
                 await fileStream.CopyToAsync(localFile);
             }
@@ -65,9 +66,9 @@ namespace Bomberjam.Website.Storage
 
         public async Task UploadGameResult(Guid gameId, Stream fileStream)
         {
-            var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(gameId));
             await using (fileStream)
             {
+                var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(gameId));
                 await using var localFile = File.Open(filePath, FileMode.Create);
                 await fileStream.CopyToAsync(localFile);
             }
