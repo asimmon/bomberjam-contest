@@ -56,7 +56,11 @@ namespace Bomberjam.Website
             services.AddSingleton<IObjectCache, ObjectCache>();
 
             var dbConnName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "BomberjamContextWin" : "BomberjamContextLin";
-            services.AddDbContext<BomberjamContext>(options => options.UseSqlite(Configuration.GetConnectionString(dbConnName)));
+            services.AddDbContext<BomberjamContext>(options =>
+            {
+                options.UseSqlite(this.Configuration.GetConnectionString(dbConnName)).EnableSensitiveDataLogging();
+            });
+
             services.AddScoped<DatabaseRepository>();
             services.AddScoped<IRepository, CachedRepository>(container =>
             {
@@ -74,10 +78,13 @@ namespace Bomberjam.Website
                     zippedBotFileStream.CopyTo(zippedBotFileMs);
                     var zippedBotFileBytes = zippedBotFileMs.ToArray();
 
-                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000001"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000002"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000003"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(new Guid("00000000-0000-0000-0000-000000000004"), new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserAskaiserId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserFalgarId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserXenureId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserMintyId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserKalmeraId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserPandarfId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    fileBotStorage.UploadBotSourceCode(Constants.UserMireId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
                 }
             }
         }

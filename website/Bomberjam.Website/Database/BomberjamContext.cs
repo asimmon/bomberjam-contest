@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
@@ -8,10 +9,13 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
-        private static readonly DbUser UserAskaiser = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000001"), "Askaiser", "simmon.anthony@gmail.com");
-        private static readonly DbUser UserFalgar = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000002"), "Falgar", "falgar@gmail.com");
-        private static readonly DbUser UserXenure = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000003"), "Xenure", "xenure@gmail.com");
-        private static readonly DbUser UserMinty = CreateInitialUser(new Guid("00000000-0000-0000-0000-000000000004"), "Minty", "minty@gmail.com");
+        private static readonly DbUser UserAskaiser = CreateInitialUser(Constants.UserAskaiserId, "Askaiser", "simmon.anthony@gmail.com");
+        private static readonly DbUser UserFalgar = CreateInitialUser(Constants.UserFalgarId, "Falgar", "falgar@gmail.com");
+        private static readonly DbUser UserXenure = CreateInitialUser(Constants.UserXenureId, "Xenure", "xenure@gmail.com");
+        private static readonly DbUser UserMinty = CreateInitialUser(Constants.UserMintyId, "Minty", "minty@gmail.com");
+        private static readonly DbUser UserKalmera = CreateInitialUser(Constants.UserKalmeraId, "Kalmera", "kalmera@gmail.com");
+        private static readonly DbUser UserPandarf = CreateInitialUser(Constants.UserPandarfId, "Pandarf", "pandarf@gmail.com");
+        private static readonly DbUser UserMire = CreateInitialUser(Constants.UserMireId, "Mire", "mire@gmail.com");
 
         public BomberjamContext(DbContextOptions<BomberjamContext> options)
             : base(options)
@@ -37,13 +41,22 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Type).HasConversion<int>();
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Status).HasConversion<int>();
 
-            modelBuilder.Entity<DbUser>().HasData(UserAskaiser, UserFalgar, UserXenure, UserMinty);
+            modelBuilder.Entity<DbUser>().HasData(UserAskaiser, UserFalgar, UserXenure, UserMinty, UserKalmera, UserPandarf, UserMire);
 
             modelBuilder.Entity<DbQueuedTask>().HasData(
                 CreateInitialCompileTask(Guid.NewGuid(), UserAskaiser.Id),
                 CreateInitialCompileTask(Guid.NewGuid(), UserFalgar.Id),
                 CreateInitialCompileTask(Guid.NewGuid(), UserXenure.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserMinty.Id));
+                CreateInitialCompileTask(Guid.NewGuid(), UserMinty.Id),
+                CreateInitialCompileTask(Guid.NewGuid(), UserKalmera.Id),
+                CreateInitialCompileTask(Guid.NewGuid(), UserPandarf.Id),
+                CreateInitialCompileTask(Guid.NewGuid(), UserMire.Id));
+
+            modelBuilder.Entity<DbQueuedTask>().HasData(
+                CreateInitialGameTask(Guid.NewGuid(), UserAskaiser, UserPandarf, UserXenure, UserFalgar),
+                CreateInitialGameTask(Guid.NewGuid(), UserMire, UserKalmera, UserXenure, UserFalgar),
+                CreateInitialGameTask(Guid.NewGuid(), UserMinty, UserPandarf, UserKalmera, UserAskaiser),
+                CreateInitialGameTask(Guid.NewGuid(), UserFalgar, UserAskaiser, UserXenure, UserKalmera));
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)
@@ -114,6 +127,16 @@ namespace Bomberjam.Website.Database
             Updated = DateTime.UtcNow,
             Type = QueuedTaskType.Compile,
             Data = userId.ToString("D"),
+            Status = QueuedTaskStatus.Created,
+        };
+
+        private static DbQueuedTask CreateInitialGameTask(Guid taskId, params DbUser[] users) => new DbQueuedTask
+        {
+            Id = taskId,
+            Created = DateTime.UtcNow,
+            Updated = DateTime.UtcNow,
+            Type = QueuedTaskType.Game,
+            Data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.Username}")),
             Status = QueuedTaskStatus.Created,
         };
     }
