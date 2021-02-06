@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace Bomberjam.Common
 {
@@ -43,7 +44,7 @@ namespace Bomberjam.Common
         [JsonPropertyName("color")]
         public int Color { get; set; }
 
-        [JsonPropertyName("hasWon")]
-        public bool HasWon { get; set; }
+        [JsonIgnore]
+        public DateTime DeathTime { get; set; }
     }
 }

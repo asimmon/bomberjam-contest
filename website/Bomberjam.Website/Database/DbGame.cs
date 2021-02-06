@@ -7,7 +7,6 @@ namespace Bomberjam.Website.Database
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public Guid? WinnerId { get; set; }
         public string Errors { get; set; }
         public double? InitDuration { get; set; }
         public double? GameDuration { get; set; }

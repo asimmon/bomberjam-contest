@@ -80,6 +80,9 @@ def _run_cmd(cmd, working_dir, timelimit):
 
         str_stderr = raw_strerr.decode("utf-8").strip()
         arr_stderr = str_stderr.split("\n") if not str_stderr.isspace() and str_stderr != "" else []
+
+        logging.info(str_stdout)
+        logging.info(str_stderr)
     except subprocess.TimeoutExpired:
         arr_stdout = []
         arr_stderr = ["Compilation timed out with command %s" % cmd]
@@ -236,7 +239,7 @@ setup(ext_modules = read_setup_file('setup_exts'), script_args = ['-q', 'build_e
 comp_args = {
     "C#": [
         ["dotnet", "restore"],
-        ["dotnet", "build", "--no-restore", "--nologo", "--verbosity", "q", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"],
+        ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"],
     ],
     "Java": [
         ["javac", "-encoding", "UTF-8", "-J-Xmx%sm" % (MEMORY_LIMIT)],

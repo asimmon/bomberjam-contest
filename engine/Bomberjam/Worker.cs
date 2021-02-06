@@ -69,6 +69,7 @@ namespace Bomberjam
             this.CreateProcesses();
             this.AddPlayers();
             this.ExecuteTicks();
+            this.ComputePlayerRanks();
             this.SendFinalState();
             this.SaveHistoryOutput();
         }
@@ -345,6 +346,19 @@ namespace Bomberjam
             }
         }
 
+        private void ComputePlayerRanks()
+        {
+            var playersSortedByScore = this._simulator.State.Players.Values
+                .OrderByDescending(p => p.Score)
+                .ThenByDescending(p => p.DeathTime);
+
+            var rank = 1;
+            foreach (var player in playersSortedByScore)
+            {
+                this._simulator.History.Summary.Players[player.Id].Rank = rank++;
+            }
+        }
+
         private void SendFinalState()
         {
             this.Debug(this._simulator.State.Tick, null, "Sending final game state");
@@ -366,9 +380,8 @@ namespace Bomberjam
             var endScoresMessage = string.Join(", ", this._simulator.State.Players.Values.Select(p => p.Name + ": " + p.Score.ToString(CultureInfo.InvariantCulture)));
             this.Debug(this._simulator.State.Tick, null, $"Scores: {endScoresMessage}");
 
-            var endGameMessage = this._simulator.State.Players.Values.Where(p => p.HasWon).Select(p => p.Name).FirstOrDefault() is { } winner
-                ? $"Game ended, '{winner}' is the last player alive"
-                : "Game ended, no winner";
+            var rankedPlayers = string.Join(", ", this._simulator.History.Summary.Players.Values.OrderBy(p => p.Rank).Select(p => p.Name));
+            var endGameMessage = "Game ended, ranked players: " + rankedPlayers;
 
             this.Debug(this._simulator.State.Tick, null, endGameMessage);
 

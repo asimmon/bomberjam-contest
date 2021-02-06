@@ -82,8 +82,9 @@ namespace Bomberjam.Website.Database
         {
             if (state == EntityState.Added)
             {
-                timestampable.Created = DateTime.UtcNow;
-                timestampable.Updated = DateTime.UtcNow;
+                var utcNow = DateTime.UtcNow;
+                timestampable.Created = utcNow;
+                timestampable.Updated = utcNow;
             }
             else if (state == EntityState.Modified)
             {

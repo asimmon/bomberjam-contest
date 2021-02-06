@@ -11,6 +11,7 @@ namespace Bomberjam.Website.Database
         public DbGame Game { get; set; }
         public DbUser User { get; set; }
         public int Score { get; set; }
+        public int Rank { get; set; }
         public string Errors { get; set; }
     }
 }

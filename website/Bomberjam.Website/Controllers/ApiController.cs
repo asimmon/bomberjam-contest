@@ -195,16 +195,11 @@ namespace Bomberjam.Website.Controllers
 
         private static GameHistory RemoveWebsiteIds(GameHistory gh)
         {
-            if (gh.Summary is { } summary)
+            if (gh.Summary is { Players: var players })
             {
-                summary.WebsiteWinnerId = null;
-
-                if (summary.Players is { } players)
+                foreach (var (_, playerSummary) in players)
                 {
-                    foreach (var (_, playerSummary) in players)
-                    {
-                        playerSummary.WebsiteId = null;
-                    }
+                    playerSummary.WebsiteId = null;
                 }
             }
 

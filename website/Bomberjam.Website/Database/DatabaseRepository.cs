@@ -225,7 +225,6 @@ namespace Bomberjam.Website.Database
                     {
                         GameId = game.Id,
                         GameCreated = game.Created,
-                        WinnerId = game.WinnerId,
                         UserId = gameUser.UserId,
                         UserScore = gameUser.Score
                     }
@@ -238,7 +237,6 @@ namespace Bomberjam.Website.Database
                     {
                         GameId = tmp.GameId,
                         GameCreated = tmp.GameCreated,
-                        WinnerId = tmp.WinnerId,
                         UserId = tmp.UserId,
                         UserScore = tmp.UserScore,
                         UserName = user.Username
@@ -254,7 +252,6 @@ namespace Bomberjam.Website.Database
                     {
                         Id = row.GameId,
                         Created = row.GameCreated,
-                        WinnerId = row.WinnerId,
                         UserNames = new Dictionary<Guid, string>(),
                         UserScores = new Dictionary<Guid, int>()
                     };
@@ -271,11 +268,6 @@ namespace Bomberjam.Website.Database
         {
             var dbGame = new DbGame();
 
-            if (gameSummary.WebsiteWinnerId.HasValue)
-            {
-                dbGame.WinnerId = gameSummary.WebsiteWinnerId.Value;
-            }
-
             dbGame.Errors = gameSummary.Errors;
             dbGame.InitDuration = gameSummary.InitDuration;
             dbGame.GameDuration = gameSummary.GameDuration;
@@ -291,7 +283,8 @@ namespace Bomberjam.Website.Database
                     Game = dbGame,
                     UserId = playerSummary.WebsiteId!.Value,
                     Score = playerSummary.Score,
-                    Errors = playerSummary.Errors
+                    Rank = playerSummary.Rank,
+                    Errors = playerSummary.Errors,
                 };
 
                 this._dbContext.GameUsers.Add(dbGameUser);

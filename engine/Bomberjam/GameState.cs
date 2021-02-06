@@ -23,8 +23,8 @@ namespace Bomberjam
             [ActionCode.Down] = pos => DirectionPositionIncrementers[Direction.Down](pos),
             [ActionCode.Left] = pos => DirectionPositionIncrementers[Direction.Left](pos),
             [ActionCode.Right] = pos => DirectionPositionIncrementers[Direction.Right](pos),
-            [ActionCode.Stay] = pos => { },
-            [ActionCode.Bomb] = pos => { }
+            [ActionCode.Stay] = _ => { },
+            [ActionCode.Bomb] = _ => { }
         };
 
         private static readonly int[] DefaultPlayerColors =
@@ -357,9 +357,13 @@ namespace Bomberjam
 
         private static void KillPlayer(GamePlayer victim)
         {
-            // The winner needs to stay alive to appear at the end of the game
-            if (!victim.HasWon)
+            // The last player needs to stay alive to appear at the end of the game
+            if (!victim.IsLastPlayerAlive)
+            {
                 victim.IsAlive = false;
+            }
+
+            victim.DeathTime = DateTime.UtcNow;
         }
 
         private void RunBombs()
@@ -645,7 +649,8 @@ namespace Bomberjam
 
                 if (alivePlayers.Count == 1)
                 {
-                    alivePlayers[0].HasWon = true;
+                    alivePlayers[0].IsLastPlayerAlive = true;
+                    alivePlayers[0].DeathTime = DateTime.UtcNow;
                     alivePlayers[0].AddScore(this._configuration.PointsLastSurvivor!.Value);
                 }
             }

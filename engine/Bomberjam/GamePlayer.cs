@@ -1,4 +1,5 @@
-﻿using Bomberjam.Common;
+﻿using System;
+using Bomberjam.Common;
 
 namespace Bomberjam
 {
@@ -16,6 +17,7 @@ namespace Bomberjam
             this.BombsLeft = 1;
             this.MaxBombs = 1;
             this.IsAlive = true;
+            this.DeathTime = DateTime.MaxValue;
         }
 
         public string Id { get; }
@@ -30,9 +32,11 @@ namespace Bomberjam
         public bool IsAlive { get; set; }
         public bool IsTimedOut { get; set; }
         public int Score { get; set; }
-        public bool HasWon { get; set; }
+        public int Rank { get; set; }
+        public bool IsLastPlayerAlive { get; set; }
         public bool MustRespawn { get; set; }
         public int Respawning { get; set; }
+        public DateTime DeathTime { get; set; }
 
         public void AddScore(int deltaScore)
         {
@@ -60,8 +64,8 @@ namespace Bomberjam
             IsAlive = this.IsAlive,
             IsTimedOut = this.IsTimedOut,
             Score = this.Score,
-            HasWon = this.HasWon,
             Respawning = this.Respawning,
+            DeathTime = this.DeathTime
         };
     }
 }

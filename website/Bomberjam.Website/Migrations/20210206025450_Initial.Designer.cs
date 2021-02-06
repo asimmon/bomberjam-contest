@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
-    [Migration("20210205173144_Initial")]
+    [Migration("20210206025450_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -45,9 +45,6 @@ namespace Bomberjam.Website.Migrations
                     b.Property<DateTime>("Updated")
                         .HasColumnType("TEXT");
 
-                    b.Property<Guid?>("WinnerId")
-                        .HasColumnType("TEXT");
-
                     b.HasKey("Id");
 
                     b.ToTable("Games");
@@ -66,6 +63,9 @@ namespace Bomberjam.Website.Migrations
 
                     b.Property<string>("Errors")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Rank")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("Score")
                         .HasColumnType("INTEGER");
@@ -114,102 +114,102 @@ namespace Bomberjam.Website.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b9f80ecb-892d-40f6-9adb-33c7eeff5bab"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(1553),
+                            Id = new Guid("566d290a-2263-49de-ae13-53dee2fbab4f"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(2891),
                             Data = "00000000-0000-0000-0000-000000000001",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(1818)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3094)
                         },
                         new
                         {
-                            Id = new Guid("4fa73c89-50c2-4001-ab2e-e533d53f09f0"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2573),
+                            Id = new Guid("69a8d5ad-e558-4e53-af6b-162d1fa08eff"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3725),
                             Data = "00000000-0000-0000-0000-000000000002",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2575)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3726)
                         },
                         new
                         {
-                            Id = new Guid("3a16c227-e0d8-4094-bad1-1f81dea6e72d"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2579),
+                            Id = new Guid("766ca326-810c-49f3-9666-5297eb190478"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3730),
                             Data = "00000000-0000-0000-0000-000000000003",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2580)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3731)
                         },
                         new
                         {
-                            Id = new Guid("6a719ad0-b897-40dc-b9ba-cedf6c4a6846"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2582),
+                            Id = new Guid("98dd3f0e-70cc-488d-bc3e-c7fb330fb0d7"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3733),
                             Data = "00000000-0000-0000-0000-000000000004",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2583)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3734)
                         },
                         new
                         {
-                            Id = new Guid("72faa54e-93ea-48b5-b60f-ba7ca4b43f77"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2585),
+                            Id = new Guid("77b9a817-7e8c-4fbd-90e3-89a506167301"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3736),
                             Data = "00000000-0000-0000-0000-000000000005",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2586)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3737)
                         },
                         new
                         {
-                            Id = new Guid("4e36d430-4fcb-4a7d-baa0-dd6a88fa25da"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2588),
+                            Id = new Guid("f4e98337-29a0-47cb-8026-9a1077a0b864"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3740),
                             Data = "00000000-0000-0000-0000-000000000006",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2588)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3740)
                         },
                         new
                         {
-                            Id = new Guid("360f6a9d-40dc-44a0-9750-24af09ed207e"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2590),
+                            Id = new Guid("b443cd5a-6b5b-4787-9565-2909fb376347"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3743),
                             Data = "00000000-0000-0000-0000-000000000007",
                             Status = 1,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(2591)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(3744)
                         },
                         new
                         {
-                            Id = new Guid("dd5c24cb-8566-41c9-8b42-8461ccfbc905"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(4359),
+                            Id = new Guid("889f8c20-09a1-44fd-834e-feb2ee989c7c"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(5667),
                             Data = "00000000-0000-0000-0000-000000000001:Askaiser,00000000-0000-0000-0000-000000000006:Pandarf,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000002:Falgar",
                             Status = 1,
                             Type = 2,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(4362)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(5671)
                         },
                         new
                         {
-                            Id = new Guid("9cc6ec17-e25b-4c0d-a628-99c7148ab50c"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(6377),
+                            Id = new Guid("2fb9fbb4-6b66-4e91-8430-6d2491ba2412"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(7564),
                             Data = "00000000-0000-0000-0000-000000000007:Mire,00000000-0000-0000-0000-000000000005:Kalmera,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000002:Falgar",
                             Status = 1,
                             Type = 2,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(6381)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(7568)
                         },
                         new
                         {
-                            Id = new Guid("e4f36de0-94ab-4a66-93da-a455871b46b4"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(6401),
+                            Id = new Guid("9ef6f451-ade7-47d6-9c6f-f7d7b50f8cec"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(7607),
                             Data = "00000000-0000-0000-0000-000000000004:Minty,00000000-0000-0000-0000-000000000006:Pandarf,00000000-0000-0000-0000-000000000005:Kalmera,00000000-0000-0000-0000-000000000001:Askaiser",
                             Status = 1,
                             Type = 2,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(6402)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(7608)
                         },
                         new
                         {
-                            Id = new Guid("4c3dd66e-b893-4f79-a615-04c18a76021a"),
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(6411),
+                            Id = new Guid("f7f5286d-9feb-4dbf-80e0-18f39e5b5427"),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(7623),
                             Data = "00000000-0000-0000-0000-000000000002:Falgar,00000000-0000-0000-0000-000000000001:Askaiser,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000005:Kalmera",
                             Status = 1,
                             Type = 2,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 474, DateTimeKind.Utc).AddTicks(6411)
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 153, DateTimeKind.Utc).AddTicks(7624)
                         });
                 });
 
@@ -262,13 +262,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(2),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 151, DateTimeKind.Utc).AddTicks(9672),
                             Email = "simmon.anthony@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(258),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 151, DateTimeKind.Utc).AddTicks(9949),
                             Username = "Askaiser"
                         },
                         new
@@ -276,13 +276,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000002"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1951),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1934),
                             Email = "falgar@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1954),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1938),
                             Username = "Falgar"
                         },
                         new
@@ -290,13 +290,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000003"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1956),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1941),
                             Email = "xenure@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1957),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1942),
                             Username = "Xenure"
                         },
                         new
@@ -304,13 +304,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000004"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1958),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1943),
                             Email = "minty@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1959),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1944),
                             Username = "Minty"
                         },
                         new
@@ -318,13 +318,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000005"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1960),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1946),
                             Email = "kalmera@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1961),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1947),
                             Username = "Kalmera"
                         },
                         new
@@ -332,13 +332,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000006"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1962),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1948),
                             Email = "pandarf@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1962),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1949),
                             Username = "Pandarf"
                         },
                         new
@@ -346,13 +346,13 @@ namespace Bomberjam.Website.Migrations
                             Id = new Guid("00000000-0000-0000-0000-000000000007"),
                             BotLanguage = "",
                             CompilationErrors = "",
-                            Created = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1964),
+                            Created = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1951),
                             Email = "mire@gmail.com",
                             GameCount = 0,
                             IsCompiled = false,
                             IsCompiling = false,
                             SubmitCount = 1,
-                            Updated = new DateTime(2021, 2, 5, 17, 31, 44, 473, DateTimeKind.Utc).AddTicks(1964),
+                            Updated = new DateTime(2021, 2, 6, 2, 54, 50, 152, DateTimeKind.Utc).AddTicks(1952),
                             Username = "Mire"
                         });
                 });

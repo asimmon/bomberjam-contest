@@ -35,14 +35,7 @@ namespace Bomberjam
 
             foreach (var (playerId, player) in state.Players)
             {
-                if (history.Summary.Players.TryGetValue(playerId, out var playerSummary))
-                {
-                    if (player.HasWon)
-                    {
-                        history.Summary.WebsiteWinnerId = playerSummary.WebsiteId;
-                    }
-                }
-                else
+                if (!history.Summary.Players.TryGetValue(playerId, out var playerSummary))
                 {
                     playerSummary = history.Summary.Players[playerId] = new GamePlayerSummary();
                     playerSummary.Id = player.Id;

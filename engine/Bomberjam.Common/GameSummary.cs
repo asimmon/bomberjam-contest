@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Bomberjam.Common
@@ -8,9 +7,6 @@ namespace Bomberjam.Common
     {
         [JsonPropertyName("players")]
         public Dictionary<string, GamePlayerSummary> Players { get; set; } = new();
-
-        [JsonPropertyName("websiteWnnerId")]
-        public Guid? WebsiteWinnerId { get; set; }
 
         [JsonPropertyName("errors")]
         public string Errors { get; set; } = string.Empty;
