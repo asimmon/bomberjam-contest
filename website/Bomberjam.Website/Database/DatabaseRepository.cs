@@ -226,7 +226,8 @@ namespace Bomberjam.Website.Database
                         GameId = game.Id,
                         GameCreated = game.Created,
                         UserId = gameUser.UserId,
-                        UserScore = gameUser.Score
+                        UserScore = gameUser.Score,
+                        UserRank = gameUser.Rank
                     }
                 )
                 .Join(
@@ -239,9 +240,11 @@ namespace Bomberjam.Website.Database
                         GameCreated = tmp.GameCreated,
                         UserId = tmp.UserId,
                         UserScore = tmp.UserScore,
+                        UserRank = tmp.UserRank,
                         UserName = user.Username
                     }
                 )
+                .OrderByDescending(row => row.GameId)
                 .ToListAsync();
 
             return rows.Aggregate(new Dictionary<Guid, GameInfo>(), (acc, row) =>
@@ -252,13 +255,17 @@ namespace Bomberjam.Website.Database
                     {
                         Id = row.GameId,
                         Created = row.GameCreated,
-                        UserNames = new Dictionary<Guid, string>(),
-                        UserScores = new Dictionary<Guid, int>()
+                        Users = new List<GameUserInfo>()
                     };
                 }
 
-                gameInfo.UserNames[row.UserId] = row.UserName;
-                gameInfo.UserScores[row.UserId] = row.UserScore;
+                gameInfo.Users.Add(new GameUserInfo
+                {
+                    Id = row.UserId,
+                    Name = row.UserName,
+                    Score = row.UserScore,
+                    Rank = row.UserRank
+                });
 
                 return acc;
             }).Values;

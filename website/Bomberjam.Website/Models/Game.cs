@@ -7,7 +7,14 @@ namespace Bomberjam.Website.Models
     {
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
-        public IDictionary<Guid, string> UserNames { get; set; }
-        public IDictionary<Guid, int> UserScores { get; set; }
+        public IList<GameUserInfo> Users { get; set; }
+    }
+
+    public class GameUserInfo
+    {
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public int Score { get; set;  }
+        public int Rank { get; set;  }
     }
 }
