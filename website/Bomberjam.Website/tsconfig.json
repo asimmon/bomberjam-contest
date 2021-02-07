@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+    "module": "es6",
+    "target": "es5",
+    "jsx": "react"
+  },
+  "exclude": [
+    "node_modules",
+    "obj",
+    "bin",
+    "wwwroot/dist",
+    "wwwroot/lib"
+  ]
+}

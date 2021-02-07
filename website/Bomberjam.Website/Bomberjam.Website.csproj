@@ -2,6 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>latest</LangVersion>
+    <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,4 +23,8 @@
     <None Remove="MyBot.zip" />
     <EmbeddedResource Include="MyBot.zip" />
   </ItemGroup>
+  
+  <Target Name="Create bundles" BeforeTargets="BeforeBuild">
+    <Exec Command="npm run build" />
+  </Target>
 </Project>

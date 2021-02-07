@@ -115,7 +115,7 @@ namespace Bomberjam
                     this._process.StandardInput.WriteLine(text);
                 }
             }
-            catch (IOException ioex)
+            catch (IOException)
             {
                 // TODO throw and catch error above
             }

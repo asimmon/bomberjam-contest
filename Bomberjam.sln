@@ -15,8 +15,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bomberjam.Website", "websit
 EndProject
 Project("{888888A0-9F3D-457C-B088-3A5042F75D52}") = "worker", "worker\worker.pyproj", "{D2EF0CCF-8CE3-4F93-870F-C62AAD783A73}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docker", "docker", "{9D337C42-838F-4FDE-94BC-B502C3A5D9B5}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "docker", "{9D337C42-838F-4FDE-94BC-B502C3A5D9B5}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
 		worker.Dockerfile = worker.Dockerfile
 		web.Dockerfile = web.Dockerfile
 		docker-compose.yml = docker-compose.yml

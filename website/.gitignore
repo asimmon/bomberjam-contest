@@ -364,3 +364,5 @@ FodyWeavers.xsd
 # Local SQLite database
 bomberjam.db
 bomberjam.db-*
+
+/Bomberjam.Website/wwwroot/dist/
