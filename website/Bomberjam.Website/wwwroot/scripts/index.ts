@@ -1,4 +1,7 @@
-﻿function sayHello(name: string): Promise<string> {
+﻿import 'jquery';
+import 'bootstrap'
+
+function sayHello(name: string): Promise<string> {
   return new Promise<string>(resolve => {
     window.setTimeout(() => {
       resolve('Hello ' + name);
