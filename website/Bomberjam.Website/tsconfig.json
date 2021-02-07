@@ -3,8 +3,9 @@
     "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
-    "module": "es6",
-    "target": "es5",
+    "target": "es6",
+    "module": "es2015",
+    "moduleResolution": "node",
     "jsx": "react"
   },
   "exclude": [
