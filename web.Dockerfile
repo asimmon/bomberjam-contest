@@ -4,7 +4,8 @@ EXPOSE 80
 EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
-
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
 WORKDIR /src
 COPY ["engine/Bomberjam.Common/", "engine/Bomberjam.Common/"]
 COPY ["website/Bomberjam.Website/", "website/Bomberjam.Website/"]
