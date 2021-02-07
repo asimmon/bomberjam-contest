@@ -23,9 +23,13 @@
     <None Remove="MyBot.zip" />
     <EmbeddedResource Include="MyBot.zip" />
   </ItemGroup>
-  
-  <Target Name="Create bundles" BeforeTargets="BeforeBuild">
+
+  <Target Name="InstallNodeDependencies" BeforeTargets="BuildAssetBundle" Condition=" '$(OS)' != 'Windows_NT' ">
+    <RemoveDir Directories="$(ProjectDir)node_modules" />
     <Exec Command="npm install" />
+  </Target>
+
+  <Target Name="BuildAssetBundle" BeforeTargets="BeforeBuild">
     <Exec Command="npm run build" />
   </Target>
 </Project>
