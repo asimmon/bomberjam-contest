@@ -6,12 +6,14 @@
     "production": "webpack --progress --mode production"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.34",
+    "@fortawesome/free-solid-svg-icons": "^5.15.2",
     "angular": "^1.8.2",
     "bootstrap": "^4.6.0",
     "jquery": "^3.5.1",
-    "popper.js": "^1.16.1",
     "pixi-sound": "^3.0.5",
-    "pixi.js": "^5.3.7"
+    "pixi.js": "^5.3.7",
+    "popper.js": "^1.16.1"
   },
   "devDependencies": {
     "@types/angular": "^1.8.0",

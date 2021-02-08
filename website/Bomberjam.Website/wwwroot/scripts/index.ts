@@ -1,8 +1,10 @@
 ﻿import 'jquery';
 import 'bootstrap';
-import * as angular from 'angular';
+import { module } from 'angular';
+
+import './fontawesome'
 
 import GameVisualizerController from "./gameVisualizer";
 
-angular.module('bomberjam', [])
+module('bomberjam', [])
   .controller('GameVisualizerController', ['$timeout', GameVisualizerController]);
