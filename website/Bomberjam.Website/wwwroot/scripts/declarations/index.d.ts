@@ -2,6 +2,14 @@ interface JSON {
   parse<T = any>(text: string): T;
 }
 
+interface Document {
+  getElementById<T extends HTMLElement>(elementId: string): T | null;
+}
+
+interface ISetTimeout {
+  (callback: () => void, delay: number): void;
+}
+
 interface IHasPos {
   x: number;
   y: number;

@@ -6,7 +6,8 @@ import TextureRegistry from './textureRegistry';
 
 export default async function replayGame(
   history: IGameHistory,
-  stateChangedCallback: (stateIdx: number, state: IGameState) => void
+  stateChangedCallback: (stateIdx: number, state: IGameState) => void,
+  setTimeout: ISetTimeout
 ): Promise<IReplayGameController> {
   const pixiApp = new Application({
     antialias: true,
@@ -16,7 +17,7 @@ export default async function replayGame(
 
   const textures = await loadTexturesAsync(pixiApp);
   const sounds = await loadSoundsAsync(pixiApp);
-  const pixiContainer = document.getElementById('pixi') as HTMLElement;
+  const pixiContainer = document.getElementById('canvas') as HTMLElement;
 
   let initialized = false;
   let stopped = false;
@@ -32,7 +33,7 @@ export default async function replayGame(
   };
 
   // hack: does not block function exit so we can return the controller
-  window.setTimeout(async () => {
+  setTimeout(async () => {
     while (!stopped) {
       displayState(stateIdx);
 
@@ -41,7 +42,7 @@ export default async function replayGame(
         if (stateIdx >= states.length) stateIdx = states.length - 1;
       }
 
-      await sleepAsync(tickDuration);
+      await sleepAsync(setTimeout, tickDuration);
     }
   }, 0);
 
@@ -88,7 +89,7 @@ export default async function replayGame(
     },
     resumeGame: () => {
       sounds.resumeAll();
-      sounds.unpause.play();
+      //TODO sounds.unpause.play();
       paused = false;
     },
     goToStateIdx: (newStateIdx: number) => {
@@ -175,6 +176,6 @@ function cleanupPixiApp(pixiContainer: HTMLElement, pixiApp: Application, textur
   } catch {}
 }
 
-async function sleepAsync(milliseconds: number): Promise<void> {
+async function sleepAsync(setTimeout: ISetTimeout, milliseconds: number): Promise<void> {
   return new Promise(resolve => setTimeout(resolve, milliseconds));
 }

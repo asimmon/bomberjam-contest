@@ -49,9 +49,9 @@ export default class BomberjamRenderer {
 
     this.pixiApp.renderer.resize(this.pixiApp.stage.width, this.pixiApp.stage.height);
     if (!this.stateProvider.state.isFinished) {
-      this.sounds.level.play();
+      //TODO this.sounds.level.play();
     } else {
-      this.sounds.waiting.play();
+      //TODO this.sounds.waiting.play();
     }
   }
 

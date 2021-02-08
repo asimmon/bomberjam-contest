@@ -55,17 +55,17 @@ export default class GameMap extends GameContainer {
 
   onPlayerAdded(playerId: string, player: IPlayer): void {
     this.registerPlayer(playerId, player);
-    this.sounds.coin.play();
+    //TODO this.sounds.coin.play();
   }
 
   onPlayerRemoved(playerId: string, player: IPlayer): void {
     this.unregisterObjectSprite(this.playerSprites, playerId);
-    this.sounds.error.play();
+    //TODO this.sounds.error.play();
   }
 
   onBombAdded(bombId: string, bomb: IBomb): void {
     this.registerBomb(bombId, bomb);
-    this.sounds.bomb.play();
+    //TODO this.sounds.bomb.play();
   }
 
   onBombRemoved(bombId: string, bomb: IBomb): void {
@@ -83,7 +83,7 @@ export default class GameMap extends GameContainer {
     for (const playerId in this.state.players) {
       const player: IPlayer = this.state.players[playerId];
       if (bonus.x === player.x && bonus.y === player.y) {
-        this.sounds.powerup.play();
+        //TODO this.sounds.powerup.play();
       }
     }
   }
@@ -137,17 +137,17 @@ export default class GameMap extends GameContainer {
     // Game started
     if (prevState.tick === 1 && this.state.tick > 1) {
       this.sounds.waiting.stop();
-      this.sounds.level.play();
+      //TODO this.sounds.level.play();
     }
     // Game ended
     else if (!prevState.isFinished && this.state.isFinished) {
       this.sounds.level.stop();
-      this.sounds.victory.play();
+      //TODO this.sounds.victory.play();
     }
     // Game was ended but the replay started the game again
     else if (prevState.isFinished && !this.state.isFinished) {
       this.sounds.victory.stop();
-      this.sounds.level.play();
+      //TODO this.sounds.level.play();
     }
 
     // Hide bombs that just exploded
@@ -158,7 +158,7 @@ export default class GameMap extends GameContainer {
       if (bombSprite) {
         if (bomb.countdown <= 0) {
           bombSprite.visible = false;
-          this.sounds.explosion.play();
+          //TODO this.sounds.explosion.play();
         } else {
           bombSprite.visible = true;
         }
@@ -182,7 +182,7 @@ export default class GameMap extends GameContainer {
           (oldPlayer && oldPlayer.isAlive !== newPlayer.isAlive) ||
           newPlayer.respawning === this.stateProvider.configuration.respawnTime
         ) {
-          this.sounds.death.play();
+          //TODO this.sounds.death.play();
         }
 
         // Restore player transparency if not respawning
@@ -199,7 +199,7 @@ export default class GameMap extends GameContainer {
     const currentWallCount = Object.keys(this.wallSprites).length;
 
     // New wall has dropped.
-    if (previousWallCount !== currentWallCount) this.sounds.stomp.play();
+    //TODO if (previousWallCount !== currentWallCount) this.sounds.stomp.play();
   }
 
   private fixZOrdering(): void {
@@ -247,7 +247,7 @@ export default class GameMap extends GameContainer {
     sprite.tint = player.color;
     this.playerSprites[playerId] = sprite;
     this.mapContainer.addChild(sprite);
-    this.sounds.footsteps.play();
+    //TODO this.sounds.footsteps.play();
   }
 
   private registerBomb(bombId: string, bomb: IBomb) {

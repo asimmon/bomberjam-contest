@@ -9,18 +9,6 @@ using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Controllers
 {
-    public class HomeModel
-    {
-        public HomeModel(IReadOnlyList<User> users, IReadOnlyList<GameInfo> games)
-        {
-            this.Users = users;
-            this.Games = games;
-        }
-
-        public IReadOnlyList<User> Users { get; }
-        public IReadOnlyList<GameInfo> Games { get; }
-    }
-
     public class HomeController : BaseWebController<HomeController>
     {
         public HomeController(IRepository repository, ILogger<HomeController> logger)
@@ -41,5 +29,23 @@ namespace Bomberjam.Website.Controllers
         {
             return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+
+        [HttpGet("~/visualizer")]
+        public IActionResult Visualizer()
+        {
+            return this.View("Visualizer");
+        }
+    }
+
+    public class HomeModel
+    {
+        public HomeModel(IReadOnlyList<User> users, IReadOnlyList<GameInfo> games)
+        {
+            this.Users = users;
+            this.Games = games;
+        }
+
+        public IReadOnlyList<User> Users { get; }
+        public IReadOnlyList<GameInfo> Games { get; }
     }
 }
