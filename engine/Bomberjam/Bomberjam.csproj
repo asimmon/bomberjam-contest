@@ -6,7 +6,7 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
+  <PropertyGroup Condition=" '$(Configuration)'=='Release' And '$(OS)' != 'Windows_NT' ">
     <AssemblyName>bomberjam</AssemblyName>
     <DebugType>None</DebugType>
     <PublishTrimmed>true</PublishTrimmed>
