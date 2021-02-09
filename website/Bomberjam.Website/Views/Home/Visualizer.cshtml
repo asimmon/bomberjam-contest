@@ -1,46 +1,10 @@
 ﻿@{
-    ViewData["Title"] = "Visualizer";
+  ViewData["Title"] = "Visualizer";
 }
 
 <h1>Visualizer</h1>
 
 <div ng-app="bomberjam">
-    <div id="game-visualizer" ng-controller="GameVisualizerController as ctrl">
-        <div>
-            <input type="file" id="game-file-picker"/>
-        </div>
 
-        <div id="canvas"></div>
-
-        <div>
-            <input
-                type="range"
-                id="ticks"
-                ng-model="ctrl.selectedStateIdx"
-                ng-change="ctrl.onSelectedTickChanged()"
-                min="{{ctrl.minStateIdx}}"
-                max="{{ctrl.maxStateIdx}}"
-                ng-mousedown="ctrl.tickRangeMouseDown()"
-                ng-mouseup="ctrl.tickRangeMouseUp()"/>
-            <span>{{ctrl.selectedStateIdx}} / {{ctrl.maxStateIdx}}</span>
-        </div>
-        <div>
-            <button id="pause-resume" ng-click="ctrl.pauseOrResumeGame()" class="btn btn-primary btn-sm">
-                <span ng-show="ctrl.isPlaying">
-                    <i class="fas fa-pause"></i>
-                </span>
-                <span ng-hide="ctrl.isPlaying">
-                    <i class="fas fa-play"></i>
-                </span>
-            </button>
-
-            <button id="decrease-speed" ng-click="ctrl.decreaseSpeed()" class="btn btn-primary btn-sm">
-                Slower
-            </button>
-
-            <button id="increase-speed" ng-click="ctrl.increaseSpeed()" class="btn btn-primary btn-sm">
-                Faster
-            </button>
-        </div>
-    </div>
+  <visualizer game-id="fooz"></visualizer>
 </div>

@@ -1,9 +1,10 @@
 import * as angular from 'angular';
 import replayGame from "./game/game";
 
-export default class GameVisualizerController {
+export class VisualizerController {
   private readonly timeoutService: angular.ITimeoutService;
   private readonly httpService: angular.IHttpService;
+  private readonly element: angular.IAugmentedJQuery;
 
   private replayCtrl: IReplayGameController | null = null;
   private canChangeRangeValue: boolean = true;
@@ -16,9 +17,10 @@ export default class GameVisualizerController {
   public selectedStateIdx: number = 0;
   public isPlaying: boolean = false;
 
-  public constructor(timeoutService: angular.ITimeoutService, httpService: angular.IHttpService) {
+  public constructor(timeoutService: angular.ITimeoutService, httpService: angular.IHttpService, element: angular.IAugmentedJQuery) {
     this.timeoutService = timeoutService;
     this.httpService = httpService;
+    this.element = element;
 
     const gameFilePicker = document.getElementById<HTMLInputElement>('game-file-picker');
     if (!gameFilePicker) {
@@ -31,12 +33,14 @@ export default class GameVisualizerController {
         await this.loadGameHistoryFile(selectedFile);
       }
     }, false);
+  }
 
-    this.downloadGameHistory('e043dbd8-63f5-4e53-a51e-c83b894802ef').then(gameHistory => {
-      this.loadGameHistory(gameHistory).catch(console.error);
-    }, error => {
-      console.log(error);
-    })
+  public set gameId(gameId: string) {
+
+  }
+
+  public set enableFilePicker(gameId: string) {
+
   }
 
   private downloadGameHistory(gameId: string): Promise<IGameHistory> {
@@ -143,4 +147,48 @@ export default class GameVisualizerController {
   public tickRangeMouseUp() {
     this.canChangeRangeValue = true;
   }
+}
+
+export const Visualizer: angular.IComponentOptions = {
+  bindings: {
+    gameId: '@',
+    enableFilePicker: '@'
+  },
+  template: `
+<div>
+  <input type="file" id="game-file-picker" />
+  
+  <div id="canvas"></div>
+  
+  <div>
+    <input type="range" min="{{ctrl.minStateIdx}}" max="{{ctrl.maxStateIdx}}"
+      ng-model="ctrl.selectedStateIdx"
+      ng-change="ctrl.onSelectedTickChanged()"
+      ng-mousedown="ctrl.tickRangeMouseDown()"
+      ng-mouseup="ctrl.tickRangeMouseUp()"/>
+      
+    <span>{{ctrl.selectedStateIdx}} / {{ctrl.maxStateIdx}}</span>
+  </div>
+  <div>
+    <button ng-click="ctrl.pauseOrResumeGame()" class="btn btn-primary btn-sm">
+      <span ng-show="ctrl.isPlaying">
+        <i class="fas fa-pause"></i>
+      </span>
+      <span ng-hide="ctrl.isPlaying">
+        <i class="fas fa-play"></i>
+      </span>
+    </button>
+
+    <button ng-click="ctrl.decreaseSpeed()" class="btn btn-primary btn-sm">
+      Slower
+    </button>
+
+    <button ng-click="ctrl.increaseSpeed()" class="btn btn-primary btn-sm">
+      Faster
+    </button>
+  </div>
+</div>
+  `,
+  controller: ['$timeout', '$http', '$element', VisualizerController],
+  controllerAs: 'ctrl'
 }
