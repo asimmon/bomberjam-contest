@@ -3,6 +3,7 @@ import replayGame from "./game/game";
 
 export default class GameVisualizerController {
   private readonly timeoutService: angular.ITimeoutService;
+  private readonly httpService: angular.IHttpService;
 
   private replayCtrl: IReplayGameController | null = null;
   private canChangeRangeValue: boolean = true;
@@ -15,8 +16,9 @@ export default class GameVisualizerController {
   public selectedStateIdx: number = 0;
   public isPlaying: boolean = false;
 
-  public constructor(timeoutService: angular.ITimeoutService) {
+  public constructor(timeoutService: angular.ITimeoutService, httpService: angular.IHttpService) {
     this.timeoutService = timeoutService;
+    this.httpService = httpService;
 
     const gameFilePicker = document.getElementById<HTMLInputElement>('game-file-picker');
     if (!gameFilePicker) {
@@ -29,6 +31,22 @@ export default class GameVisualizerController {
         await this.loadGameHistoryFile(selectedFile);
       }
     }, false);
+
+    this.downloadGameHistory('e043dbd8-63f5-4e53-a51e-c83b894802ef').then(gameHistory => {
+      this.loadGameHistory(gameHistory).catch(console.error);
+    }, error => {
+      console.log(error);
+    })
+  }
+
+  private downloadGameHistory(gameId: string): Promise<IGameHistory> {
+    return new Promise<IGameHistory>((resolve, reject) => {
+      this.httpService.get<IGameHistory>('/api/game/' + gameId).then(response => {
+        resolve(response.data);
+      }, error => {
+        reject(error);
+      });
+    });
   }
 
   private async loadGameHistoryFile(file: File): Promise<void> {

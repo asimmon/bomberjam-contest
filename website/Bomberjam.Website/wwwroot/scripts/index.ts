@@ -7,4 +7,4 @@ import './fontawesome'
 import GameVisualizerController from "./gameVisualizer";
 
 module('bomberjam', [])
-  .controller('GameVisualizerController', ['$timeout', GameVisualizerController]);
+  .controller('GameVisualizerController', ['$timeout', '$http', GameVisualizerController]);

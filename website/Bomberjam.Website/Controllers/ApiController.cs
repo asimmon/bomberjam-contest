@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net.Mime;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
@@ -153,6 +154,14 @@ namespace Bomberjam.Website.Controllers
             {
                 return this.NotFound();
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("game/{gameId}")]
+        public IActionResult GetGame(Guid gameId)
+        {
+            var fileStream = this._botStorage.DownloadGameResult(gameId);
+            return this.File(fileStream, MediaTypeNames.Application.Json);
         }
 
         [HttpGet("game/yolo")]
