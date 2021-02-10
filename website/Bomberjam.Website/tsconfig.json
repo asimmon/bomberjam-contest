@@ -3,6 +3,7 @@
     "strict": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
     "target": "es6",
     "module": "es2015",
     "moduleResolution": "node",
@@ -12,7 +13,6 @@
     "node_modules",
     "obj",
     "bin",
-    "wwwroot/dist",
-    "wwwroot/lib"
+    "wwwroot/dist"
   ]
 }

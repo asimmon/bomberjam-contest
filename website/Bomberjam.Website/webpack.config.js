@@ -5,7 +5,7 @@ module.exports = (env, argv) => {
   return {
     mode: argv.mode === 'production' ? 'production' : 'development',
     entry: [
-      path.resolve(__dirname, 'wwwroot/scripts/index.ts'),
+      path.resolve(__dirname, 'wwwroot/scripts/index.tsx'),
       path.resolve(__dirname, 'wwwroot/styles/index.scss')
     ],
     output: {
@@ -18,7 +18,7 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
-          test: /\.ts$/,
+          test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/,
         },

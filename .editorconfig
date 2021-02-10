@@ -17,7 +17,7 @@ indent_size = 2
 [*.csproj]
 indent_size = 2
 
-[*.{js,ts,json}]
+[*.{js,ts,tsx,json}]
 indent_size = 2
 
 [*.py]
