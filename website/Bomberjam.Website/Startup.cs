@@ -29,12 +29,20 @@ namespace Bomberjam.Website
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddResponseCompression(opts =>
+            {
+                opts.EnableForHttps = true;
+            });
+
             services.AddRouting();
-            var mvcBuilder = services.AddControllersWithViews();
 
             if (this.Environment.IsDevelopment())
             {
-                mvcBuilder.AddRazorRuntimeCompilation();
+                services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            }
+            else
+            {
+                services.AddControllersWithViews();
             }
 
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -98,6 +106,8 @@ namespace Bomberjam.Website
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app)
         {
+            app.UseResponseCompression();
+
             if (this.Environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

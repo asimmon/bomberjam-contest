@@ -31,6 +31,7 @@
 
   <Target Name="BuildFrontend" BeforeTargets="BeforeBuild">
     <Exec Command="npm install" Condition=" !Exists( '$(ProjectDir)node_modules' ) " />
-    <Exec Command="npm run build" />
+    <Exec Command="npm run build" Condition=" '$(Configuration)' != 'Release' " />
+    <Exec Command="npm run production" Condition=" '$(Configuration)' == 'Release' " />
   </Target>
 </Project>

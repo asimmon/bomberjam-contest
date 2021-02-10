@@ -81,7 +81,7 @@ interface IStateProvider {
 }
 
 interface IReplayGameController {
-  stopViewer: () => void;
+  destroy: () => void;
   resumeGame: () => void;
   pauseGame: () => void;
   increaseSpeed: () => void;

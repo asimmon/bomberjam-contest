@@ -1,4 +1,4 @@
-import React, { useState, useEffect, ChangeEvent } from "react";
+import React, {ChangeEvent, useEffect, useState} from "react";
 import replayGame from "./game/game";
 
 interface VisualizerProps {
@@ -16,7 +16,8 @@ export const Visualizer = (props: VisualizerProps) => {
 
   const downloadGameHistory = async (gameId: string): Promise<IGameHistory> => {
     const response = await fetch('/api/game/' + gameId);
-    return response.json();
+    if (response.ok) return response.json();
+    throw new Error('API returned: ' + response.status + ' ' + response.statusText);
   }
 
   const downloadAndLoadGameHistory = async (gameId: string): Promise<void> => {
@@ -65,6 +66,13 @@ export const Visualizer = (props: VisualizerProps) => {
   };
 
   const loadGameHistory = async (history: IGameHistory): Promise<void> => {
+    if (replayCtrl) {
+      replayCtrl.destroy();
+      setReplayCtrl(null);
+      setIsStarted(false);
+      setIsPlaying(false);
+    }
+
     const ctrl = await replayGame(history, onStateChanged, window.setTimeout);
 
     setReplayCtrl(ctrl);
@@ -104,7 +112,7 @@ export const Visualizer = (props: VisualizerProps) => {
   const decreaseSpeed = () => replayCtrl?.decreaseSpeed();
 
   const onFileChanged = (event: ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.files && event.target.files.length && event.target.files[0].name.toUpperCase().endsWith('.JSON')) {
+    if (event.target.files && event.target.files.length && event.target.files[0] && event.target.files[0].name.toUpperCase().endsWith('.JSON')) {
       const maxUploadSize = 2097152;
       const file = event.target.files[0];
       if (file.size && file.size <= maxUploadSize) {
@@ -113,42 +121,46 @@ export const Visualizer = (props: VisualizerProps) => {
     }
   };
 
-  if (typeof props.gameId === 'string' && props.gameId.length > 0) {
+  if (props.gameId.length > 0) {
     useEffect(() => {
-      // TODO error handling
-      const _ = downloadAndLoadGameHistory(props.gameId);
+      downloadAndLoadGameHistory(props.gameId).catch(err => {
+        // TODO display error
+        console.log(err);
+      });
     }, []);
   }
 
   return <div>
-    <div>
+    <div className={props.gameId.length > 0 ? 'd-none' : ''}>
       <input type="file" onChange={onFileChanged} />
     </div>
 
     <div id="canvas" />
 
-    <div>
-      <input
-        type="range"
-        min={minStateIdx}
-        max={maxStateIdx}
-        value={selectedStateIdx}
-        onChange={onRangeValueChanged}
-        onMouseDown={onRangeMouseDown}
-        onMouseUp={onRangeMouseUp}
-      />
+    <div className={isStarted ? '' : 'd-none'}>
+      <div>
+        <input
+          type="range"
+          min={minStateIdx}
+          max={maxStateIdx}
+          value={selectedStateIdx}
+          onChange={onRangeValueChanged}
+          onMouseDown={onRangeMouseDown}
+          onMouseUp={onRangeMouseUp}
+        />
 
-      <span>{selectedStateIdx} / {maxStateIdx}</span>
-    </div>
+        <span>{selectedStateIdx} / {maxStateIdx}</span>
+      </div>
 
-    <div>
-      <button onClick={pauseOrResumeGame} className="btn btn-primary btn-sm">
-        <span className={isPlaying ? '' : 'd-none'}><i className="fas fa-pause" /></span>
-        <span className={isPlaying ? 'd-none' : ''}><i className="fas fa-play" /></span>
-      </button>
+      <div>
+        <button onClick={pauseOrResumeGame} className="btn btn-primary btn-sm">
+          <span className={isPlaying ? '' : 'd-none'}><i className="fas fa-pause" /></span>
+          <span className={isPlaying ? 'd-none' : ''}><i className="fas fa-play" /></span>
+        </button>
 
-      <button onClick={decreaseSpeed} className="btn btn-primary btn-sm">Slower</button>
-      <button onClick={increaseSpeed} className="btn btn-primary btn-sm">Faster</button>
+        <button onClick={decreaseSpeed} className="btn btn-primary btn-sm">Slower</button>
+        <button onClick={increaseSpeed} className="btn btn-primary btn-sm">Faster</button>
+      </div>
     </div>
   </div>;
 }

@@ -98,7 +98,7 @@ export default async function replayGame(
         displayState(stateIdx);
       }
     },
-    stopViewer: () => {
+    destroy: () => {
       stopped = true;
       cleanupPixiApp(pixiContainer, pixiApp, textures, sounds);
     }
@@ -148,7 +148,6 @@ function cleanupPixiApp(pixiContainer: HTMLElement, pixiApp: Application, textur
     pixiApp.stop();
 
     textures.destroy();
-
     sounds.destroy();
 
     for (const id in pixiApp.loader.resources) {
