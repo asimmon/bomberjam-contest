@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bomberjam.Common;
 using Bomberjam.Website.Common;
@@ -104,6 +105,23 @@ namespace Bomberjam.Website.Database
 
             await this._dbContext.SaveChangesAsync();
         }
+
+        public async Task<ICollection<RankedUser>> GetRankedUsers()
+        {
+            return await this._dbContext.Users
+                .OrderBy(u => u.Created)
+                .Select(u => MapRankedUser(u))
+                .ToListAsync();
+        }
+
+        private static RankedUser MapRankedUser(DbUser u) => new RankedUser
+        {
+            Id = u.Id,
+            UserName = u.Username,
+            BotLanguage = u.BotLanguage,
+            Points = 0,
+            GlobalRank = 0
+        };
 
         public async Task<QueuedTask> GetTask(Guid taskId)
         {

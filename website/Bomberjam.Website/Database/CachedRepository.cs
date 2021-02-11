@@ -61,6 +61,11 @@ namespace Bomberjam.Website.Database
             this._objectCache.Remove(FormatKey(GetUserByEmailCacheKeyFormat, changedUser.Email));
         }
 
+        public Task<ICollection<RankedUser>> GetRankedUsers()
+        {
+            return this._underlyingRepository.GetRankedUsers();
+        }
+
         public Task<QueuedTask> PopNextTask()
         {
             return this._underlyingRepository.PopNextTask();

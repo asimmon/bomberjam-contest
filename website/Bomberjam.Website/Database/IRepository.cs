@@ -14,6 +14,8 @@ namespace Bomberjam.Website.Database
         Task AddUser(string email, string username);
         Task UpdateUser(User changedUser);
 
+        Task<ICollection<RankedUser>> GetRankedUsers();
+
         Task<QueuedTask> PopNextTask();
         Task<QueuedTask> GetTask(Guid taskId);
         Task AddCompilationTask(Guid userId);

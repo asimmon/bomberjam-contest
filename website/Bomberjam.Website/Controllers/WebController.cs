@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -9,9 +10,9 @@ using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Controllers
 {
-    public class HomeController : BaseWebController<HomeController>
+    public class WebController : BaseWebController<WebController>
     {
-        public HomeController(IRepository repository, ILogger<HomeController> logger)
+        public WebController(IRepository repository, ILogger<WebController> logger)
             : base(repository, logger)
         {
         }
@@ -34,6 +35,19 @@ namespace Bomberjam.Website.Controllers
         public IActionResult Visualizer()
         {
             return this.View("Visualizer");
+        }
+
+        [HttpGet("~/leaderboard")]
+        public async Task<IActionResult> Leaderboard()
+        {
+            var rankedUsers = await this.Repository.GetRankedUsers();
+            return this.View(rankedUsers);
+        }
+
+        [HttpGet("~/user/{userId}")]
+        public IActionResult User(Guid userId)
+        {
+            return this.View(new UserDetail());
         }
     }
 
