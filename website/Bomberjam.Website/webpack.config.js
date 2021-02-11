@@ -1,5 +1,6 @@
 const path = require('path');
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
 module.exports = (env, argv) => {
   return {
@@ -29,7 +30,14 @@ module.exports = (env, argv) => {
       ]
     },
     plugins: [
-      new CleanWebpackPlugin()
+      new CleanWebpackPlugin(),
+      new BrowserSyncPlugin({
+        host: 'localhost',
+        port: 5002,
+        proxy: 'https://localhost:5001',
+      }, {
+        reload: true
+      })
     ]
   };
 };
