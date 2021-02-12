@@ -8,7 +8,7 @@ namespace Bomberjam.Website.Database
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
         public int GithubId { get; set; }
-        public string Username { get; set; }
+        public string UserName { get; set; }
         public string Email { get; set; }
         public int SubmitCount { get; set; }
         public int GameCount { get; set; }

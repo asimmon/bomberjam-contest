@@ -31,6 +31,7 @@
         <thead>
         <tr>
             <th>ID</th>
+            <th>Github ID</th>
             <th>Email</th>
             <th>UserName</th>
             <th>Created</th>
@@ -47,17 +48,18 @@
         @foreach (var user in Model.Users)
         {
             <tr>
-                <td style="white-space:nowrap">@user.Id</td>
-                <td style="white-space:nowrap">@user.Email</td>
-                <td style="white-space:nowrap">@user.UserName</td>
-                <td style="white-space:nowrap">@user.Created</td>
-                <td style="white-space:nowrap">@user.Updated</td>
-                <td style="white-space:nowrap">@user.GameCount</td>
-                <td style="white-space:nowrap">@user.SubmitCount</td>
-                <td style="white-space:nowrap">@user.IsCompiled</td>
-                <td style="white-space:nowrap">@user.IsCompiling</td>
-                <td style="white-space:nowrap">@user.CompilationErrors</td>
-                <td style="white-space:nowrap">@user.BotLanguage</td>
+                <td>@user.Id</td>
+                <td>@user.GithubId</td>
+                <td>@user.Email</td>
+                <td>@user.UserName</td>
+                <td>@user.Created</td>
+                <td>@user.Updated</td>
+                <td>@user.GameCount</td>
+                <td>@user.SubmitCount</td>
+                <td>@user.IsCompiled</td>
+                <td>@user.IsCompiling</td>
+                <td>@user.CompilationErrors</td>
+                <td>@user.BotLanguage</td>
             </tr>
         }
         </tbody>

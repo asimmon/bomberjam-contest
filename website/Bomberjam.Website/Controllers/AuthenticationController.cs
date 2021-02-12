@@ -48,16 +48,16 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/signin-github")]
         public async Task<IActionResult> SignInGithub()
         {
-            if (this.TryGetEmailClaim(out var email))
+            if (this.TryGetNameIdentifierClaim(out var githubId) && this.TryGetEmailClaim(out var email))
             {
                 try
                 {
-                    await this.Repository.GetUserByEmail(email);
+                    await this.Repository.GetUserByGithubId(githubId);
                 }
                 catch (UserNotFoundException)
                 {
-                    var temporaryUsername = "Player " + Rng.Next(1000, 9999).ToString(CultureInfo.InvariantCulture);
-                    await this.Repository.AddUser(TODO, email, temporaryUsername);
+                    var temporaryUsername = "Player" + Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
+                    await this.Repository.AddUser(githubId, email, temporaryUsername);
                 }
             }
 

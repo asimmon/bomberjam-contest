@@ -9,7 +9,7 @@ namespace Bomberjam.Website.Database
     public interface IRepository
     {
         Task<IEnumerable<User>> GetUsers();
-        Task<User> GetUserByEmail(string email);
+        Task<User> GetUserByGithubId(int githubId);
         Task<User> GetUserById(Guid id);
         Task AddUser(int githubId, string email, string username);
         Task UpdateUser(User changedUser);

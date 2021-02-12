@@ -45,7 +45,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/user/{userId}")]
-        public IActionResult User(Guid userId)
+        public IActionResult UserDetails(Guid userId)
         {
             return this.View(new UserDetail());
         }

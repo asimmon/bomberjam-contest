@@ -24,9 +24,6 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> Index()
         {
             var user = await this.GetAuthenticatedUser();
-            if (user.NeedsToCompleteProfile())
-                return this.RedirectToAction("Edit", "Account");
-
             return this.View("Index", user);
         }
 

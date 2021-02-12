@@ -7,6 +7,7 @@ namespace Bomberjam.Website.Models
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
+        public int GithubId { get; set; }
         public string UserName { get; set; }
         public string Email { get; set; }
         public int GameCount { get; set; }
@@ -15,10 +16,6 @@ namespace Bomberjam.Website.Models
         public bool IsCompiling { get; set; }
         public string CompilationErrors { get; set; }
         public string BotLanguage { get; set; }
-
-        public bool NeedsToCompleteProfile()
-        {
-            return string.IsNullOrWhiteSpace(this.UserName);
-        }
+        public float Points { get; set; }
     }
 }

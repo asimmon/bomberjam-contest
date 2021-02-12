@@ -9,13 +9,13 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
-        private static readonly DbUser UserAskaiser = CreateInitialUser(Constants.UserAskaiserId, "Askaiser", "simmon.anthony@gmail.com");
-        private static readonly DbUser UserFalgar = CreateInitialUser(Constants.UserFalgarId, "Falgar", "falgar@gmail.com");
-        private static readonly DbUser UserXenure = CreateInitialUser(Constants.UserXenureId, "Xenure", "xenure@gmail.com");
-        private static readonly DbUser UserMinty = CreateInitialUser(Constants.UserMintyId, "Minty", "minty@gmail.com");
-        private static readonly DbUser UserKalmera = CreateInitialUser(Constants.UserKalmeraId, "Kalmera", "kalmera@gmail.com");
-        private static readonly DbUser UserPandarf = CreateInitialUser(Constants.UserPandarfId, "Pandarf", "pandarf@gmail.com");
-        private static readonly DbUser UserMire = CreateInitialUser(Constants.UserMireId, "Mire", "mire@gmail.com");
+        private static readonly DbUser UserAskaiser = CreateInitialUser(Constants.UserAskaiserId, 14242083, "Askaiser", "simmon.anthony@gmail.com");
+        private static readonly DbUser UserFalgar = CreateInitialUser(Constants.UserFalgarId, 36072624, "Falgar", "falgar@gmail.com");
+        private static readonly DbUser UserXenure = CreateInitialUser(Constants.UserXenureId, 9208753, "Xenure", "xenure@gmail.com");
+        private static readonly DbUser UserMinty = CreateInitialUser(Constants.UserMintyId, 26142591, "Minty", "minty@gmail.com");
+        private static readonly DbUser UserKalmera = CreateInitialUser(Constants.UserKalmeraId, 5122918, "Kalmera", "kalmera@gmail.com");
+        private static readonly DbUser UserPandarf = CreateInitialUser(Constants.UserPandarfId, 1035273, "Pandarf", "pandarf@gmail.com");
+        private static readonly DbUser UserMire = CreateInitialUser(Constants.UserMireId, 5489330, "Mire", "mire@gmail.com");
 
         public BomberjamContext(DbContextOptions<BomberjamContext> options)
             : base(options)
@@ -35,7 +35,7 @@ namespace Bomberjam.Website.Database
 
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GithubId).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.Email).IsUnique();
-            modelBuilder.Entity<DbUser>().HasIndex(x => x.Username).IsUnique();
+            modelBuilder.Entity<DbUser>().HasIndex(x => x.UserName).IsUnique();
 
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Type);
@@ -108,19 +108,21 @@ namespace Bomberjam.Website.Database
             return base.DisposeAsync();
         }
 
-        private static DbUser CreateInitialUser(Guid id, string username, string email) => new DbUser
+        private static DbUser CreateInitialUser(Guid id, int githubId, string username, string email) => new DbUser
         {
             Id = id,
+            GithubId = githubId,
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow,
-            Username = username,
+            UserName = username,
             Email = email,
             SubmitCount = 1,
             GameCount = 0,
             IsCompiling = false,
             IsCompiled = false,
             CompilationErrors = string.Empty,
-            BotLanguage = string.Empty
+            BotLanguage = string.Empty,
+            Points = Constants.InitialPoints
         };
 
         private static DbQueuedTask CreateInitialCompileTask(Guid taskId, Guid userId) => new DbQueuedTask
@@ -130,6 +132,7 @@ namespace Bomberjam.Website.Database
             Updated = DateTime.UtcNow,
             Type = QueuedTaskType.Compile,
             Data = userId.ToString("D"),
+            UserId = userId,
             Status = QueuedTaskStatus.Created,
         };
 
@@ -139,7 +142,7 @@ namespace Bomberjam.Website.Database
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow,
             Type = QueuedTaskType.Game,
-            Data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.Username}")),
+            Data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.UserName}")),
             Status = QueuedTaskStatus.Created,
         };
     }

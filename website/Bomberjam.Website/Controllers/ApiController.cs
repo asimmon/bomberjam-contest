@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
@@ -193,6 +194,8 @@ namespace Bomberjam.Website.Controllers
             gameHistory.Summary.StandardOutput = gameResult.StandardOutput ?? string.Empty;
             gameHistory.Summary.StandardError = gameResult.StandardError ?? string.Empty;
 
+            await this.ComputeNewUserPoints(gameHistory);
+
             var gameId = await this.Repository.AddGame(gameHistory.Summary);
 
             var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(RemoveWebsiteIds(gameHistory));
@@ -200,6 +203,33 @@ namespace Bomberjam.Website.Controllers
             await this._botStorage.UploadGameResult(gameId, jsonGameHistoryStream);
 
             return this.Ok();
+        }
+
+        private async Task ComputeNewUserPoints(GameHistory gameHistory)
+        {
+            var users = new Dictionary<string, User>();
+
+            foreach (var (playerId, player) in gameHistory.Summary.Players)
+            {
+                users[playerId] = await this.Repository.GetUserById(player.WebsiteId!.Value).ConfigureAwait(false);
+            }
+
+            var match = new EloMatch();
+
+            var eloPlayers = gameHistory.Summary.Players.Aggregate(new Dictionary<string, IEloPlayer>(), (acc, kvp) =>
+            {
+                var user = users[kvp.Key];
+                acc[kvp.Key] = match.AddPlayer(kvp.Value.Rank, user.Points);
+                return acc;
+            });
+
+            match.ComputeElos();
+
+            foreach (var (playerId, player) in gameHistory.Summary.Players)
+            {
+                player.Points = eloPlayers[playerId].NewElo;
+                player.DeltaPoints = eloPlayers[playerId].EloChange;
+            }
         }
 
         private static GameHistory RemoveWebsiteIds(GameHistory gh)

@@ -22,5 +22,11 @@ namespace Bomberjam.Common
 
         [JsonPropertyName("websiteId")]
         public Guid? WebsiteId { get; set; }
+
+        [JsonIgnore]
+        public float Points { get; set; }
+
+        [JsonIgnore]
+        public float DeltaPoints { get; set; }
     }
 }

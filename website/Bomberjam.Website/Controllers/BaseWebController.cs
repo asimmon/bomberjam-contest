@@ -22,28 +22,26 @@ namespace Bomberjam.Website.Controllers
 
         protected ILogger<T> Logger { get; }
 
-        protected bool TryGetAuthenticatedUserEmail(out string email)
-        {
-            var emailClaim = this.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-            if (emailClaim != null)
-            {
-                email = emailClaim.Value;
-                return true;
-            }
-
-            email = null;
-            return false;
-        }
-
         protected Task<User> GetAuthenticatedUser()
         {
-            var emailClaim = this.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-            if (emailClaim == null)
+            if (!this.TryGetNameIdentifierClaim(out var githubId))
             {
                 throw new Exception("TODO Not authenticated");
             }
 
-            return this.Repository.GetUserByEmail(emailClaim.Value);
+            return this.Repository.GetUserByGithubId(githubId);
+        }
+
+        protected bool TryGetNameIdentifierClaim(out int nameIdentifier)
+        {
+            var nameIdentifierClaim = this.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+            if (nameIdentifierClaim != null && int.TryParse(nameIdentifierClaim.Value, out nameIdentifier))
+            {
+                return true;
+            }
+
+            nameIdentifier = -1;
+            return false;
         }
     }
 }

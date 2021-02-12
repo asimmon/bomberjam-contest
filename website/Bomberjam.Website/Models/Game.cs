@@ -14,7 +14,7 @@ namespace Bomberjam.Website.Models
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public int Score { get; set;  }
+        public float DeltaPoints { get; set;  }
         public int Rank { get; set;  }
     }
 }

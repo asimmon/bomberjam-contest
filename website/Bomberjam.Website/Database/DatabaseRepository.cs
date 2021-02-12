@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Bomberjam.Common;
 using Bomberjam.Website.Common;
@@ -23,21 +22,21 @@ namespace Bomberjam.Website.Database
 
         public async Task<IEnumerable<User>> GetUsers()
         {
-            return await this._dbContext.Users.Select(u => MapUser(u)).ToListAsync();
+            return await this._dbContext.Users.Select(u => MapUser(u)).ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task<User> GetUserByEmail(string email)
+        public async Task<User> GetUserByGithubId(int githubId)
         {
-            var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.Email == email);
+            var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.GithubId == githubId).ConfigureAwait(false);
             if (dbUser == null)
-                throw new UserNotFoundException($"User '{email}' not found");
+                throw new UserNotFoundException($"User with github ID '{githubId}' not found");
 
             return MapUser(dbUser);
         }
 
         public async Task<User> GetUserById(Guid id)
         {
-            var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.Id == id);
+            var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.Id == id).ConfigureAwait(false);
             if (dbUser == null)
                 throw new UserNotFoundException($"User '{id}' not found");
 
@@ -49,14 +48,16 @@ namespace Bomberjam.Website.Database
             Id = dbUser.Id,
             Created = dbUser.Created,
             Updated = dbUser.Updated,
+            GithubId = dbUser.GithubId,
             Email = dbUser.Email,
-            UserName = dbUser.Username,
+            UserName = dbUser.UserName,
             GameCount = dbUser.GameCount,
             SubmitCount = dbUser.SubmitCount,
             IsCompiled = dbUser.IsCompiled,
             IsCompiling = dbUser.IsCompiling,
             CompilationErrors = dbUser.CompilationErrors,
             BotLanguage = dbUser.BotLanguage,
+            Points = dbUser.Points,
         };
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
@@ -67,27 +68,27 @@ namespace Bomberjam.Website.Database
             {
                 GithubId = githubId,
                 Email = email,
-                Username = username ?? string.Empty,
+                UserName = username ?? string.Empty,
                 GameCount = 0,
                 SubmitCount = 0,
                 IsCompiled = false,
                 IsCompiling = false,
                 CompilationErrors = string.Empty,
                 BotLanguage = string.Empty,
-                Points = Constants.InitialPoints,
+                Points = Constants.InitialPoints
             });
 
-            await this._dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task UpdateUser(User changedUser)
         {
-            var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(e => e.Id == changedUser.Id);
+            var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(e => e.Id == changedUser.Id).ConfigureAwait(false);
             if (dbUser == null)
                 throw new UserNotFoundException($"User '{changedUser.Email ?? changedUser.Id.ToString("D")}' not found");
 
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
-                dbUser.Username = changedUser.UserName;
+                dbUser.UserName = changedUser.UserName;
 
             if (changedUser.GameCount > dbUser.GameCount)
                 dbUser.GameCount = changedUser.GameCount;
@@ -105,28 +106,30 @@ namespace Bomberjam.Website.Database
                 ? string.Empty
                 : changedUser.BotLanguage;
 
-            await this._dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<ICollection<RankedUser>> GetRankedUsers()
         {
             return await this._dbContext.Users
-                .OrderBy(u => u.Created)
+                .OrderByDescending(u => u.Points)
+                .ThenBy(u => u.Created)
                 .Select(u => MapRankedUser(u))
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
         }
 
         private static RankedUser MapRankedUser(DbUser u) => new RankedUser
         {
             Id = u.Id,
-            UserName = u.Username,
+            UserName = u.UserName,
             BotLanguage = u.BotLanguage,
-            Points = 0
+            Points = u.Points
         };
 
         public async Task<QueuedTask> GetTask(Guid taskId)
         {
-            var dbTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
+            var dbTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (dbTask == null)
                 throw new QueuedTaskNotFoundException($"Task '{taskId}' not found");
 
@@ -136,7 +139,7 @@ namespace Bomberjam.Website.Database
         public Task AddCompilationTask(Guid userId)
         {
             var data = userId.ToString("D");
-            return this.AddTask(QueuedTaskType.Compile, data);
+            return this.AddTask(QueuedTaskType.Compile, data, userId);
         }
 
         public Task AddGameTask(ICollection<User> users)
@@ -144,26 +147,27 @@ namespace Bomberjam.Website.Database
             Debug.Assert(users != null);
             Debug.Assert(users.Count == 4);
 
-            // <guid>:<name>,<guid:name>,<guid:name>,<guid:name>
+            // <userGuid>:<userName>,<userGuid:userName>,<userGuid:userName>,<userGuid:userName>
             var data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.UserName}"));
-            return this.AddTask(QueuedTaskType.Game, data);
+            return this.AddTask(QueuedTaskType.Game, data, null);
         }
 
-        private async Task AddTask(QueuedTaskType type, string data)
+        private async Task AddTask(QueuedTaskType type, string data, Guid? relatedUserId)
         {
             this._dbContext.Add(new DbQueuedTask
             {
                 Type = type,
                 Data = data,
                 Status = QueuedTaskStatus.Created,
+                UserId = relatedUserId
             });
 
-            await this._dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
         public async Task<QueuedTask> PopNextTask()
         {
-            var dbNextTask = await this._dbContext.Tasks.Where(t => t.Status == QueuedTaskStatus.Created).OrderBy(t => t.Created).FirstOrDefaultAsync();
+            var dbNextTask = await this._dbContext.Tasks.Where(t => t.Status == QueuedTaskStatus.Created).OrderBy(t => t.Created).FirstOrDefaultAsync().ConfigureAwait(false);
             if (dbNextTask == null)
                 throw new QueuedTaskNotFoundException("There are no more queued tasks");
 
@@ -171,7 +175,7 @@ namespace Bomberjam.Website.Database
             dbNextTask.Updated = DateTime.UtcNow;
 
             var nextTask = MapQueuedTask(dbNextTask);
-            await this._dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
             return nextTask;
         }
 
@@ -187,14 +191,14 @@ namespace Bomberjam.Website.Database
 
         public async Task MarkTaskAsStarted(Guid taskId)
         {
-            var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
+            var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (queuedTask == null)
                 throw new QueuedTaskNotFoundException($"The queued task '{taskId}' not found");
 
             if (queuedTask.Status == QueuedTaskStatus.Pulled)
             {
                 queuedTask.Status = QueuedTaskStatus.Started;
-                await this._dbContext.SaveChangesAsync();
+                await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             else
             {
@@ -204,14 +208,14 @@ namespace Bomberjam.Website.Database
 
         public async Task MarkTaskAsFinished(Guid taskId)
         {
-            var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
+            var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (queuedTask == null)
                 throw new QueuedTaskNotFoundException($"The queued task '{taskId}' not found");
 
             if (queuedTask.Status == QueuedTaskStatus.Started)
             {
                 queuedTask.Status = QueuedTaskStatus.Finished;
-                await this._dbContext.SaveChangesAsync();
+                await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
             }
             else
             {
@@ -227,7 +231,8 @@ namespace Bomberjam.Website.Database
                 .Where(t => t.Type == QueuedTaskType.Compile)
                 .Where(t => t.Status != QueuedTaskStatus.Finished)
                 .Where(t => t.Data == userIdString)
-                .FirstOrDefaultAsync();
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
 
             return dbTask == null ? null : MapQueuedTask(dbTask);
         }
@@ -235,6 +240,7 @@ namespace Bomberjam.Website.Database
         public async Task<IEnumerable<GameInfo>> GetGames()
         {
             var rows = await this._dbContext.Games
+                .OrderByDescending(g => g.Created)
                 .Take(50)
                 .Join(
                     this._dbContext.GameUsers,
@@ -245,7 +251,7 @@ namespace Bomberjam.Website.Database
                         GameId = game.Id,
                         GameCreated = game.Created,
                         UserId = gameUser.UserId,
-                        UserScore = gameUser.Score,
+                        UserDeltaPoints = gameUser.DeltaPoints,
                         UserRank = gameUser.Rank
                     }
                 )
@@ -258,13 +264,13 @@ namespace Bomberjam.Website.Database
                         GameId = tmp.GameId,
                         GameCreated = tmp.GameCreated,
                         UserId = tmp.UserId,
-                        UserScore = tmp.UserScore,
+                        UserDeltaPoints = tmp.UserDeltaPoints,
                         UserRank = tmp.UserRank,
-                        UserName = user.Username
+                        UserName = user.UserName
                     }
                 )
-                .OrderByDescending(row => row.GameId)
-                .ToListAsync();
+                .ToListAsync()
+                .ConfigureAwait(false);
 
             return rows.Aggregate(new Dictionary<Guid, GameInfo>(), (acc, row) =>
             {
@@ -282,7 +288,7 @@ namespace Bomberjam.Website.Database
                 {
                     Id = row.UserId,
                     Name = row.UserName,
-                    Score = row.UserScore,
+                    DeltaPoints = row.UserDeltaPoints,
                     Rank = row.UserRank
                 });
 
@@ -304,19 +310,25 @@ namespace Bomberjam.Website.Database
 
             foreach (var (_, playerSummary) in gameSummary.Players)
             {
+                var userDbId = playerSummary.WebsiteId!.Value;
+
                 var dbGameUser = new DbGameUser
                 {
                     Game = dbGame,
-                    UserId = playerSummary.WebsiteId!.Value,
+                    UserId = userDbId,
                     Score = playerSummary.Score,
+                    DeltaPoints = playerSummary.Points,
                     Rank = playerSummary.Rank,
                     Errors = playerSummary.Errors,
                 };
 
                 this._dbContext.GameUsers.Add(dbGameUser);
+
+                var dbUser = await this._dbContext.Users.SingleAsync(u => u.Id == userDbId).ConfigureAwait(false);
+                dbUser.Points = playerSummary.Points;
             }
 
-            await this._dbContext.SaveChangesAsync();
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
 
             return dbGame.Id;
         }
