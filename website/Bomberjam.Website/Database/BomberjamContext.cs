@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bomberjam.Website.Common;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -54,11 +56,14 @@ namespace Bomberjam.Website.Database
                 CreateInitialCompileTask(Guid.NewGuid(), UserPandarf.Id),
                 CreateInitialCompileTask(Guid.NewGuid(), UserMire.Id));
 
-            modelBuilder.Entity<DbQueuedTask>().HasData(
-                CreateInitialGameTask(Guid.NewGuid(), UserAskaiser, UserPandarf, UserXenure, UserFalgar),
-                CreateInitialGameTask(Guid.NewGuid(), UserMire, UserKalmera, UserXenure, UserFalgar),
-                CreateInitialGameTask(Guid.NewGuid(), UserMinty, UserPandarf, UserKalmera, UserAskaiser),
-                CreateInitialGameTask(Guid.NewGuid(), UserFalgar, UserAskaiser, UserXenure, UserKalmera));
+            var rng = new Random(42);
+            var users = new List<DbUser> { UserAskaiser, UserFalgar, UserXenure, UserMinty, UserKalmera, UserPandarf, UserMire };
+
+            for (var i = 0; i < 4; i++)
+            {
+                users.Shuffle(rng);
+                modelBuilder.Entity<DbQueuedTask>().HasData(CreateInitialGameTask(Guid.NewGuid(), users[0], users[1], users[2], users[3]));
+            }
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)

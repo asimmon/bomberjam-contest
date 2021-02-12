@@ -104,92 +104,92 @@ namespace Bomberjam.Website.Migrations
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("4b13ac24-d17d-461d-a4cf-661a0129cb7b"), new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(3), "00000000-0000-0000-0000-000000000001:Askaiser,00000000-0000-0000-0000-000000000006:Pandarf,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000002:Falgar", 1, 2, new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(8), null });
+                values: new object[] { new Guid("cada3406-dc2a-4a40-a6e4-015a20fa6bd4"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(8972), "00000000-0000-0000-0000-000000000002:Falgar,00000000-0000-0000-0000-000000000004:Minty,00000000-0000-0000-0000-000000000007:Mire,00000000-0000-0000-0000-000000000003:Xenure", 1, 2, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(8976), null });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("320ca448-5ace-4958-b947-e828a5341846"), new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(1832), "00000000-0000-0000-0000-000000000007:Mire,00000000-0000-0000-0000-000000000005:Kalmera,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000002:Falgar", 1, 2, new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(1835), null });
+                values: new object[] { new Guid("1a52d853-319c-483b-a1d6-f043a0a38a84"), new DateTime(2021, 2, 12, 23, 24, 58, 833, DateTimeKind.Utc).AddTicks(1172), "00000000-0000-0000-0000-000000000004:Minty,00000000-0000-0000-0000-000000000007:Mire,00000000-0000-0000-0000-000000000006:Pandarf,00000000-0000-0000-0000-000000000005:Kalmera", 1, 2, new DateTime(2021, 2, 12, 23, 24, 58, 833, DateTimeKind.Utc).AddTicks(1175), null });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("3a2fff15-b806-420f-aa68-706229218423"), new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(1859), "00000000-0000-0000-0000-000000000004:Minty,00000000-0000-0000-0000-000000000006:Pandarf,00000000-0000-0000-0000-000000000005:Kalmera,00000000-0000-0000-0000-000000000001:Askaiser", 1, 2, new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(1859), null });
+                values: new object[] { new Guid("8a91e879-64b7-4a07-9c03-db142d0c8aac"), new DateTime(2021, 2, 12, 23, 24, 58, 833, DateTimeKind.Utc).AddTicks(1222), "00000000-0000-0000-0000-000000000006:Pandarf,00000000-0000-0000-0000-000000000004:Minty,00000000-0000-0000-0000-000000000001:Askaiser,00000000-0000-0000-0000-000000000002:Falgar", 1, 2, new DateTime(2021, 2, 12, 23, 24, 58, 833, DateTimeKind.Utc).AddTicks(1223), null });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("b9e40918-c3ac-4743-a421-ee620a7124f6"), new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(1873), "00000000-0000-0000-0000-000000000002:Falgar,00000000-0000-0000-0000-000000000001:Askaiser,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000005:Kalmera", 1, 2, new DateTime(2021, 2, 12, 4, 12, 33, 450, DateTimeKind.Utc).AddTicks(1874), null });
+                values: new object[] { new Guid("910a5286-4f6f-405a-8d34-09aabf1d759e"), new DateTime(2021, 2, 12, 23, 24, 58, 833, DateTimeKind.Utc).AddTicks(1249), "00000000-0000-0000-0000-000000000001:Askaiser,00000000-0000-0000-0000-000000000003:Xenure,00000000-0000-0000-0000-000000000005:Kalmera,00000000-0000-0000-0000-000000000006:Pandarf", 1, 2, new DateTime(2021, 2, 12, 23, 24, 58, 833, DateTimeKind.Utc).AddTicks(1250), null });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(5700), "simmon.anthony@gmail.com", 0, 14242083, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(5873), "Askaiser" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000001"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 830, DateTimeKind.Utc).AddTicks(9448), "simmon.anthony@gmail.com", 0, 14242083, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 830, DateTimeKind.Utc).AddTicks(9686), "Askaiser" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000002"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7413), "falgar@gmail.com", 0, 36072624, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7417), "Falgar" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000002"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1380), "falgar@gmail.com", 0, 36072624, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1382), "Falgar" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000003"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7420), "xenure@gmail.com", 0, 9208753, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7421), "Xenure" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000003"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1385), "xenure@gmail.com", 0, 9208753, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1386), "Xenure" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000004"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7422), "minty@gmail.com", 0, 26142591, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7423), "Minty" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000004"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1387), "minty@gmail.com", 0, 26142591, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1388), "Minty" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000005"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7425), "kalmera@gmail.com", 0, 5122918, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7426), "Kalmera" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000005"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1389), "kalmera@gmail.com", 0, 5122918, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1390), "Kalmera" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000006"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7428), "pandarf@gmail.com", 0, 1035273, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7429), "Pandarf" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000006"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1391), "pandarf@gmail.com", 0, 1035273, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1392), "Pandarf" });
 
             migrationBuilder.InsertData(
                 table: "Users",
                 columns: new[] { "Id", "BotLanguage", "CompilationErrors", "Created", "Email", "GameCount", "GithubId", "IsCompiled", "IsCompiling", "Points", "SubmitCount", "Updated", "UserName" },
-                values: new object[] { new Guid("00000000-0000-0000-0000-000000000007"), "", "", new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7431), "mire@gmail.com", 0, 5489330, false, false, 1500f, 1, new DateTime(2021, 2, 12, 4, 12, 33, 448, DateTimeKind.Utc).AddTicks(7432), "Mire" });
+                values: new object[] { new Guid("00000000-0000-0000-0000-000000000007"), "", "", new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1393), "mire@gmail.com", 0, 5489330, false, false, 1500f, 1, new DateTime(2021, 2, 12, 23, 24, 58, 831, DateTimeKind.Utc).AddTicks(1394), "Mire" });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("78e41df7-7bc3-4815-b8b3-816c08b49851"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(6671), "00000000-0000-0000-0000-000000000001", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(6852), new Guid("00000000-0000-0000-0000-000000000001") });
+                values: new object[] { new Guid("e9d937cf-63cb-44dd-a3d1-895a128c3949"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(1205), "00000000-0000-0000-0000-000000000001", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(1458), new Guid("00000000-0000-0000-0000-000000000001") });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("5ecb4629-5b69-4df2-a6f6-2378b89f3824"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7856), "00000000-0000-0000-0000-000000000002", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7858), new Guid("00000000-0000-0000-0000-000000000002") });
+                values: new object[] { new Guid("b996195a-3772-49e2-a1a1-480acf6d149f"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3632), "00000000-0000-0000-0000-000000000002", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3635), new Guid("00000000-0000-0000-0000-000000000002") });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("c32bf946-9127-490d-9de8-7905f594db97"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7862), "00000000-0000-0000-0000-000000000003", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7863), new Guid("00000000-0000-0000-0000-000000000003") });
+                values: new object[] { new Guid("a3c8af6d-aa68-4b22-8e63-331a36ec6a8e"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3641), "00000000-0000-0000-0000-000000000003", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3641), new Guid("00000000-0000-0000-0000-000000000003") });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("03b0f003-702a-4dee-a3db-f80c55b7d5b9"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7866), "00000000-0000-0000-0000-000000000004", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7867), new Guid("00000000-0000-0000-0000-000000000004") });
+                values: new object[] { new Guid("fd4d90ae-420e-41de-87c0-2ac8cd01970a"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3644), "00000000-0000-0000-0000-000000000004", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3644), new Guid("00000000-0000-0000-0000-000000000004") });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("36fd6622-b47e-446b-a859-7d77b61e5287"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7869), "00000000-0000-0000-0000-000000000005", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7870), new Guid("00000000-0000-0000-0000-000000000005") });
+                values: new object[] { new Guid("f9983658-0d33-4f0c-b915-6be4daad3bfd"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3646), "00000000-0000-0000-0000-000000000005", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3647), new Guid("00000000-0000-0000-0000-000000000005") });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("fe64b2d5-52c6-4df1-af97-fa66c3b8b346"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7872), "00000000-0000-0000-0000-000000000006", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7873), new Guid("00000000-0000-0000-0000-000000000006") });
+                values: new object[] { new Guid("c7bdf232-c8d8-4567-9f96-a2eb13fd5bcb"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3649), "00000000-0000-0000-0000-000000000006", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3650), new Guid("00000000-0000-0000-0000-000000000006") });
 
             migrationBuilder.InsertData(
                 table: "Tasks",
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated", "UserId" },
-                values: new object[] { new Guid("b850786b-f8a1-4fae-9dd9-e6ecbf5f5f27"), new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7876), "00000000-0000-0000-0000-000000000007", 1, 1, new DateTime(2021, 2, 12, 4, 12, 33, 449, DateTimeKind.Utc).AddTicks(7876), new Guid("00000000-0000-0000-0000-000000000007") });
+                values: new object[] { new Guid("ccbf6e0b-7309-456e-90c7-f796876efc31"), new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3652), "00000000-0000-0000-0000-000000000007", 1, 1, new DateTime(2021, 2, 12, 23, 24, 58, 832, DateTimeKind.Utc).AddTicks(3653), new Guid("00000000-0000-0000-0000-000000000007") });
 
             migrationBuilder.CreateIndex(
                 name: "IX_GameUsers_UserId",

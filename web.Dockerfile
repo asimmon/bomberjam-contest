@@ -12,7 +12,7 @@ COPY ["website/Bomberjam.Website/", "website/Bomberjam.Website/"]
 RUN dotnet restore "engine/Bomberjam.Common/Bomberjam.Common.csproj"
 RUN dotnet restore "website/Bomberjam.Website/Bomberjam.Website.csproj"
 WORKDIR "/src/website/Bomberjam.Website"
-RUN dotnet build "Bomberjam.Website.csproj" -c Debug -o /app/build
+# RUN dotnet build "Bomberjam.Website.csproj" -c Debug -o /app/build
 
 FROM build AS publish
 ENV PATH="${PATH}:/root/.dotnet/tools"

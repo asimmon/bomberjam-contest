@@ -240,7 +240,6 @@ namespace Bomberjam.Website.Database
         public async Task<IEnumerable<GameInfo>> GetGames()
         {
             var rows = await this._dbContext.Games
-                .OrderByDescending(g => g.Created)
                 .Take(50)
                 .Join(
                     this._dbContext.GameUsers,
@@ -270,6 +269,8 @@ namespace Bomberjam.Website.Database
                         UserGithubId = user.GithubId
                     }
                 )
+                .OrderByDescending(x => x.GameCreated)
+                .ThenBy(x => x.UserGithubId)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
