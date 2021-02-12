@@ -1,8 +1,8 @@
 {
   "version": "0.0.1",
   "scripts": {
-    "build": "webpack --progress",
-    "watch": "webpack --progress --watch",
+    "build": "webpack",
+    "watch": "webpack --watch",
     "production": "webpack --progress --mode production"
   },
   "dependencies": {

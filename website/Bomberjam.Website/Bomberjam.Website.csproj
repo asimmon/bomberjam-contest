@@ -34,8 +34,10 @@
   </Target>
 
   <Target Name="BuildFrontend" BeforeTargets="BeforePublish">
+    <Message Text="$([System.DateTime]::Now.ToString(yyyy-MM-dd HH:mm:ss)) - Frontend build started" Importance="High" />
     <Exec WorkingDirectory="$(ProjectDir)" Command="npm ci" Condition=" !Exists( '$(ProjectDir)node_modules' ) " />
     <Exec WorkingDirectory="$(ProjectDir)" Command="npm run build" Condition=" '$(Configuration)' != 'Release' " />
     <Exec WorkingDirectory="$(ProjectDir)" Command="npm run production" Condition=" '$(Configuration)' == 'Release' " />
+    <Message Text="$([System.DateTime]::Now.ToString(yyyy-MM-dd HH:mm:ss)) - Frontend build finished" Importance="High" />
   </Target>
 </Project>
