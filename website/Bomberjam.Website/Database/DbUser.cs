@@ -7,6 +7,7 @@ namespace Bomberjam.Website.Database
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
+        public int GithubId { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public int SubmitCount { get; set; }
@@ -15,5 +16,6 @@ namespace Bomberjam.Website.Database
         public bool IsCompiled { get; set; }
         public string CompilationErrors { get; set; }
         public string BotLanguage { get; set; }
+        public float Points { get; set; }
     }
 }

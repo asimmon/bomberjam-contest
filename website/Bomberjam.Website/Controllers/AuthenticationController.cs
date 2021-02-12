@@ -57,7 +57,7 @@ namespace Bomberjam.Website.Controllers
                 catch (UserNotFoundException)
                 {
                     var temporaryUsername = "Player " + Rng.Next(1000, 9999).ToString(CultureInfo.InvariantCulture);
-                    await this.Repository.AddUser(email, temporaryUsername);
+                    await this.Repository.AddUser(TODO, email, temporaryUsername);
                 }
             }
 

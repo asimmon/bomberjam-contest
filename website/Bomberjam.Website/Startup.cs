@@ -75,13 +75,7 @@ namespace Bomberjam.Website
                 options.UseSqlite(this.Configuration.GetConnectionString(dbConnName)).EnableSensitiveDataLogging();
             });
 
-            services.AddScoped<DatabaseRepository>();
-            services.AddScoped<IRepository, CachedRepository>(container =>
-            {
-                var repository = container.GetService<DatabaseRepository>();
-                var objectCache = container.GetService<IObjectCache>();
-                return new CachedRepository(repository, objectCache);
-            });
+            services.AddScoped<IRepository, DatabaseRepository>();
 
             var zippedBotFileStream = typeof(Startup).Assembly.GetManifestResourceStream("Bomberjam.Website.MyBot.zip");
             if (zippedBotFileStream != null)

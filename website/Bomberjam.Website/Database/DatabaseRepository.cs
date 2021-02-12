@@ -61,10 +61,11 @@ namespace Bomberjam.Website.Database
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
 
-        public async Task AddUser(string email, string username)
+        public async Task AddUser(int githubId, string email, string username)
         {
             this._dbContext.Users.Add(new DbUser
             {
+                GithubId = githubId,
                 Email = email,
                 Username = username ?? string.Empty,
                 GameCount = 0,
@@ -73,6 +74,7 @@ namespace Bomberjam.Website.Database
                 IsCompiling = false,
                 CompilationErrors = string.Empty,
                 BotLanguage = string.Empty,
+                Points = Constants.InitialPoints,
             });
 
             await this._dbContext.SaveChangesAsync();
@@ -119,8 +121,7 @@ namespace Bomberjam.Website.Database
             Id = u.Id,
             UserName = u.Username,
             BotLanguage = u.BotLanguage,
-            Points = 0,
-            GlobalRank = 0
+            Points = 0
         };
 
         public async Task<QueuedTask> GetTask(Guid taskId)

@@ -11,7 +11,7 @@ namespace Bomberjam.Website.Database
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUserByEmail(string email);
         Task<User> GetUserById(Guid id);
-        Task AddUser(string email, string username);
+        Task AddUser(int githubId, string email, string username);
         Task UpdateUser(User changedUser);
 
         Task<ICollection<RankedUser>> GetRankedUsers();
