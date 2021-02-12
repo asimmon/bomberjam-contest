@@ -25,13 +25,17 @@
     <EmbeddedResource Include="MyBot.zip" />
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\dist\bundle.js" />
+  </ItemGroup>
+
   <Target Name="DeleteNodeModulesDirectory" BeforeTargets="BuildFrontend" Condition=" '$(OS)' != 'Windows_NT' ">
     <RemoveDir Directories="$(ProjectDir)node_modules" />
   </Target>
 
-  <Target Name="BuildFrontend" BeforeTargets="BeforeBuild">
-    <Exec Command="npm install" Condition=" !Exists( '$(ProjectDir)node_modules' ) " />
-    <Exec Command="npm run build" Condition=" '$(Configuration)' != 'Release' " />
-    <Exec Command="npm run production" Condition=" '$(Configuration)' == 'Release' " />
+  <Target Name="BuildFrontend" BeforeTargets="BeforePublish">
+    <Exec WorkingDirectory="$(ProjectDir)" Command="npm install" Condition=" !Exists( '$(ProjectDir)node_modules' ) " />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="npm run build" Condition=" '$(Configuration)' != 'Release' " />
+    <Exec WorkingDirectory="$(ProjectDir)" Command="npm run production" Condition=" '$(Configuration)' == 'Release' " />
   </Target>
 </Project>
