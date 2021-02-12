@@ -1,5 +1,56 @@
-﻿@{
+﻿@model UserDetails
+@{
   ViewData["Title"] = "User";
 }
 
-USER DETAIL
+
+<div class="row">
+  <div class="col-md-3">
+    <img src="https://avatars.githubusercontent.com/u/@Model.User.GithubId" class="img-fluid rounded" alt="@Model.User.UserName"/>
+    <h1>@Model.User.UserName</h1>
+    <p>
+      @Model.User.Points points
+    </p>
+  </div>
+
+  <div class="col-md-9">
+    <h3>Games</h3>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>Date</th>
+          <th>Players</th>
+          <th>Result</th>
+          <th>View</th>
+        </tr>
+        </thead>
+        <tbody>
+        @{
+          foreach (var game in Model.Games)
+          {
+            <tr>
+              <td>@game.Created.ToString("yyyy-MM-dd HH:mm:ss")</td>
+              <td>
+              @foreach (var user in game.Users)
+              {
+                <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
+                  <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="img-fluid rounded" />
+                </a>
+              }
+              </td>
+              <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
+              <td>
+                <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
+                  <i class="fas fa-video"></i>
+                </a>
+              </td>
+            </tr>
+          }
+        }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

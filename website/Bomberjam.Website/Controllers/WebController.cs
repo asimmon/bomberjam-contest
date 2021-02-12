@@ -28,13 +28,19 @@ namespace Bomberjam.Website.Controllers
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return this.View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return this.View(new ErrorModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
         [HttpGet("~/visualizer")]
         public IActionResult Visualizer()
         {
-            return this.View("Visualizer");
+            return this.View();
+        }
+
+        [HttpGet("~/game/{gameId}")]
+        public IActionResult GameDetails(Guid gameId)
+        {
+            return this.View(gameId);
         }
 
         [HttpGet("~/leaderboard")]
@@ -45,9 +51,13 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/user/{userId}")]
-        public IActionResult UserDetails(Guid userId)
+        public async Task<IActionResult> UserDetails(Guid userId)
         {
-            return this.View(new UserDetail());
+            var user = await this.Repository.GetUserById(userId);
+            var allGames = await this.Repository.GetGames();
+            var userGames = allGames.Where(g => g.Users.Any(u => u.Id == userId)).ToList();
+
+            return this.View(new UserDetails(user, userGames));
         }
     }
 

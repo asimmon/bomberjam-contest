@@ -3,7 +3,7 @@ using System.Text.Json.Serialization;
 
 namespace Bomberjam.Website.Models
 {
-    public sealed class GameResult
+    public sealed class ApiGameResult
     {
         [Required]
         [JsonPropertyName("serializedHistory")]

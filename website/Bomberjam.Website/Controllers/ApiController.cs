@@ -174,7 +174,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpPost("game")]
-        public async Task<IActionResult> AddGameResult([FromBody] GameResult gameResult)
+        public async Task<IActionResult> AddGameResult([FromBody] ApiGameResult gameResult)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(GetAllErrors(this.ModelState));

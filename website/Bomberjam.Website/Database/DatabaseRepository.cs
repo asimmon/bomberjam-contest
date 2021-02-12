@@ -266,7 +266,8 @@ namespace Bomberjam.Website.Database
                         UserId = tmp.UserId,
                         UserDeltaPoints = tmp.UserDeltaPoints,
                         UserRank = tmp.UserRank,
-                        UserName = user.UserName
+                        UserName = user.UserName,
+                        UserGithubId = user.GithubId
                     }
                 )
                 .ToListAsync()
@@ -287,6 +288,7 @@ namespace Bomberjam.Website.Database
                 gameInfo.Users.Add(new GameUserInfo
                 {
                     Id = row.UserId,
+                    GithubId = row.UserGithubId,
                     Name = row.UserName,
                     DeltaPoints = row.UserDeltaPoints,
                     Rank = row.UserRank

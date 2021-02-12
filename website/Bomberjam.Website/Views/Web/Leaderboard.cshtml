@@ -1,33 +1,35 @@
 ﻿@model IEnumerable<RankedUser>
 @{
-    ViewData["Title"] = "Leaderboard";
+  ViewData["Title"] = "Leaderboard";
 }
 
 <h2>Leaderboard</h2>
 
 <div class="table-responsive">
-    <table class="table table-sm table-bordered">
-        <thead>
+  <table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>&nbsp;</th>
+      <th>User</th>
+      <th>Language</th>
+      <th>Points</th>
+    </tr>
+    </thead>
+    <tbody>
+    @{
+      var rank = 1;
+      foreach (var user in Model)
+      {
         <tr>
-            <th>&nbsp;</th>
-            <th>User</th>
-            <th>Language</th>
-            <th>Points</th>
+          <td>@(rank++)</td>
+          <td>
+            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
+          </td>
+          <td>@user.BotLanguage</td>
+          <td>@user.Points.ToString("0.000")</td>
         </tr>
-        </thead>
-        <tbody>
-        @{
-          var rank = 1;
-          foreach (var user in Model)
-          {
-            <tr>
-              <td>@(rank++)</td>
-              <td><a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a></td>
-              <td>@user.BotLanguage</td>
-              <td>@user.Points.ToString("0.00")</td>
-            </tr>
-          }
-        }
-        </tbody>
-    </table>
+      }
+    }
+    </tbody>
+  </table>
 </div>
