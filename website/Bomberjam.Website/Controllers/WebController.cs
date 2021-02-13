@@ -21,8 +21,7 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> Index()
         {
             var users = await this.Repository.GetUsers();
-            var games = await this.Repository.GetGames();
-            return this.View(new HomeModel(users.ToList(), games.ToList()));
+            return this.View(new HomeModel(users.ToList(), new List<GameInfo>()));
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -51,11 +50,12 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/user/{userId}")]
-        public async Task<IActionResult> UserDetails(Guid userId)
+        public async Task<IActionResult> UserDetails(Guid userId, int page = 1)
         {
+            page = Math.Max(0, page);
+
             var user = await this.Repository.GetUserById(userId);
-            var allGames = await this.Repository.GetGames();
-            var userGames = allGames.Where(g => g.Users.Any(u => u.Id == userId)).ToList();
+            var userGames = await this.Repository.GetPagedUserGames(userId, page);
 
             return this.View(new UserDetails(user, userGames));
         }

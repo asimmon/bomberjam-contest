@@ -1,10 +1,8 @@
-using System.Collections.Generic;
-
 namespace Bomberjam.Website.Models
 {
     public class UserDetails : User
     {
-        public UserDetails(User user, IReadOnlyCollection<GameInfo> games)
+        public UserDetails(User user, PaginationModel<GameInfo> games)
         {
             this.User = user;
             this.Games = games;
@@ -12,6 +10,6 @@ namespace Bomberjam.Website.Models
 
         public User User { get; }
 
-        public IReadOnlyCollection<GameInfo> Games { get; }
+        public PaginationModel<GameInfo> Games { get; }
     }
 }

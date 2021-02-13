@@ -1,8 +1,7 @@
 ﻿@model UserDetails
 @{
-  ViewData["Title"] = "User";
+  ViewData["Title"] = Model.User.UserName;
 }
-
 
 <div class="row">
   <div class="col-md-3">
@@ -14,7 +13,7 @@
   </div>
 
   <div class="col-md-9">
-    <h3>Games</h3>
+    <h3>@Model.Games.TotalCount games</h3>
 
     <div class="table-responsive">
       <table class="table table-sm table-bordered table-striped">
@@ -27,30 +26,30 @@
         </tr>
         </thead>
         <tbody>
-        @{
-          foreach (var game in Model.Games)
-          {
-            <tr>
-              <td>@game.Created.ToString("yyyy-MM-dd HH:mm:ss")</td>
-              <td>
+        @foreach (var game in Model.Games.Items)
+        {
+          <tr>
+            <td>@game.Created.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td>
               @foreach (var user in game.Users)
               {
                 <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
-                  <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="img-fluid rounded" />
+                  <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="img-fluid rounded"/>
                 </a>
               }
-              </td>
-              <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
-              <td>
-                <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
-                  <i class="fas fa-video"></i>
-                </a>
-              </td>
-            </tr>
-          }
+            </td>
+            <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
+            <td>
+              <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
+                <i class="fas fa-video"></i>
+              </a>
+            </td>
+          </tr>
         }
         </tbody>
       </table>
+
+
     </div>
   </div>
 </div>

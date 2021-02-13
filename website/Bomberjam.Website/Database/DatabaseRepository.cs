@@ -13,6 +13,8 @@ namespace Bomberjam.Website.Database
 {
     public class DatabaseRepository : IRepository
     {
+        private const int UserGamesPageItemsCount = 25;
+
         private readonly BomberjamContext _dbContext;
 
         public DatabaseRepository(BomberjamContext dbContext)
@@ -237,18 +239,36 @@ namespace Bomberjam.Website.Database
             return dbTask == null ? null : MapQueuedTask(dbTask);
         }
 
-        public async Task<IEnumerable<GameInfo>> GetGames()
+        public async Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page)
         {
-            var rows = await this._dbContext.Games
-                .Take(50)
+            var totalGamesCount = await this._dbContext.GameUsers.CountAsync(gu => gu.UserId == userId).ConfigureAwait(false);
+
+            var pageIndex = page - 1;
+            var skipCount = pageIndex * UserGamesPageItemsCount;
+
+            var rows = await this._dbContext.GameUsers
+                .Where(gameUser => gameUser.UserId == userId)
                 .Join(
-                    this._dbContext.GameUsers,
-                    game => game.Id,
+                    this._dbContext.Games,
                     gameUser => gameUser.GameId,
-                    (game, gameUser) => new
+                    game => game.Id,
+                    (gameUser, game) => new
                     {
                         GameId = game.Id,
-                        GameCreated = game.Created,
+                        GameCreated = game.Created
+                    }
+                )
+                .OrderByDescending(x => x.GameCreated)
+                .Skip(skipCount)
+                .Take(UserGamesPageItemsCount)
+                .Join(
+                    this._dbContext.GameUsers,
+                    tmp => tmp.GameId,
+                    gameUser => gameUser.GameId,
+                    (tmp, gameUser) => new
+                    {
+                        GameId = tmp.GameId,
+                        GameCreated = tmp.GameCreated,
                         UserId = gameUser.UserId,
                         UserDeltaPoints = gameUser.DeltaPoints,
                         UserRank = gameUser.Rank
@@ -270,11 +290,11 @@ namespace Bomberjam.Website.Database
                     }
                 )
                 .OrderByDescending(x => x.GameCreated)
-                .ThenBy(x => x.UserGithubId)
+                .ThenBy(x => x.UserRank)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            return rows.Aggregate(new Dictionary<Guid, GameInfo>(), (acc, row) =>
+            var games = rows.Aggregate(new Dictionary<Guid, GameInfo>(), (acc, row) =>
             {
                 if (!acc.TryGetValue(row.GameId, out var gameInfo))
                 {
@@ -297,6 +317,8 @@ namespace Bomberjam.Website.Database
 
                 return acc;
             }).Values;
+
+            return new PaginationModel<GameInfo>(games, page, UserGamesPageItemsCount, totalGamesCount);
         }
 
         public async Task<Guid> AddGame(GameSummary gameSummary)
