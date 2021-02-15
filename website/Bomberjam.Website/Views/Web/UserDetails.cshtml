@@ -8,7 +8,7 @@
     <img src="https://avatars.githubusercontent.com/u/@Model.User.GithubId" class="img-fluid rounded" alt="@Model.User.UserName"/>
     <h1>@Model.User.UserName</h1>
     <p>
-      @Model.User.Points points
+      <span format-points="@Model.User.Points"></span> points
     </p>
   </div>
 
@@ -22,23 +22,40 @@
           <th>Date</th>
           <th>Players</th>
           <th>Result</th>
+          <th>Points</th>
           <th>View</th>
         </tr>
         </thead>
         <tbody>
         @foreach (var game in Model.Games.Items)
         {
+          var points = 0f;
           <tr>
             <td>@game.Created.ToString("yyyy-MM-dd HH:mm:ss")</td>
             <td>
               @foreach (var user in game.Users)
               {
+                if (user.Id == Model.User.Id)
+                {
+                  points = user.DeltaPoints;
+                }
+
                 <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
                   <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="img-fluid rounded"/>
                 </a>
               }
             </td>
             <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
+            <td>
+              @if (points < 0)
+              {
+                <text>&#8722;</text><span format-points="@points"></span>
+              }
+              else
+              {
+                <text>&#43;</text><span format-points="@points"></span>
+              }
+            </td>
             <td>
               <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
                 <i class="fas fa-video"></i>
@@ -49,7 +66,20 @@
         </tbody>
       </table>
 
+      @if (Model.Games.PageCount > 1)
+      {
+        <div class="btn-group btn-group-sm" role="group" aria-label="Third group">
+          @for (var i = 1; i <= Model.Games.PageCount; i++)
+          {
+            var pageIndex = i;
+            var buttonClassName = Model.Games.CurrentPage == pageIndex ? "btn btn-primary" : "btn btn-outline-primary";
 
+            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id" asp-route-page="@pageIndex" class="@buttonClassName">
+              @pageIndex
+            </a>
+          }
+        </div>
+      }
     </div>
   </div>
 </div>

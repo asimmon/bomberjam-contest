@@ -26,7 +26,7 @@
             <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
           </td>
           <td>@user.BotLanguage</td>
-          <td>@user.Points.ToString("0.000")</td>
+          <td><span format-points="@user.Points"></span></td>
         </tr>
       }
     }

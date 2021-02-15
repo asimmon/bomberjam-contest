@@ -13,8 +13,6 @@ namespace Bomberjam.Website.Database
 {
     public class DatabaseRepository : IRepository
     {
-        private const int UserGamesPageItemsCount = 25;
-
         private readonly BomberjamContext _dbContext;
 
         public DatabaseRepository(BomberjamContext dbContext)
@@ -241,84 +239,61 @@ namespace Bomberjam.Website.Database
 
         public async Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page)
         {
-            var totalGamesCount = await this._dbContext.GameUsers.CountAsync(gu => gu.UserId == userId).ConfigureAwait(false);
-
             var pageIndex = page - 1;
-            var skipCount = pageIndex * UserGamesPageItemsCount;
+            var skipCount = pageIndex * Constants.GamesPageSize;
 
-            var rows = await this._dbContext.GameUsers
+            var totalGamesCount = await this._dbContext.GameUsers.CountAsync(x => x.UserId == userId).ConfigureAwait(false);
+
+            // First, find the n-queried games of this user, sorted by date
+            var innerGamePageQuery = this._dbContext.GameUsers
                 .Where(gameUser => gameUser.UserId == userId)
-                .Join(
-                    this._dbContext.Games,
-                    gameUser => gameUser.GameId,
-                    game => game.Id,
-                    (gameUser, game) => new
-                    {
-                        GameId = game.Id,
-                        GameCreated = game.Created
-                    }
-                )
+                .Join(this._dbContext.Games, gameUser => gameUser.GameId, game => game.Id, (gameUser, game) => new
+                {
+                    GameId = game.Id,
+                    GameCreated = game.Created
+                })
                 .OrderByDescending(x => x.GameCreated)
                 .Skip(skipCount)
-                .Take(UserGamesPageItemsCount)
-                .Join(
-                    this._dbContext.GameUsers,
-                    tmp => tmp.GameId,
-                    gameUser => gameUser.GameId,
-                    (tmp, gameUser) => new
-                    {
-                        GameId = tmp.GameId,
-                        GameCreated = tmp.GameCreated,
-                        UserId = gameUser.UserId,
-                        UserDeltaPoints = gameUser.DeltaPoints,
-                        UserRank = gameUser.Rank
-                    }
-                )
-                .Join(
-                    this._dbContext.Users,
-                    tmp => tmp.UserId,
-                    user => user.Id,
-                    (tmp, user) => new
-                    {
-                        GameId = tmp.GameId,
-                        GameCreated = tmp.GameCreated,
-                        UserId = tmp.UserId,
-                        UserDeltaPoints = tmp.UserDeltaPoints,
-                        UserRank = tmp.UserRank,
-                        UserName = user.UserName,
-                        UserGithubId = user.GithubId
-                    }
-                )
+                .Take(Constants.GamesPageSize);
+
+            // Then join each game to its participants and user details
+            var groupedGameAndParticipantsQuery = await innerGamePageQuery
+                .Join(this._dbContext.GameUsers, tmp => tmp.GameId, gameUser => gameUser.GameId, (tmp, gameUser) => new
+                {
+                    tmp.GameId,
+                    tmp.GameCreated,
+                    gameUser.UserId,
+                    UserDeltaPoints = gameUser.DeltaPoints,
+                    UserRank = gameUser.Rank
+                })
+                .Join(this._dbContext.Users, tmp => tmp.UserId, user => user.Id, (tmp, user) => new
+                {
+                    tmp.GameId,
+                    tmp.GameCreated,
+                    tmp.UserId,
+                    tmp.UserDeltaPoints,
+                    tmp.UserRank,
+                    user.UserName,
+                    UserGithubId = user.GithubId
+                })
                 .OrderByDescending(x => x.GameCreated)
                 .ThenBy(x => x.UserRank)
                 .ToListAsync()
                 .ConfigureAwait(false);
 
-            var games = rows.Aggregate(new Dictionary<Guid, GameInfo>(), (acc, row) =>
-            {
-                if (!acc.TryGetValue(row.GameId, out var gameInfo))
-                {
-                    gameInfo = acc[row.GameId] = new GameInfo
-                    {
-                        Id = row.GameId,
-                        Created = row.GameCreated,
-                        Users = new List<GameUserInfo>()
-                    };
-                }
-
-                gameInfo.Users.Add(new GameUserInfo
+            // Project the results to actual C# models
+            var gamePage = groupedGameAndParticipantsQuery
+                .GroupBy(x => new { x.GameId, x.GameCreated })
+                .Select(g => new GameInfo(g.Key.GameId, g.Key.GameCreated, g.Select(row => new GameUserInfo
                 {
                     Id = row.UserId,
                     GithubId = row.UserGithubId,
                     Name = row.UserName,
                     DeltaPoints = row.UserDeltaPoints,
                     Rank = row.UserRank
-                });
+                })));
 
-                return acc;
-            }).Values;
-
-            return new PaginationModel<GameInfo>(games, page, UserGamesPageItemsCount, totalGamesCount);
+            return new PaginationModel<GameInfo>(gamePage, totalGamesCount, page, Constants.GamesPageSize);
         }
 
         public async Task<Guid> AddGame(GameSummary gameSummary)
@@ -342,7 +317,7 @@ namespace Bomberjam.Website.Database
                     Game = dbGame,
                     UserId = userDbId,
                     Score = playerSummary.Score,
-                    DeltaPoints = playerSummary.Points,
+                    DeltaPoints = playerSummary.DeltaPoints,
                     Rank = playerSummary.Rank,
                     Errors = playerSummary.Errors,
                 };
