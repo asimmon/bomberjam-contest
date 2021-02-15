@@ -11,6 +11,8 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
+        private const string TablePrefix = "App_";
+
         private static readonly DbUser UserAskaiser = CreateInitialUser(Constants.UserAskaiserId, 14242083, "Askaiser", "simmon.anthony@gmail.com");
         private static readonly DbUser UserFalgar = CreateInitialUser(Constants.UserFalgarId, 36072624, "Falgar", "falgar@gmail.com");
         private static readonly DbUser UserXenure = CreateInitialUser(Constants.UserXenureId, 9208753, "Xenure", "xenure@gmail.com");
@@ -33,6 +35,14 @@ namespace Bomberjam.Website.Database
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
+
+            foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+            {
+                var prefixedTableName = TablePrefix + entityType.GetTableName();
+                entityType.SetTableName(prefixedTableName);
+            }
+
             modelBuilder.Entity<DbGameUser>().HasKey(x => new { GameID = x.GameId, UserID = x.UserId });
 
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GithubId).IsUnique();
