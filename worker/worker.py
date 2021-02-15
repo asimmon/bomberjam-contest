@@ -1,8 +1,8 @@
 import glob
-import json
 import logging
 import os
 import os.path
+import signal
 import shutil
 import socket
 import subprocess
@@ -241,15 +241,32 @@ def try_handle_next_task():
     return False
 
 
-def main():
-    util.setup_logging()
-    logging.info("Starting up worker at %s" % (socket.gethostname()))
-    time.sleep(3)
+class WorkerApp:
+    is_shutdown_requested = False
+    shutdown_signals = {
+        signal.SIGINT: 'SIGINT',
+        signal.SIGTERM: 'SIGTERM'
+    }
 
-    while True:
-        if not try_handle_next_task():
-            time.sleep(10)
+    def __init__(self):
+        signal.signal(signal.SIGINT, self.exit_gracefully)
+        signal.signal(signal.SIGTERM, self.exit_gracefully)
+
+        util.setup_logging()
+        logging.info("Starting up worker at %s" % (socket.gethostname()))
+        time.sleep(3)
+
+    def exit_gracefully(self, signum):
+        logging.info("Received %s signal" % self.shutdown_signals[signum])
+        self.is_shutdown_requested = True
+
+    def run(self):
+        while not self.is_shutdown_requested:
+            if not try_handle_next_task():
+                for x in range(10):
+                    if not self.is_shutdown_requested:
+                        time.sleep(1)
 
 
 if __name__ == "__main__":
-    main()
+    WorkerApp().run()

@@ -17,6 +17,7 @@ services:
     image: bomberjam-worker
     restart: unless-stopped
     privileged: true
+    init: true
     environment:
       - API_BASE_URL=https://web/api/
       - API_AUTH=verysecret
