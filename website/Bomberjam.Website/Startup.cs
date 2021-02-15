@@ -1,9 +1,13 @@
+using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Storage;
+using Hangfire;
+using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -17,6 +21,10 @@ namespace Bomberjam.Website
 {
     public class Startup
     {
+        private static readonly Regex SqliteDataSourceRegex = new Regex(
+            "Data Source=(?<filename>[a-z0-9]+\\.db)",
+            RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
             this.Configuration = configuration;
@@ -70,12 +78,33 @@ namespace Bomberjam.Website
             services.AddSingleton<IObjectCache, ObjectCache>();
 
             var dbConnName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "BomberjamContextWin" : "BomberjamContextLin";
+            var dbConnStr = this.Configuration.GetConnectionString(dbConnName);
+
             services.AddDbContext<BomberjamContext>(options =>
             {
-                options.UseSqlite(this.Configuration.GetConnectionString(dbConnName)).EnableSensitiveDataLogging();
+                options.UseSqlite(dbConnStr).EnableSensitiveDataLogging();
             });
 
             services.AddScoped<IRepository, DatabaseRepository>();
+
+            if (SqliteDataSourceRegex.Match(dbConnStr) is { Success: true } match)
+            {
+                services.AddHangfire(config => config
+                    .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                    .UseSimpleAssemblyNameTypeSerializer()
+                    .UseRecommendedSerializerSettings()
+                    .UseSQLiteStorage(match.Groups["filename"].Value));
+            }
+            else
+            {
+                throw new Exception($"Could not extract SQLite database file name from the connection string '{dbConnStr}'");
+            }
+
+            // Add the processing server as IHostedService
+            services.AddHangfireServer();
+
+            // Add framework services.
+            services.AddMvc();
 
             var zippedBotFileStream = typeof(Startup).Assembly.GetManifestResourceStream("Bomberjam.Website.MyBot.zip");
             if (zippedBotFileStream != null)
@@ -97,8 +126,7 @@ namespace Bomberjam.Website
             }
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IBackgroundJobClient backgroundJobs)
         {
             app.UseResponseCompression();
 
@@ -132,7 +160,10 @@ namespace Bomberjam.Website
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
+                endpoints.MapHangfireDashboard();
             });
+
+            backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
         }
     }
 }
