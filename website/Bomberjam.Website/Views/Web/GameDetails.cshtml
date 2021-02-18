@@ -1,8 +1,11 @@
-﻿@model Guid
+﻿@model GameInfo
 @{
   ViewData["Title"] = "Game";
 }
 
-<h1>Game</h1>
+<h1>
+  @string.Join(", ", Model.Users.Select(u => u.Name))
+  <small class="text-muted">@Model.Created</small>
+</h1>
 
-<div id="visualizer" data-game-id="@Model"></div>
+<div id="visualizer" data-game-id="@Model.Id"></div>

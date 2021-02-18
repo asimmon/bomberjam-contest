@@ -46,15 +46,7 @@
               }
             </td>
             <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
-            <td>
-              @if (points < 0)
-              {
-                <text>&#8722;</text><span format-points="@points"></span>
-              }
-              else
-              {
-                <text>&#43;</text><span format-points="@points"></span>
-              }
+            <td><span format-points="@points" show-sign="true"></span>
             </td>
             <td>
               <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">

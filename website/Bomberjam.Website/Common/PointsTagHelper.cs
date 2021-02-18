@@ -1,19 +1,35 @@
+using System;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Bomberjam.Website.Common
 {
-    [HtmlTargetElement("span", Attributes = PointsAttributeName)]
+    [HtmlTargetElement("span", Attributes = FormatPointsAttributeName)]
+    [HtmlTargetElement("span", Attributes = ShowSignAttributeName)]
     public class PointsTagHelper : TagHelper
     {
-        private const string PointsAttributeName = "format-points";
+        private const string FormatPointsAttributeName = "format-points";
+        private const string ShowSignAttributeName = "show-sign";
 
-        [HtmlAttributeName(PointsAttributeName)]
-        public float Points { get; set; }
+        [HtmlAttributeName(FormatPointsAttributeName)]
+        public float FormatPoints { get; set; }
+
+        [HtmlAttributeName(ShowSignAttributeName)]
+        public bool ShowSign { get; set; }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            var content = (this.Points / 30f).ToString("0.000");
-            output.Content.SetContent(content);
+            if (this.ShowSign)
+            {
+                var absPoints = Math.Abs(this.FormatPoints);
+                var sign = this.FormatPoints >= 0 ? "+" : "-";
+                var content = sign + (absPoints / 30f).ToString("0.000");
+                output.Content.SetContent(content);
+            }
+            else
+            {
+                var content = (this.FormatPoints / 30f).ToString("0.000");
+                output.Content.SetContent(content);
+            }
         }
     }
 }

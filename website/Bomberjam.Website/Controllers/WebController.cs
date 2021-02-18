@@ -30,23 +30,24 @@ namespace Bomberjam.Website.Controllers
             return this.View(new ErrorModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpGet("~/visualizer")]
-        public IActionResult Visualizer()
-        {
-            return this.View();
-        }
-
-        [HttpGet("~/game/{gameId}")]
-        public IActionResult GameDetails(Guid gameId)
-        {
-            return this.View(gameId);
-        }
-
         [HttpGet("~/leaderboard")]
         public async Task<IActionResult> Leaderboard()
         {
             var rankedUsers = await this.Repository.GetRankedUsers();
             return this.View(rankedUsers);
+        }
+
+        [HttpGet("~/game/{gameId}")]
+        public async Task<IActionResult> GameDetails(Guid gameId)
+        {
+            var game = await this.Repository.GetGame(gameId);
+            return this.View(game);
+        }
+
+        [HttpGet("~/visualizer")]
+        public IActionResult Visualizer()
+        {
+            return this.View();
         }
 
         [HttpGet("~/user/{userId}")]

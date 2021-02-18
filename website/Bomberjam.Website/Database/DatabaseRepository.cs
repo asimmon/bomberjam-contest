@@ -237,6 +237,53 @@ namespace Bomberjam.Website.Database
             return dbTask == null ? null : MapQueuedTask(dbTask);
         }
 
+        public async Task<GameInfo> GetGame(Guid gameId)
+        {
+            // Then join each game to its participants and user details
+            var gameAndParticipants = await this._dbContext.Games
+                .Where(g => g.Id == gameId)
+                .Join(this._dbContext.GameUsers, game => game.Id, gameUser => gameUser.GameId, (game, gameUser) => new
+                {
+                    GameId = game.Id,
+                    GameCreated = game.Created,
+                    gameUser.UserId,
+                    UserDeltaPoints = gameUser.DeltaPoints,
+                    UserRank = gameUser.Rank
+                })
+                .Join(this._dbContext.Users, tmp => tmp.UserId, user => user.Id, (tmp, user) => new
+                {
+                    tmp.GameId,
+                    tmp.GameCreated,
+                    tmp.UserId,
+                    tmp.UserDeltaPoints,
+                    tmp.UserRank,
+                    user.UserName,
+                    UserGithubId = user.GithubId
+                })
+                .OrderByDescending(x => x.GameCreated)
+                .ThenBy(x => x.UserRank)
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            // Project the results to actual C# models
+            var groupedGame = gameAndParticipants
+                .GroupBy(x => new { x.GameId, x.GameCreated })
+                .Select(g => new GameInfo(g.Key.GameId, g.Key.GameCreated, g.Select(row => new GameUserInfo
+                {
+                    Id = row.UserId,
+                    GithubId = row.UserGithubId,
+                    Name = row.UserName,
+                    DeltaPoints = row.UserDeltaPoints,
+                    Rank = row.UserRank
+                })))
+                .FirstOrDefault();
+
+            if (groupedGame == null)
+                throw new GameNotFoundException(gameId.ToString());
+
+            return groupedGame;
+        }
+
         public async Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page)
         {
             var pageIndex = page - 1;

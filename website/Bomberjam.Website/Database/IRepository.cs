@@ -24,6 +24,7 @@ namespace Bomberjam.Website.Database
         Task MarkTaskAsFinished(Guid taskId);
         Task<QueuedTask> GetUserActiveCompileTask(Guid userId);
 
+        Task<GameInfo> GetGame(Guid gameId);
         Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);
         Task<Guid> AddGame(GameSummary gameSummary);
     }
