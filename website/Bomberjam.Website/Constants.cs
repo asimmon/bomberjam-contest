@@ -14,6 +14,8 @@ namespace Bomberjam.Website
 
         public const int GamesPageSize = 25;
 
+        public static readonly Random Rng = new Random();
+
         public static readonly Guid UserAskaiserId = new Guid("00000000-0000-0000-0000-000000000001");
         public static readonly Guid UserFalgarId = new Guid("00000000-0000-0000-0000-000000000002");
         public static readonly Guid UserXenureId = new Guid("00000000-0000-0000-0000-000000000003");

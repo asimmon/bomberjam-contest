@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Storage;
 using Hangfire;
 using Hangfire.Storage.SQLite;
@@ -126,7 +127,7 @@ namespace Bomberjam.Website
             }
         }
 
-        public void Configure(IApplicationBuilder app, IBackgroundJobClient backgroundJobs)
+        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs)
         {
             app.UseResponseCompression();
 
@@ -163,7 +164,7 @@ namespace Bomberjam.Website
                 endpoints.MapHangfireDashboard();
             });
 
-            backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), Cron.Minutely);
         }
     }
 }

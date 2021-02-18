@@ -142,7 +142,7 @@ namespace Bomberjam.Website.Database
             return this.AddTask(QueuedTaskType.Compile, data, userId);
         }
 
-        public Task AddGameTask(ICollection<User> users)
+        public Task AddGameTask(IReadOnlyCollection<User> users)
         {
             Debug.Assert(users != null);
             Debug.Assert(users.Count == 4);

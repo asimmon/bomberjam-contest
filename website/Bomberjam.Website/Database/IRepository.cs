@@ -19,7 +19,7 @@ namespace Bomberjam.Website.Database
         Task<QueuedTask> PopNextTask();
         Task<QueuedTask> GetTask(Guid taskId);
         Task AddCompilationTask(Guid userId);
-        Task AddGameTask(ICollection<User> users);
+        Task AddGameTask(IReadOnlyCollection<User> users);
         Task MarkTaskAsStarted(Guid taskId);
         Task MarkTaskAsFinished(Guid taskId);
         Task<QueuedTask> GetUserActiveCompileTask(Guid userId);
