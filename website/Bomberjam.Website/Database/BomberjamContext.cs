@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,13 +11,16 @@ namespace Bomberjam.Website.Database
     {
         private const string TablePrefix = "App_";
 
-        private static readonly DbUser UserAskaiser = CreateInitialUser(Constants.UserAskaiserId, 14242083, "Askaiser", "simmon.anthony@gmail.com");
-        private static readonly DbUser UserFalgar = CreateInitialUser(Constants.UserFalgarId, 36072624, "Falgar", "falgar@gmail.com");
-        private static readonly DbUser UserXenure = CreateInitialUser(Constants.UserXenureId, 9208753, "Xenure", "xenure@gmail.com");
-        private static readonly DbUser UserMinty = CreateInitialUser(Constants.UserMintyId, 26142591, "Minty", "minty@gmail.com");
-        private static readonly DbUser UserKalmera = CreateInitialUser(Constants.UserKalmeraId, 5122918, "Kalmera", "kalmera@gmail.com");
-        private static readonly DbUser UserPandarf = CreateInitialUser(Constants.UserPandarfId, 1035273, "Pandarf", "pandarf@gmail.com");
-        private static readonly DbUser UserMire = CreateInitialUser(Constants.UserMireId, 5489330, "Mire", "mire@gmail.com");
+        private static readonly DbUser[] InitialTestUsers =
+        {
+            CreateInitialUser(Constants.UserAskaiserId, 14242083, "Askaiser", "simmon.anthony@gmail.com"),
+            CreateInitialUser(Constants.UserFalgarId, 36072624, "Falgar", "falgar@gmail.com"),
+            CreateInitialUser(Constants.UserXenureId, 9208753, "Xenure", "xenure@gmail.com"),
+            CreateInitialUser(Constants.UserMintyId, 26142591, "Minty", "minty@gmail.com"),
+            CreateInitialUser(Constants.UserKalmeraId, 5122918, "Kalmera", "kalmera@gmail.com"),
+            CreateInitialUser(Constants.UserPandarfId, 1035273, "Pandarf", "pandarf@gmail.com"),
+            CreateInitialUser(Constants.UserMireId, 5489330, "Mire", "mire@gmail.com")
+        };
 
         public BomberjamContext(DbContextOptions<BomberjamContext> options)
             : base(options)
@@ -55,16 +59,13 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Type).HasConversion<int>();
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Status).HasConversion<int>();
 
-            modelBuilder.Entity<DbUser>().HasData(UserAskaiser, UserFalgar, UserXenure, UserMinty, UserKalmera, UserPandarf, UserMire);
+            modelBuilder.Entity<DbUser>().HasData(InitialTestUsers);
 
-            modelBuilder.Entity<DbQueuedTask>().HasData(
-                CreateInitialCompileTask(Guid.NewGuid(), UserAskaiser.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserFalgar.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserXenure.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserMinty.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserKalmera.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserPandarf.Id),
-                CreateInitialCompileTask(Guid.NewGuid(), UserMire.Id));
+            var initialBots = InitialTestUsers.Select(u => CreateInitialBot(u.Id)).ToList();
+            modelBuilder.Entity<DbBot>().HasData(initialBots);
+
+            var initialCompileTasks = initialBots.Select(b => CreateInitialCompileTask(Guid.NewGuid(), b.Id)).ToList();
+            modelBuilder.Entity<DbQueuedTask>().HasData(initialCompileTasks);
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)
@@ -125,14 +126,24 @@ namespace Bomberjam.Website.Database
             Points = Constants.InitialPoints
         };
 
-        private static DbQueuedTask CreateInitialCompileTask(Guid taskId, Guid userId) => new DbQueuedTask
+        private static DbBot CreateInitialBot(Guid userId) => new DbBot
+        {
+            Id = userId,
+            Created = DateTime.UtcNow,
+            Updated = DateTime.UtcNow,
+            UserId = userId,
+            Status = CompilationStatus.NotCompiled,
+            Language = string.Empty,
+            Errors = string.Empty
+        };
+
+        private static DbQueuedTask CreateInitialCompileTask(Guid taskId, Guid botId) => new DbQueuedTask
         {
             Id = taskId,
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow,
             Type = QueuedTaskType.Compile,
-            Data = userId.ToString("D"),
-            UserId = userId,
+            Data = botId.ToString("D"),
             Status = QueuedTaskStatus.Created,
         };
     }

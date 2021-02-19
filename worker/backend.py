@@ -63,13 +63,27 @@ def send_compilation_result(bot_id, did_compile, language, errors=None):
         'Content-Type': 'application/json'
     }
     r = requests.post(request_url, headers=request_headers, verify=False, json={
-        'userId': bot_id,
-        'didCompile': did_compile,
+        'botId': bot_id,
+        'didCompile': True if did_compile else False,
         'language': language,
         'error': str(errors)
     })
     r.raise_for_status()
     logging.debug("Sent compilation result: %s" % r.text)
+
+
+def get_player_compiled_bot_id(player_id):
+    logging.debug(f"Retrieving the latest compiled bot ID for player {player_id}...")
+
+    request_url = API_BASE_URL + ("user/%s/bot" % player_id)
+    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+
+    r = requests.get(request_url, headers=request_headers, verify=False)
+    r.raise_for_status()
+
+    bot_id = r.text;
+    logging.info("Latest compiled bot ID for player %s: %s" % (player_id, bot_id))
+    return bot_id
 
 
 def send_game_result(game):

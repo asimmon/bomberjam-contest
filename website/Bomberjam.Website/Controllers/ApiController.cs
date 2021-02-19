@@ -13,7 +13,6 @@ using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
@@ -21,7 +20,7 @@ namespace Bomberjam.Website.Controllers
     [Authorize(AuthenticationSchemes = Constants.SupportedAuthenticationSchemes)]
     [ApiController]
     [Route("~/api")]
-    public class ApiController : BaseApiController<ApiController>
+    public class ApiController : BaseBomberjamController<ApiController>
     {
         private static readonly SemaphoreSlim GetNextTaskMutex = new(1);
 
@@ -41,13 +40,6 @@ namespace Bomberjam.Website.Controllers
             return this.File(fileBytes, "application/octet-stream", $"bot-{botId:D}.zip");
         }
 
-        [HttpPost("bot/{botId}/upload")]
-        public async Task<IActionResult> UploadBot(Guid botId)
-        {
-            await this.BotStorage.UploadCompiledBot(botId, this.Request.Body);
-            return this.Ok();
-        }
-
         private static async Task<byte[]> StreamToByteArray(Stream stream)
         {
             await using (stream)
@@ -56,6 +48,13 @@ namespace Bomberjam.Website.Controllers
                 await stream.CopyToAsync(memoryStream);
                 return memoryStream.ToArray();
             }
+        }
+
+        [HttpPost("bot/{botId}/upload")]
+        public async Task<IActionResult> UploadCompiledBot(Guid botId)
+        {
+            await this.BotStorage.UploadCompiledBot(botId, this.Request.Body);
+            return this.Ok();
         }
 
         [HttpPost("bot/{botId}/compilation-result")]
@@ -75,9 +74,14 @@ namespace Bomberjam.Website.Controllers
             return this.Ok();
         }
 
-        private static string[] GetAllErrors(ModelStateDictionary modelState)
+        [HttpGet("user/{userId}/bot")]
+        public async Task<IActionResult> GetUserCompiledBotId(Guid userId)
         {
-            return modelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToArray();
+            var bots = await this.Repository.GetBots(userId);
+            var compiledBots = bots.Where(b => b.Status == CompilationStatus.CompilationSucceeded);
+            return compiledBots.OrderByDescending(b => b.Updated).FirstOrDefault() is { } latestCompiledBot
+                ? this.Ok(latestCompiledBot.Id.ToString("D"))
+                : this.NotFound();
         }
 
         [HttpGet("task/{taskId}")]

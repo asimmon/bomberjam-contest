@@ -10,7 +10,7 @@ using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Controllers
 {
-    public class WebController : BaseWebController<WebController>
+    public class WebController : BaseBomberjamController<WebController>
     {
         public WebController(IRepository repository, ILogger<WebController> logger)
             : base(repository, logger)

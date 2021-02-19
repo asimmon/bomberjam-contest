@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
 {
-    public class AuthenticationController : BaseWebController<AuthenticationController>
+    public class AuthenticationController : BaseBomberjamController<AuthenticationController>
     {
         public AuthenticationController(IRepository repository, ILogger<AuthenticationController> logger)
             : base(repository, logger)

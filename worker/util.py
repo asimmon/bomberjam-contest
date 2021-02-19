@@ -47,29 +47,30 @@ def setup_logging():
     logging.getLogger().addHandler(stdout_handler)
 
 
-class Bot:
-    def __init__(self, bot_index, bot_id, bot_name):
-        self.bot_index = bot_index
-        self.bot_id = bot_id
-        self.bot_name = bot_name
+class Player:
+    def __init__(self, player_index, player_id, player_name):
+        self.player_index = player_index
+        self.player_id = player_id
+        self.player_name = player_name
+        self.bot_id = ''
         self.bot_dir = ''
         self.bot_logs = ''
 
 
 class Game:
-    # serialized_bot_data format: id:name,id:name,etc
+    # serialized_player_data format: id:name,id:name,etc
     # Example: 1:foo,5:bar,6:qux,4:baz
-    def __init__(self, serialized_bot_data):
-        self.bots = []
+    def __init__(self, serialized_player_data):
+        self.players = []
         self.game_result = ''
         self.game_stdout = ''
         self.game_stderr = ''
         self.exception = ''
 
-        bot_data = {k: str(v) for k, v in [i.split(':') for i in serialized_bot_data.split(',')]}
-        for bot_index, bot_id in enumerate(bot_data):
-            self.add_player(bot_index, bot_id, bot_data[bot_id])
+        player_data = {k: str(v) for k, v in [i.split(':') for i in serialized_player_data.split(',')]}
+        for player_index, player_id in enumerate(player_data):
+            self.add_player(player_index, player_id, player_data[player_id])
 
-    def add_player(self, bot_index, bot_id, bot_name):
-        bot = Bot(bot_index, bot_id, bot_name)
-        self.bots.append(bot)
+    def add_player(self, player_index, player_id, player_name):
+        player = Player(player_index, player_id, player_name)
+        self.players.append(player)

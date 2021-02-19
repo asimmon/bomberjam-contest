@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
 {
-    public class BaseWebController<T> : Controller
+    public class BaseBomberjamController<T> : Controller
         where T : Controller
     {
-        public BaseWebController(IRepository repository, ILogger<T> logger)
+        public BaseBomberjamController(IRepository repository, ILogger<T> logger)
         {
             this.Repository = repository;
             this.Logger = logger;
@@ -42,6 +43,11 @@ namespace Bomberjam.Website.Controllers
 
             nameIdentifier = -1;
             return false;
+        }
+
+        protected static string[] GetAllErrors(ModelStateDictionary modelState)
+        {
+            return modelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToArray();
         }
     }
 }

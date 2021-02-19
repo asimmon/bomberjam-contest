@@ -8,6 +8,37 @@
     <p>
         Welcome, @Model.User.UserName!
         Click <a asp-controller="Account" asp-action="Edit">here</a> to edit your account.
-        You've submitted @Model.Bots.Count bots.
     </p>
+</div>
+
+<h2>You've submitted  @Model.Bots.Count bots</h2>
+
+<div class="table-responsive">
+  <table class="table table-sm table-bordered">
+    <thead>
+    <tr>
+      <th>Date</th>
+      <th>Language</th>
+      <th>Errors</th>
+      <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var bot in Model.Bots)
+    {
+      <tr>
+        <td style="white-space:nowrap">@bot.Created</td>
+        <td style="white-space:nowrap">@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
+        <td style="white-space:nowrap">@bot.Errors</td>
+        <td style="white-space:nowrap">@bot.Status.ToString()</td>
+      </tr>
+    }
+    @if (Model.Bots.Count == 0)
+    {
+      <tr>
+        <td colspan="4" class="text-center">Nothing to display</td>
+      </tr>
+    }
+    </tbody>
+  </table>
 </div>

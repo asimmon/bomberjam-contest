@@ -13,7 +13,7 @@ namespace Bomberjam.Website.Controllers
 {
     [Authorize]
     [Route("~/account")]
-    public class AccountController : BaseWebController<AccountController>
+    public class AccountController : BaseBomberjamController<AccountController>
     {
         public AccountController(IRepository repository, IBotStorage botStorage, ILogger<AccountController> logger)
             : base(repository, logger)
@@ -80,8 +80,8 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
             }
 
-            await this.BotStorage.UploadBotSourceCode(user.Id, viewModel.BotFile.OpenReadStream());
             var newBotId = await this.Repository.AddBot(user.Id);
+            await this.BotStorage.UploadBotSourceCode(newBotId, viewModel.BotFile.OpenReadStream());
             await this.Repository.AddCompilationTask(newBotId);
 
             return this.RedirectToAction("Index", "Account");

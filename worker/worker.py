@@ -105,13 +105,15 @@ def handle_compile_task(bot_id):
             util.rm_as_user("bot_compilation", temp_dir)
 
 
-def setup_participant(bot, temp_dir):
+def setup_participant(player, temp_dir):
     """Download and set up the bot for a game"""
-    bot_dir = "%s_%s" % (bot.bot_index, bot.bot_id)
+    player.bot_id = backend.get_player_compiled_bot_id(player.player_id)
+
+    bot_dir = "%s_%s" % (player.player_index, player.player_id)
     bot_dir = os.path.join(temp_dir, bot_dir)
 
     os.mkdir(bot_dir)
-    bot_archive_path = backend.download_bot(bot.bot_id, bot_dir, is_compiled=True)
+    bot_archive_path = backend.download_bot(player.bot_id, bot_dir, is_compiled=True)
     archive.unpack(bot_archive_path)
 
     # Make the start script executable
@@ -123,9 +125,9 @@ def setup_participant(bot, temp_dir):
     # files, but not vice versa.
     # https://superuser.com/questions/102253/how-to-make-files-created-in-a-directory-owned-by-directory-group
 
-    bot_user = "bot_%s" % bot.bot_index
-    bot_group = "bot_%s" % bot.bot_index
-    bot_cgroup = "bot_%s" % bot.bot_index
+    bot_user = "bot_%s" % player.player_index
+    bot_group = "bot_%s" % player.player_index
+    bot_cgroup = "bot_%s" % player.player_index
 
     # We want 770 so that the bot can create files still; leading 2
     # is equivalent to g+s which forces new files to be owned by the group
@@ -147,8 +149,8 @@ def run_game(game):
         try:
             bomberjam_exec_path = os.path.join(temp_dir, BOMBERJAM_EXEC_NAME)
             game_result_path = os.path.join(temp_dir, 'game.json')
-            bot_names_override = ','.join([x.bot_name for x in game.bots])
-            bot_ids_override = ','.join([x.bot_id for x in game.bots])
+            bot_names_override = ','.join([x.player_name for x in game.players])
+            bot_ids_override = ','.join([x.player_id for x in game.players])
 
             shutil.copy(BOMBERJAM_EXEC_NAME, bomberjam_exec_path)
             command = [bomberjam_exec_path, '-q', '-o', game_result_path, '-n', bot_names_override, '-i', bot_ids_override]
@@ -159,10 +161,10 @@ def run_game(game):
             # and fails when it tries to lstat the temp dir, which this fixes
             os.chmod(temp_dir, 0o755)
 
-            for bot_index, bot in enumerate(game.bots):
-                bot_command, bot_dir = setup_participant(bot, temp_dir)
+            for player_index, player in enumerate(game.players):
+                bot_command, bot_dir = setup_participant(player, temp_dir)
                 command.append(bot_command)
-                bot.bot_dir = bot_dir
+                player.bot_dir = bot_dir
 
             logging.debug("Running game command %s" % command)
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -189,8 +191,8 @@ def run_game(game):
         finally:
             # tempdir will automatically be cleaned up, but we need to do things
             # manually because the bot might have made files it owns
-            for bot_index, bot in enumerate(game.bots):
-                bot_user = "bot_%s" % bot_index
+            for player_index, player in enumerate(game.players):
+                bot_user = "bot_%s" % player_index
                 util.rm_as_user(bot_user, temp_dir)
 
                 # The processes won't necessarily be automatically cleaned up, so let's do it ourselves
@@ -200,7 +202,7 @@ def run_game(game):
 def handle_game_task(game):
     """Downloads compiled bots, runs a game, and posts the results of the game"""
     try:
-        logging.debug("Running game with bots: %s" % ", ".join(["%s (%s)" % (x.bot_name, x.bot_id) for x in game.bots]))
+        logging.debug("Running game with bots: %s" % ", ".join(["%s (%s)" % (x.player_name, x.player_id) for x in game.players]))
         game = run_game(game)
     except:
         game.exception = traceback.format_exc()
@@ -223,8 +225,8 @@ def handle_any_task(task):
             handle_compile_task(bot_id)
 
         elif task_type == 2:
-            game_data = util.Game(task['data'])
-            handle_game_task(game_data)
+            game = util.Game(task['data'])
+            handle_game_task(game)
     finally:
         backend.mark_task_finished(task_id)
 
