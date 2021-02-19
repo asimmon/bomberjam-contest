@@ -13,16 +13,19 @@ namespace Bomberjam.Website.Database
         Task<User> GetUserById(Guid id);
         Task AddUser(int githubId, string email, string username);
         Task UpdateUser(User changedUser);
-
         Task<ICollection<RankedUser>> GetRankedUsers();
+
+        Task<IEnumerable<Bot>> GetBots(Guid userId);
+        Task<Bot> GetBot(Guid botId);
+        Task<Guid> AddBot(Guid userId);
+        Task UpdateBot(Bot bot);
 
         Task<QueuedTask> PopNextTask();
         Task<QueuedTask> GetTask(Guid taskId);
-        Task AddCompilationTask(Guid userId);
+        Task AddCompilationTask(Guid botId);
         Task AddGameTask(IReadOnlyCollection<User> users);
         Task MarkTaskAsStarted(Guid taskId);
         Task MarkTaskAsFinished(Guid taskId);
-        Task<QueuedTask> GetUserActiveCompileTask(Guid userId);
 
         Task<GameInfo> GetGame(Guid gameId);
         Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);

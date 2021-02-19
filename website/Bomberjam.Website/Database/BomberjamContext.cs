@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Bomberjam.Website.Common;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -29,6 +26,7 @@ namespace Bomberjam.Website.Database
         }
 
         public DbSet<DbUser> Users { get; set; }
+        public DbSet<DbBot> Bots { get; set; }
         public DbSet<DbGame> Games { get; set; }
         public DbSet<DbGameUser> GameUsers { get; set; }
         public DbSet<DbQueuedTask> Tasks { get; set; }
@@ -39,8 +37,7 @@ namespace Bomberjam.Website.Database
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
-                var prefixedTableName = TablePrefix + entityType.GetTableName();
-                entityType.SetTableName(prefixedTableName);
+                entityType.SetTableName(TablePrefix + entityType.GetTableName());
             }
 
             modelBuilder.Entity<DbGameUser>().HasKey(x => new { GameID = x.GameId, UserID = x.UserId });
@@ -48,6 +45,9 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GithubId).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.UserName).IsUnique();
+
+            modelBuilder.Entity<DbBot>().HasIndex(x => x.Updated);
+            modelBuilder.Entity<DbBot>().Property(x => x.Status).HasConversion<int>();
 
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Type);
@@ -65,15 +65,6 @@ namespace Bomberjam.Website.Database
                 CreateInitialCompileTask(Guid.NewGuid(), UserKalmera.Id),
                 CreateInitialCompileTask(Guid.NewGuid(), UserPandarf.Id),
                 CreateInitialCompileTask(Guid.NewGuid(), UserMire.Id));
-
-            var rng = new Random(42);
-            var users = new List<DbUser> { UserAskaiser, UserFalgar, UserXenure, UserMinty, UserKalmera, UserPandarf, UserMire };
-
-            for (var i = 0; i < 4; i++)
-            {
-                users.Shuffle(rng);
-                modelBuilder.Entity<DbQueuedTask>().HasData(CreateInitialGameTask(Guid.NewGuid(), users[0], users[1], users[2], users[3]));
-            }
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)
@@ -131,12 +122,6 @@ namespace Bomberjam.Website.Database
             Updated = DateTime.UtcNow,
             UserName = username,
             Email = email,
-            SubmitCount = 1,
-            GameCount = 0,
-            IsCompiling = false,
-            IsCompiled = false,
-            CompilationErrors = string.Empty,
-            BotLanguage = string.Empty,
             Points = Constants.InitialPoints
         };
 
@@ -148,16 +133,6 @@ namespace Bomberjam.Website.Database
             Type = QueuedTaskType.Compile,
             Data = userId.ToString("D"),
             UserId = userId,
-            Status = QueuedTaskStatus.Created,
-        };
-
-        private static DbQueuedTask CreateInitialGameTask(Guid taskId, params DbUser[] users) => new DbQueuedTask
-        {
-            Id = taskId,
-            Created = DateTime.UtcNow,
-            Updated = DateTime.UtcNow,
-            Type = QueuedTaskType.Game,
-            Data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.UserName}")),
             Status = QueuedTaskStatus.Created,
         };
     }

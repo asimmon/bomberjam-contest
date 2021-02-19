@@ -11,7 +11,6 @@
     <tr>
       <th>&nbsp;</th>
       <th>User</th>
-      <th>Language</th>
       <th>Points</th>
     </tr>
     </thead>
@@ -25,7 +24,6 @@
           <td>
             <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
           </td>
-          <td>@user.BotLanguage</td>
           <td><span format-points="@user.Points"></span></td>
         </tr>
       }

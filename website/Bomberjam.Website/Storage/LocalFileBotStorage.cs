@@ -23,21 +23,21 @@ namespace Bomberjam.Website.Storage
             Directory.CreateDirectory(this._gamesDirPath);
         }
 
-        public Task UploadBotSourceCode(Guid userId, Stream fileStream)
+        public Task UploadBotSourceCode(Guid botId, Stream fileStream)
         {
-            return this.UploadBotSourceCode(userId, false, fileStream);
+            return this.UploadBotSourceCode(botId, false, fileStream);
         }
 
-        public Task UploadCompiledBot(Guid userId, Stream fileStream)
+        public Task UploadCompiledBot(Guid botId, Stream fileStream)
         {
-            return this.UploadBotSourceCode(userId, true, fileStream);
+            return this.UploadBotSourceCode(botId, true, fileStream);
         }
 
-        private async Task UploadBotSourceCode(Guid userId, bool isCompiled, Stream fileStream)
+        private async Task UploadBotSourceCode(Guid botId, bool isCompiled, Stream fileStream)
         {
             await using (fileStream)
             {
-                var filePath = Path.Join(this._botsDirPath, MakeBotFileName(userId, isCompiled));
+                var filePath = Path.Join(this._botsDirPath, MakeBotFileName(botId, isCompiled));
                 await using var localFile = File.Open(filePath, FileMode.Create);
                 await fileStream.CopyToAsync(localFile);
             }
@@ -48,35 +48,35 @@ namespace Bomberjam.Website.Storage
             return string.Format(CultureInfo.InvariantCulture, "{0}-{1}.zip", userId.ToString("D"), isCompiled ? 1 : 0);
         }
 
-        public Stream DownloadBotSourceCode(Guid userId)
+        public Stream DownloadBotSourceCode(Guid botId)
         {
-            return this.DownloadBotSourceCode(userId, false);
+            return this.DownloadBotSourceCode(botId, false);
         }
 
-        public Stream DownloadCompiledBot(Guid userId)
+        public Stream DownloadCompiledBot(Guid botId)
         {
-            return this.DownloadBotSourceCode(userId, true);
+            return this.DownloadBotSourceCode(botId, true);
         }
 
-        private Stream DownloadBotSourceCode(Guid userId, bool isCompiled)
+        private Stream DownloadBotSourceCode(Guid botId, bool isCompiled)
         {
-            var filePath = Path.Join(this._botsDirPath, MakeBotFileName(userId, isCompiled));
+            var filePath = Path.Join(this._botsDirPath, MakeBotFileName(botId, isCompiled));
             return File.OpenRead(filePath);
         }
 
-        public async Task UploadGameResult(Guid gameId, Stream fileStream)
+        public async Task UploadGameResult(Guid botId, Stream fileStream)
         {
             await using (fileStream)
             {
-                var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(gameId));
+                var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(botId));
                 await using var localFile = File.Open(filePath, FileMode.Create);
                 await fileStream.CopyToAsync(localFile);
             }
         }
 
-        public Stream DownloadGameResult(Guid gameId)
+        public Stream DownloadGameResult(Guid botId)
         {
-            var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(gameId));
+            var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(botId));
             return File.OpenRead(filePath);
         }
 

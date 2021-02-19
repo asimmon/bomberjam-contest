@@ -1,4 +1,4 @@
-﻿@model User
+﻿@model AccountReadViewModel
 
 @{
     ViewData["Title"] = "Account";
@@ -6,7 +6,8 @@
 
 <div class="jumbotron">
     <p>
-        Welcome, @Model.UserName!
+        Welcome, @Model.User.UserName!
         Click <a asp-controller="Account" asp-action="Edit">here</a> to edit your account.
+        You've submitted @Model.Bots.Count bots.
     </p>
 </div>

@@ -33,13 +33,13 @@ For our reference, here is the trace of the error:
 BOT_COMMAND = "cgexec -g cpu,memory,devices:{cgroup} sudo -Hiu {bot_user} bash -c 'cd \"{bot_dir}\" && ./{runfile}'"
 
 
-def handle_compile_task(user_id):
+def handle_compile_task(bot_id):
     """Downloads and compiles a bot, then posts the compiled bot archive back through the API"""
     errors = []
 
     with tempfile.TemporaryDirectory(dir=TEMP_DIR) as temp_dir:
         try:
-            bot_path = backend.download_bot(user_id, temp_dir, is_compiled=False)
+            bot_path = backend.download_bot(bot_id, temp_dir, is_compiled=False)
             archive.unpack(bot_path)
 
             # Make sure things are in the top-level directory
@@ -87,19 +87,19 @@ def handle_compile_task(user_id):
                     "sudo", "-H", "-u", "bot_compilation", "-s", "chmod", "-R", "g+r", temp_dir
                 ], stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
-                archive_path = os.path.join(temp_dir, str(user_id) + ".zip")
+                archive_path = os.path.join(temp_dir, str(bot_id) + ".zip")
                 archive.pack(temp_dir, archive_path)
-                backend.upload_bot(user_id, archive_path)
+                backend.upload_bot(bot_id, archive_path)
             else:
                 logging.debug("Bot did not compile")
                 logging.debug("Bot errors: %s" % str(errors))
 
-            backend.send_compilation_result(user_id, did_compile, language, errors="\n".join(errors))
+            backend.send_compilation_result(bot_id, did_compile, language, errors="\n".join(errors))
 
         except Exception as ex:
             logging.error("Bot did not upload", ex)
             errors.append(UPLOAD_ERROR_MESSAGE + traceback.format_exc())
-            backend.send_compilation_result(user_id, False, language, errors="\n".join(errors))
+            backend.send_compilation_result(bot_id, False, language, errors="\n".join(errors))
         finally:
             # Remove files as bot user (Python will clean up tempdir, but we don't necessarily have permissions to clean up files)
             util.rm_as_user("bot_compilation", temp_dir)
@@ -219,8 +219,8 @@ def handle_any_task(task):
         backend.mark_task_started(task_id)
 
         if task_type == 1:
-            user_id = str(task['data'])
-            handle_compile_task(user_id)
+            bot_id = str(task['data'])
+            handle_compile_task(bot_id)
 
         elif task_type == 2:
             game_data = util.Game(task['data'])

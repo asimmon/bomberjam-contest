@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
@@ -13,18 +15,19 @@ namespace Bomberjam.Website.Controllers
     [Route("~/account")]
     public class AccountController : BaseWebController<AccountController>
     {
-        private readonly IBotStorage _botStorage;
-
         public AccountController(IRepository repository, IBotStorage botStorage, ILogger<AccountController> logger)
             : base(repository, logger)
         {
-            this._botStorage = botStorage;
+            this.BotStorage = botStorage;
         }
+
+        private IBotStorage BotStorage { get; }
 
         public async Task<IActionResult> Index()
         {
             var user = await this.GetAuthenticatedUser();
-            return this.View("Index", user);
+            var bots = await this.Repository.GetBots(user.Id);
+            return this.View("Index", new AccountReadViewModel(user, bots));
         }
 
         [HttpGet("edit")]
@@ -59,6 +62,8 @@ namespace Bomberjam.Website.Controllers
             return this.View("Submit", new AccountSubmitViewModel());
         }
 
+        private static readonly TimeSpan BotSubmitDelay = TimeSpan.FromMinutes(1);
+
         [HttpPost("submit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(AccountSubmitViewModel viewModel)
@@ -67,28 +72,17 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
 
             var user = await this.GetAuthenticatedUser();
-            var activeCompileTask = await this.Repository.GetUserActiveCompileTask(user.Id);
+            var bots = await this.Repository.GetBots(user.Id);
 
-            if (activeCompileTask is { Status: var s } && (s == QueuedTaskStatus.Pulled || s == QueuedTaskStatus.Started))
+            if (bots.OrderByDescending(b => b.Updated).FirstOrDefault() is { } mostRecentBot && DateTime.UtcNow - mostRecentBot.Updated < BotSubmitDelay)
             {
-                this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You already have an active bot compilation task");
+                this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You need to wait more before submitting a new bot");
                 return this.View("Submit", viewModel);
             }
 
-            await this._botStorage.UploadBotSourceCode(user.Id, viewModel.BotFile.OpenReadStream());
-
-            user.SubmitCount++;
-            user.IsCompiled = false;
-            user.IsCompiling = false;
-            user.BotLanguage = string.Empty;
-            user.CompilationErrors = string.Empty;
-
-            await this.Repository.UpdateUser(user);
-
-            if (activeCompileTask == null)
-            {
-                await this.Repository.AddCompilationTask(user.Id);
-            }
+            await this.BotStorage.UploadBotSourceCode(user.Id, viewModel.BotFile.OpenReadStream());
+            var newBotId = await this.Repository.AddBot(user.Id);
+            await this.Repository.AddCompilationTask(newBotId);
 
             return this.RedirectToAction("Index", "Account");
         }

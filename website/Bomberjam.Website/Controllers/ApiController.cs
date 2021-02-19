@@ -12,7 +12,6 @@ using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -26,26 +25,26 @@ namespace Bomberjam.Website.Controllers
     {
         private static readonly SemaphoreSlim GetNextTaskMutex = new(1);
 
-        private readonly IBotStorage _botStorage;
-
         public ApiController(IRepository repository, IBotStorage botStorage, ILogger<ApiController> logger)
             : base(repository, logger)
         {
-            this._botStorage = botStorage;
+            this.BotStorage = botStorage;
         }
 
-        [HttpGet("user/{userId}/bot/download")]
-        public async Task<IActionResult> DownloadBot(Guid userId, [FromQuery(Name = "compiled")] bool isCompiled)
+        private IBotStorage BotStorage { get; }
+
+        [HttpGet("bot/{botId}/download")]
+        public async Task<IActionResult> DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
-            var fileStream = isCompiled ? this._botStorage.DownloadCompiledBot(userId) : this._botStorage.DownloadBotSourceCode(userId);
+            var fileStream = isCompiled ? this.BotStorage.DownloadCompiledBot(botId) : this.BotStorage.DownloadBotSourceCode(botId);
             var fileBytes = await StreamToByteArray(fileStream);
-            return this.File(fileBytes, "application/octet-stream", $"bot-{userId:D}.zip");
+            return this.File(fileBytes, "application/octet-stream", $"bot-{botId:D}.zip");
         }
 
-        [HttpPost("user/{userId}/bot/upload")]
-        public async Task<IActionResult> UploadBot(Guid userId)
+        [HttpPost("bot/{botId}/upload")]
+        public async Task<IActionResult> UploadBot(Guid botId)
         {
-            await this._botStorage.UploadCompiledBot(userId, this.Request.Body);
+            await this.BotStorage.UploadCompiledBot(botId, this.Request.Body);
             return this.Ok();
         }
 
@@ -59,31 +58,19 @@ namespace Bomberjam.Website.Controllers
             }
         }
 
-        [HttpPost("user/{userId}/bot/compilation-result")]
+        [HttpPost("bot/{botId}/compilation-result")]
         public async Task<IActionResult> SetCompilationResult([FromBody] BotCompilationResult compilationResult)
         {
             if (!this.ModelState.IsValid)
                 return this.BadRequest(GetAllErrors(this.ModelState));
 
-            User user;
-            try
-            {
-                user = await this.Repository.GetUserById(compilationResult.UserId);
-            }
-            catch (UserNotFoundException ex)
-            {
-                return this.NotFound(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return this.StatusCode(StatusCodes.Status500InternalServerError, ex.ToString());
-            }
+            var bot = await this.Repository.GetBot(compilationResult.BotId);
 
-            user.IsCompiled = compilationResult.DidCompile;
-            user.BotLanguage = compilationResult.Language ?? string.Empty;
-            user.CompilationErrors = compilationResult.Errors ?? string.Empty;
+            bot.Status = compilationResult.DidCompile ? CompilationStatus.CompilationSucceeded : CompilationStatus.CompilationFailed;
+            bot.Language = compilationResult.Language ?? string.Empty;
+            bot.Errors = compilationResult.Errors ?? string.Empty;
 
-            await this.Repository.UpdateUser(user);
+            await this.Repository.UpdateBot(bot);
 
             return this.Ok();
         }
@@ -101,7 +88,7 @@ namespace Bomberjam.Website.Controllers
                 var task = await this.Repository.GetTask(taskId);
                 return this.Ok(task);
             }
-            catch (QueuedTaskNotFoundException)
+            catch (EntityNotFound)
             {
                 return this.NotFound();
             }
@@ -117,7 +104,7 @@ namespace Bomberjam.Website.Controllers
                 var task = await this.Repository.PopNextTask();
                 return this.Ok(task);
             }
-            catch (QueuedTaskNotFoundException)
+            catch (EntityNotFound)
             {
                 return this.NotFound();
             }
@@ -136,7 +123,7 @@ namespace Bomberjam.Website.Controllers
                 var task = await this.Repository.GetTask(taskId);
                 return this.Ok(task);
             }
-            catch (QueuedTaskNotFoundException)
+            catch (EntityNotFound)
             {
                 return this.NotFound();
             }
@@ -151,7 +138,7 @@ namespace Bomberjam.Website.Controllers
                 var task = await this.Repository.GetTask(taskId);
                 return this.Ok(task);
             }
-            catch (QueuedTaskNotFoundException)
+            catch (EntityNotFound)
             {
                 return this.NotFound();
             }
@@ -161,16 +148,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("game/{gameId}")]
         public IActionResult GetGame(Guid gameId)
         {
-            var fileStream = this._botStorage.DownloadGameResult(gameId);
-            return this.File(fileStream, MediaTypeNames.Application.Json);
-        }
-
-        [HttpGet("game/yolo")]
-        public async Task<IActionResult> StartYoloGame()
-        {
-            var users = await this.Repository.GetUsers();
-            await this.Repository.AddGameTask(users.Take(4).ToList());
-            return this.Ok();
+            var fileStream = this.BotStorage.DownloadGameResult(gameId);
+            return this.File(fileStream, MediaTypeNames.Application.Json, $"game-{gameId:D}.json");
         }
 
         [HttpPost("game")]
@@ -200,7 +179,7 @@ namespace Bomberjam.Website.Controllers
 
             var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(RemoveWebsiteIds(gameHistory));
 
-            await this._botStorage.UploadGameResult(gameId, jsonGameHistoryStream);
+            await this.BotStorage.UploadGameResult(gameId, jsonGameHistoryStream);
 
             return this.Ok();
         }
@@ -257,5 +236,7 @@ namespace Bomberjam.Website.Controllers
             memoryStream.Seek(0, SeekOrigin.Begin);
             return memoryStream;
         }
+
+        //TODO GetCompiledBotIdForUser
     }
 }

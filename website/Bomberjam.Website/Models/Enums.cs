@@ -9,9 +9,26 @@
 
     public enum QueuedTaskStatus
     {
-        Created = 1,
-        Pulled = 2,
-        Started = 3,
-        Finished = 4
+        Created = 0,
+        Pulled = 1,
+        Started = 2,
+        Finished = 3
+    }
+
+    public enum CompilationStatus
+    {
+        Unknown = 0,
+        NotCompiled = 1,
+        CompilationSucceeded = 2,
+        CompilationFailed = 3
+    }
+
+    public enum ModelType
+    {
+        Unknown = 0,
+        User = 1,
+        Bot = 2,
+        Game = 3,
+        Task = 4
     }
 }

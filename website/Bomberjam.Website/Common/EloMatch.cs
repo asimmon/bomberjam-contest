@@ -5,7 +5,6 @@ namespace Bomberjam.Website.Common
 {
     public interface IEloPlayer
     {
-        float OldElo { get; }
         float NewElo { get; }
         float EloChange { get; }
     }

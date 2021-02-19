@@ -13,17 +13,17 @@ API_AUTH = util.get_env_or_default('API_AUTH', 'yolo')
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
 
-def download_bot(user_id, storage_dir, is_compiled=False):
+def download_bot(bot_id, storage_dir, is_compiled=False):
     """Downloads and stores a bot's zip file locally"""
-    logging.debug(f"Downloading {('compiled' if is_compiled else 'source code')} bot for user {user_id}...")
+    logging.debug(f"Downloading {('compiled' if is_compiled else 'source code')} bot {bot_id}...")
 
-    request_url = API_BASE_URL + (f"user/%s/bot/download?compiled=%s" % (user_id, "true" if is_compiled else "false"))
+    request_url = API_BASE_URL + (f"bot/%s/download?compiled=%s" % (bot_id, "true" if is_compiled else "false"))
     request_headers = {'Authorization': 'Secret ' + API_AUTH}
 
     r = requests.get(request_url, headers=request_headers, verify=False)
     r.raise_for_status()
 
-    local_file_name = "bot-%s-%s.zip" % (user_id, "1" if is_compiled else "0")
+    local_file_name = "bot-%s-%s.zip" % (bot_id, "1" if is_compiled else "0")
     local_file_path = os.path.join(storage_dir, local_file_name)
 
     if os.path.exists(local_file_path):
@@ -37,14 +37,14 @@ def download_bot(user_id, storage_dir, is_compiled=False):
     return local_file_path
 
 
-def upload_bot(user_id, zip_file_path):
+def upload_bot(bot_id, zip_file_path):
     """Posts a bot file to the manager"""
-    logging.debug(f"Uploading compiled bot for user {user_id}...")
+    logging.debug(f"Uploading compiled bot {bot_id}...")
 
     with open(zip_file_path, "rb") as f:
         file_bytes = f.read()
 
-    request_url = API_BASE_URL + ("user/%s/bot/upload" % user_id)
+    request_url = API_BASE_URL + ("bot/%s/upload" % bot_id)
     request_headers = {'Authorization': 'Secret ' + API_AUTH}
 
     r = requests.post(request_url, data=file_bytes, headers=request_headers, verify=False)
@@ -53,17 +53,17 @@ def upload_bot(user_id, zip_file_path):
     logging.debug(f"Uploaded %s bytes" % len(file_bytes))
 
 
-def send_compilation_result(user_id, did_compile, language, errors=None):
+def send_compilation_result(bot_id, did_compile, language, errors=None):
     """Posts the result of a compilation task"""
-    logging.debug(f"Sending compilation result for user {user_id}...")
+    logging.debug(f"Sending compilation result for bot {bot_id}...")
 
-    request_url = API_BASE_URL + ("user/%s/bot/compilation-result" % user_id)
+    request_url = API_BASE_URL + ("bot/%s/compilation-result" % bot_id)
     request_headers = {
         'Authorization': 'Secret ' + API_AUTH,
         'Content-Type': 'application/json'
     }
     r = requests.post(request_url, headers=request_headers, verify=False, json={
-        'userId': user_id,
+        'userId': bot_id,
         'didCompile': did_compile,
         'language': language,
         'error': str(errors)

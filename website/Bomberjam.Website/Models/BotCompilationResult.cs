@@ -7,8 +7,8 @@ namespace Bomberjam.Website.Models
     public sealed class BotCompilationResult
     {
         [Required]
-        [JsonPropertyName("userId")]
-        public Guid UserId { get; set; }
+        [JsonPropertyName("botId")]
+        public Guid BotId { get; set; }
 
         [Required]
         [JsonPropertyName("didCompile")]

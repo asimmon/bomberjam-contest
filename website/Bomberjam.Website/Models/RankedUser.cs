@@ -6,8 +6,6 @@ namespace Bomberjam.Website.Models
     {
         public Guid Id { get; set; }
         public string UserName { get; set; }
-        public string BotLanguage { get; set; }
-        public int Rank { get; set; }
         public float Points { get; set; }
     }
 }

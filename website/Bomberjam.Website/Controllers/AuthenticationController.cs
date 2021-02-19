@@ -8,8 +8,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
-using Bomberjam.Website.Database;
 using Bomberjam.Website.Common;
+using Bomberjam.Website.Database;
 using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
@@ -22,7 +22,10 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/signin")]
-        public async Task<IActionResult> SignIn() => View("SignIn", await GetExternalProvidersAsync(this.HttpContext));
+        public async Task<IActionResult> SignIn()
+        {
+            return this.View("SignIn", await GetExternalProvidersAsync(this.HttpContext));
+        }
 
         [HttpPost("~/signin")]
         public async Task<IActionResult> SignIn([FromForm] string provider)
@@ -43,8 +46,6 @@ namespace Bomberjam.Website.Controllers
             return this.Challenge(new AuthenticationProperties { RedirectUri = "/signin-github" }, provider);
         }
 
-        private static readonly Random Rng = new();
-
         [HttpGet("~/signin-github")]
         public async Task<IActionResult> SignInGithub()
         {
@@ -54,9 +55,9 @@ namespace Bomberjam.Website.Controllers
                 {
                     await this.Repository.GetUserByGithubId(githubId);
                 }
-                catch (UserNotFoundException)
+                catch (EntityNotFound)
                 {
-                    var temporaryUsername = "Player" + Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
+                    var temporaryUsername = "Player" + Constants.Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
                     await this.Repository.AddUser(githubId, email, temporaryUsername);
                 }
             }
