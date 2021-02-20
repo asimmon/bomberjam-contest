@@ -34,11 +34,7 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> Edit()
         {
             var user = await this.GetAuthenticatedUser();
-            var viewModel = new AccountEditViewModel
-            {
-                UserName = user.UserName
-            };
-
+            var viewModel = new AccountEditViewModel(user);
             return this.View("Edit", viewModel);
         }
 

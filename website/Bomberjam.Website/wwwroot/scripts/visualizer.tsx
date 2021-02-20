@@ -132,34 +132,39 @@ export const Visualizer = (props: VisualizerProps) => {
 
   return <div>
     <div className={props.gameId.length > 0 ? 'd-none' : ''}>
-      <input type="file" onChange={onFileChanged} />
+      <p className="lead">Select a replay file</p>
+      <div className="custom-file mb-3">
+        <input type="file" className="custom-file-input" onChange={onFileChanged} />
+        <label className="custom-file-label" />
+      </div>
     </div>
 
-    <div id="canvas" />
+    <div id="canvas" className={isStarted ? 'border rounded' : 'd-none'} />
 
-    <div className={isStarted ? '' : 'd-none'}>
-      <div>
-        <input
-          type="range"
-          min={minStateIdx}
-          max={maxStateIdx}
-          value={selectedStateIdx}
-          onChange={onRangeValueChanged}
-          onMouseDown={onRangeMouseDown}
-          onMouseUp={onRangeMouseUp}
-        />
-
-        <span>{selectedStateIdx} / {maxStateIdx}</span>
-      </div>
-
-      <div>
-        <button onClick={pauseOrResumeGame} className="btn btn-primary btn-sm">
-          <span className={isPlaying ? '' : 'd-none'}><i className="fas fa-pause" /></span>
-          <span className={isPlaying ? 'd-none' : ''}><i className="fas fa-play" /></span>
-        </button>
-
-        <button onClick={decreaseSpeed} className="btn btn-primary btn-sm">Slower</button>
-        <button onClick={increaseSpeed} className="btn btn-primary btn-sm">Faster</button>
+    <div className={isStarted ? 'for mt-2' : 'd-none'}>
+      <div className="form-row">
+        <div className="col-md-auto">
+          <a onClick={pauseOrResumeGame} className="btn btn-primary btn-sm mr-2">
+            <span className={isPlaying ? '' : 'd-none'}><i className="fas fa-pause" /></span>
+            <span className={isPlaying ? 'd-none' : ''}><i className="fas fa-play" /></span>
+          </a>
+          <div className="btn-group btn-group-sm" role="group">
+            <a onClick={decreaseSpeed} className="btn btn-primary">Slower</a>
+            <a onClick={increaseSpeed} className="btn btn-primary">Faster</a>
+          </div>
+        </div>
+        <div className="col">
+          <input
+            type="range"
+            className="custom-range"
+            min={minStateIdx}
+            max={maxStateIdx}
+            value={selectedStateIdx}
+            onChange={onRangeValueChanged}
+            onMouseDown={onRangeMouseDown}
+            onMouseUp={onRangeMouseUp}
+          />
+        </div>
       </div>
     </div>
   </div>;

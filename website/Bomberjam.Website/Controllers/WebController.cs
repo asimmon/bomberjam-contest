@@ -18,10 +18,9 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/")]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            var users = await this.Repository.GetUsers();
-            return this.View(new HomeModel(users.ToList(), new List<GameInfo>()));
+            return this.View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -60,17 +59,5 @@ namespace Bomberjam.Website.Controllers
 
             return this.View(new UserDetails(user, userGames));
         }
-    }
-
-    public class HomeModel
-    {
-        public HomeModel(IReadOnlyList<User> users, IReadOnlyList<GameInfo> games)
-        {
-            this.Users = users;
-            this.Games = games;
-        }
-
-        public IReadOnlyList<User> Users { get; }
-        public IReadOnlyList<GameInfo> Games { get; }
     }
 }

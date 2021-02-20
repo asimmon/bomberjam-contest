@@ -560,16 +560,19 @@ namespace Bomberjam
             {
                 player.IsTimedOut = false;
 
-                if (player.IsAlive && moves.TryGetValue(playerId, out var move))
+                if (player.IsAlive)
                 {
-                    if (move.Action == ActionCode.Bomb)
-                        this.DropBomb(player);
+                    if (moves.TryGetValue(playerId, out var move))
+                    {
+                        if (move.Action == ActionCode.Bomb)
+                            this.DropBomb(player);
+                        else
+                            this.MovePlayer(player, move.Action);
+                    }
                     else
-                        this.MovePlayer(player, move.Action);
-                }
-                else
-                {
-                    player.IsTimedOut = true;
+                    {
+                        player.IsTimedOut = true;
+                    }
                 }
             }
         }

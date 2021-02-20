@@ -1,79 +1,16 @@
-﻿@model Bomberjam.Website.Controllers.HomeModel
-@{
-    ViewData["Title"] = "Home Page";
+﻿@{
+  ViewData["Title"] = "Home Page";
 }
 
 <div class="jumbotron">
-    @if (User?.Identity?.IsAuthenticated ?? false)
-    {
-        <h1>Welcome, @User.Identity.Name</h1>
-
-        @foreach (var claim in Context.User.Claims)
-        {
-            <div>
-                <code>@claim.Type</code>: <strong>@claim.Value</strong>
-            </div>
-        }
-
-        <a class="btn btn-lg btn-danger" asp-area="" asp-controller="Authentication" asp-action="SignOut">Sign out</a>
-    }
-    else
-    {
-        <h1>Welcome, anonymous</h1>
-        <a class="btn btn-lg btn-success" asp-area="" asp-controller="Authentication" asp-action="SignIn">Sign in</a>
-    }
-</div>
-
-<h2>@Model.Users.Count registered users</h2>
-
-<div class="table-responsive">
-    <table class="table table-sm table-bordered">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Github ID</th>
-            <th>Email</th>
-            <th>UserName</th>
-            <th>Created</th>
-            <th>Updated</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var user in Model.Users)
-        {
-            <tr>
-                <td>@user.Id</td>
-                <td>@user.GithubId</td>
-                <td>@user.Email</td>
-                <td>@user.UserName</td>
-                <td>@user.Created</td>
-                <td>@user.Updated</td>
-            </tr>
-        }
-        </tbody>
-    </table>
-</div>
-
-<h2>@Model.Games.Count games</h2>
-
-<div class="table-responsive">
-    <table class="table table-sm table-bordered">
-        <thead>
-        <tr>
-            <th>ID</th>
-            <th>Created</th>
-            <th>Players</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var game in Model.Games)
-        {
-            <tr>
-                <td style="white-space:nowrap">@game.Id</td>
-                <td style="white-space:nowrap">@game.Created</td>
-                <td style="white-space:nowrap">@string.Join(", ", game.Users.Select(u => u.UserName))</td>
-            </tr>
-        }
-        </tbody>
-    </table>
+  @if (User?.Identity?.IsAuthenticated ?? false)
+  {
+    <h1>Welcome, @User.Identity.Name</h1>
+    <a class="btn btn-lg btn-danger" asp-area="" asp-controller="Authentication" asp-action="SignOut">Sign out</a>
+  }
+  else
+  {
+    <h1>Welcome, anonymous</h1>
+    <a class="btn btn-lg btn-success" asp-area="" asp-controller="Authentication" asp-action="SignIn">Sign in</a>
+  }
 </div>

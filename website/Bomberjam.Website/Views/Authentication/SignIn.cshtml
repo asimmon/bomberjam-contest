@@ -6,10 +6,9 @@
 }
 
 <div class="jumbotron">
-    <h1>Authentication</h1>
-    <p class="lead text-left">Sign in using one of these external providers:</p>
+  <h1>Create or sign in to your account with GitHub</h1>
 
-    @foreach (var scheme in Model.OrderBy(p => p.DisplayName))
+  @foreach (var scheme in Model.OrderBy(p => p.DisplayName))
     {
         <form asp-controller="Authentication" asp-action="SignIn" method="post">
             <input type="hidden" name="Provider" value="@scheme.Name" />

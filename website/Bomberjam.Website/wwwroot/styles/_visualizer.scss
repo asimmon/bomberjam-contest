@@ -1,3 +1,14 @@
-#canvas canvas {
-  width: 100%;
+#visualizer {
+  #canvas {
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+  }
+
+  input[type="range"] {
+    height: 100%;
+  }
 }

@@ -1,14 +1,26 @@
 ﻿@model AccountSubmitViewModel
 
 @{
-    ViewData["Title"] = "Submit a bot";
+  ViewData["Title"] = "Submit a bot";
 }
 
-<h1>Submit a bot</h1>
+<div class="jumbotron">
+  <h1>
+    Upload a bot
+    <small class="text-muted">It will be compiled as soon as possible by our servers</small>
+  </h1>
 
-<form asp-controller="Account" asp-action="Submit" method="post" enctype="multipart/form-data">
-    <label asp-for="BotFile" class="control-label"></label>
-    <input asp-for="BotFile"/>
-    <span asp-validation-for="BotFile" class="text-danger"></span>
-    <button class="btn btn-lg btn-success m-1" type="submit">Submit</button>
-</form>
+  <div class="row">
+    <div class="col">
+      <form asp-controller="Account" asp-action="Submit" method="post" enctype="multipart/form-data">
+        <div class="custom-file">
+          <input asp-for="BotFile" class="custom-file-input"/>
+          <label asp-for="BotFile" class="custom-file-label"></label>
+          <span asp-validation-for="BotFile" class="invalid-feedback"></span>
+        </div>
+
+        <button class="btn btn-lg btn-success my-4" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+</div>

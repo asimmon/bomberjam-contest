@@ -1,13 +1,27 @@
 ﻿@model AccountEditViewModel
 
 @{
-    ViewData["Title"] = "Edit profile";
+  ViewData["Title"] = "Edit profile";
 }
 
-<form asp-controller="Account" asp-action="Edit" method="post">
-    <label asp-for="UserName" class="control-label"></label>
-    <input asp-for="UserName" value="@Model.UserName"/>
-    <span asp-validation-for="UserName" class="text-danger"></span>
+<h1>Edit your account</h1>
 
-    <button class="btn btn-lg btn-success m-1" type="submit">Save username</button>
-</form>
+<div class="row">
+  <div class="col">
+    <form asp-controller="Account" asp-action="Edit" method="post">
+      <div class="form-group">
+        <label asp-for="UserName"></label>
+        <input asp-for="UserName" value="@Model.UserName" class="form-control">
+        <span asp-validation-for="UserName" class="invalid-feedback"></span>
+      </div>
+
+      <div class="form-group">
+        <label asp-for="Email"></label>
+        <input asp-for="Email" value="@Model.Email" class="form-control">
+        <span asp-validation-for="Email" class="invalid-feedback"></span>
+      </div>
+
+      <button class="btn btn-lg btn-success my-4" type="submit">Save</button>
+    </form>
+  </div>
+</div>
