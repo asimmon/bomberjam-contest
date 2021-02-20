@@ -242,7 +242,7 @@ comp_args = {
         ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"],
     ],
     "Java": [
-        ["javac", "-encoding", "UTF-8", "-J-Xmx%sm" % (MEMORY_LIMIT)],
+        ["javac", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT],
     ],
     "Python": [
         ["python3.6", "-c", PYTHON_EXT_COMPILER],
@@ -261,7 +261,10 @@ languages = (
         ["./__dist__/" + BOT + ".dll"],
         [
             ([], ExternalCompiler(comp_args["C#"][0])),
-            ([], ErrorFilterCompiler(comp_args["C#"][1], filter_stderr=": error CS", stdout_is_error=True)),
+            ([], ErrorFilterCompiler(
+                comp_args["C#"][1],
+                filter_stderr="(: error (CS|MSB)|Build FAILED)",
+                stdout_is_error=True)),
         ]
     ),
     Language("Java", BOT +".java", "MyBot.java",
@@ -285,9 +288,8 @@ languages = (
 
 def compile_function(language, bot_dir, timelimit):
     with CD(bot_dir):
-        print("cd " + bot_dir)
         for glob in language.nukeglobs:
-            print("nuke " + glob)
+            logging.debug("Nuking " + glob)
             nukeglob(glob)
 
     errors = []
