@@ -28,5 +28,8 @@ namespace Bomberjam.Common
 
         [JsonIgnore]
         public float DeltaPoints { get; set; }
+
+        [JsonIgnore]
+        public float Responsiveness { get; set; }
     }
 }

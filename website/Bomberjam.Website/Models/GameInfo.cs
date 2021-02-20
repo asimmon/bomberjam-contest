@@ -22,8 +22,9 @@ namespace Bomberjam.Website.Models
     {
         public Guid Id { get; set; }
         public int GithubId { get; set; }
-        public string Name { get; set; }
+        public string UserName { get; set; }
         public float DeltaPoints { get; set;  }
         public int Rank { get; set;  }
+        public float Responsiveness { get; set; }
     }
 }

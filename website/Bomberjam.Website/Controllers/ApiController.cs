@@ -178,11 +178,11 @@ namespace Bomberjam.Website.Controllers
             gameHistory.Summary.StandardError = gameResult.StandardError ?? string.Empty;
 
             await this.ComputeNewUserPoints(gameHistory);
+            ComputeBotResponsiveness(gameHistory);
 
             var gameId = await this.Repository.AddGame(gameHistory.Summary);
 
             var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(RemoveWebsiteIds(gameHistory));
-
             await this.BotStorage.UploadGameResult(gameId, jsonGameHistoryStream);
 
             return this.Ok();
@@ -212,6 +212,24 @@ namespace Bomberjam.Website.Controllers
             {
                 player.Points = eloPlayers[playerId].NewElo;
                 player.DeltaPoints = eloPlayers[playerId].EloChange;
+            }
+        }
+
+        private static void ComputeBotResponsiveness(GameHistory gameHistory)
+        {
+            var botResponsivenesses = gameHistory.Summary.Players.Keys.ToDictionary(idx => idx, _ => 0);
+
+            foreach (var tick in gameHistory.Ticks)
+            {
+                foreach (var (playerIndex, player) in tick.State.Players)
+                {
+                    if (!player.IsTimedOut) botResponsivenesses[playerIndex]++;
+                }
+            }
+
+            foreach (var (playerIndex, responseCount) in botResponsivenesses)
+            {
+                gameHistory.Summary.Players[playerIndex].Responsiveness = 1f * responseCount / gameHistory.Ticks.Count;
             }
         }
 

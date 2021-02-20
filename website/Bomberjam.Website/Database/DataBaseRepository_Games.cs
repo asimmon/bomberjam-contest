@@ -22,7 +22,8 @@ namespace Bomberjam.Website.Database
                     GameCreated = game.Created,
                     gameUser.UserId,
                     UserDeltaPoints = gameUser.DeltaPoints,
-                    UserRank = gameUser.Rank
+                    UserRank = gameUser.Rank,
+                    BotResponsiveness = gameUser.Responsiveness
                 })
                 .Join(this._dbContext.Users, tmp => tmp.UserId, user => user.Id, (tmp, user) => new
                 {
@@ -32,6 +33,7 @@ namespace Bomberjam.Website.Database
                     tmp.UserDeltaPoints,
                     tmp.UserRank,
                     user.UserName,
+                    tmp.BotResponsiveness,
                     UserGithubId = user.GithubId
                 })
                 .OrderByDescending(x => x.GameCreated)
@@ -46,9 +48,10 @@ namespace Bomberjam.Website.Database
                 {
                     Id = row.UserId,
                     GithubId = row.UserGithubId,
-                    Name = row.UserName,
+                    UserName = row.UserName,
                     DeltaPoints = row.UserDeltaPoints,
-                    Rank = row.UserRank
+                    Rank = row.UserRank,
+                    Responsiveness = row.BotResponsiveness
                 })))
                 .FirstOrDefault();
 
@@ -109,7 +112,7 @@ namespace Bomberjam.Website.Database
                 {
                     Id = row.UserId,
                     GithubId = row.UserGithubId,
-                    Name = row.UserName,
+                    UserName = row.UserName,
                     DeltaPoints = row.UserDeltaPoints,
                     Rank = row.UserRank
                 })));
@@ -141,6 +144,7 @@ namespace Bomberjam.Website.Database
                     DeltaPoints = playerSummary.DeltaPoints,
                     Rank = playerSummary.Rank,
                     Errors = playerSummary.Errors,
+                    Responsiveness = playerSummary.Responsiveness
                 };
 
                 this._dbContext.GameUsers.Add(dbGameUser);
