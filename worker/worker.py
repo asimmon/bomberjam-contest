@@ -94,12 +94,12 @@ def handle_compile_task(bot_id):
                 logging.debug("Bot did not compile")
                 logging.debug("Bot errors: %s" % str(errors))
 
-            backend.send_compilation_result(bot_id, did_compile, language, errors="\n".join(errors))
+            backend.send_compilation_result(bot_id, did_compile, language, "\n".join(errors))
 
         except Exception as ex:
             logging.error("Bot did not upload", ex)
             errors.append(UPLOAD_ERROR_MESSAGE + traceback.format_exc())
-            backend.send_compilation_result(bot_id, False, language, errors="\n".join(errors))
+            backend.send_compilation_result(bot_id, False, language, "\n".join(errors))
         finally:
             # Remove files as bot user (Python will clean up tempdir, but we don't necessarily have permissions to clean up files)
             util.rm_as_user("bot_compilation", temp_dir)

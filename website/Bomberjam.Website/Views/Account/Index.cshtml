@@ -32,7 +32,7 @@
       <tr>
         <td>@bot.Created</td>
         <td>@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
-        <td>@bot.Errors</td>
+        <td style="white-space: pre-line">@bot.Errors</td>
         <td>@bot.Status.ToString()</td>
       </tr>
     }

@@ -72,8 +72,9 @@ namespace Bomberjam.Website.Controllers
 
             if (bots.OrderByDescending(b => b.Updated).FirstOrDefault() is { } mostRecentBot && DateTime.UtcNow - mostRecentBot.Updated < BotSubmitDelay)
             {
-                this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You need to wait more before submitting a new bot");
-                return this.View("Submit", viewModel);
+                // TODO enable delay between each bot upload
+                // this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You need to wait more before submitting a new bot");
+                // return this.View("Submit", viewModel);
             }
 
             var newBotId = await this.Repository.AddBot(user.Id);

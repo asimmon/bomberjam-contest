@@ -62,10 +62,10 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbUser>().HasData(InitialTestUsers);
 
             var initialBots = InitialTestUsers.Select(u => CreateInitialBot(u.Id)).ToList();
-            modelBuilder.Entity<DbBot>().HasData(initialBots);
+            //modelBuilder.Entity<DbBot>().HasData(initialBots);
 
             var initialCompileTasks = initialBots.Select(b => CreateInitialCompileTask(Guid.NewGuid(), b.Id)).ToList();
-            modelBuilder.Entity<DbQueuedTask>().HasData(initialCompileTasks);
+            //modelBuilder.Entity<DbQueuedTask>().HasData(initialCompileTasks);
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)

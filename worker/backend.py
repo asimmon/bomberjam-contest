@@ -53,7 +53,7 @@ def upload_bot(bot_id, zip_file_path):
     logging.debug(f"Uploaded %s bytes" % len(file_bytes))
 
 
-def send_compilation_result(bot_id, did_compile, language, errors=None):
+def send_compilation_result(bot_id, did_compile, language, compilation_errors):
     """Posts the result of a compilation task"""
     logging.debug(f"Sending compilation result for bot {bot_id}...")
 
@@ -66,7 +66,7 @@ def send_compilation_result(bot_id, did_compile, language, errors=None):
         'botId': bot_id,
         'didCompile': True if did_compile else False,
         'language': language,
-        'error': str(errors)
+        'errors': compilation_errors
     })
     r.raise_for_status()
     logging.debug("Sent compilation result: %s" % r.text)

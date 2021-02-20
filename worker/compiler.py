@@ -70,7 +70,7 @@ def _run_cmd(cmd, working_dir, timelimit):
     """Run a compilation command in an isolated sandbox. Returns the value of stdout as well as any errors that occurred."""
     absolute_working_dir = os.path.abspath(working_dir)
     cmd = 'sudo -H -iu bot_compilation bash -c "cd ' + absolute_working_dir + '; ' + cmd + '"'
-    logging.info(cmd)
+    logging.info("> %s" %cmd)
     process = subprocess.Popen(cmd, cwd=working_dir, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 
     try:
@@ -85,7 +85,7 @@ def _run_cmd(cmd, working_dir, timelimit):
         logging.info(str_stderr)
     except subprocess.TimeoutExpired:
         arr_stdout = []
-        arr_stderr = ["Compilation timed out with command %s" % cmd]
+        arr_stderr = ["Compilation timed out while executing command %s" % cmd]
 
     # Clean up any processes that didn't exit cleanly
     util.kill_processes_as("bot_compilation")
@@ -303,8 +303,10 @@ def compile_function(language, bot_dir, timelimit):
     return check_path(compiled_bot_file, errors), errors
 
 
-_LANG_NOT_FOUND = """Did not find a recognized MyBot.* file.
-Please add one of the following filenames to your zip file:
+_MANY_LANG_FOUND = """Found multiple MyBot.* entry files:
+%s"""
+
+_LANG_NOT_FOUND = """Did not find a recognized MyBot.* entry file. Please add one of the following filenames to your zip file:
 %s"""
 
 
@@ -314,13 +316,8 @@ def detect_language(bot_dir):
             lang for lang in languages if os.path.exists(lang.main_code_file)
         ]
 
-        # if we have cmake-based compilation, then remove any other autodetected C and C++ compilers
-        if any(lang.main_code_file == "CMakeLists.txt" for lang in detected_langs):
-            detected_langs = [lang for lang in detected_langs if
-                              lang.main_code_file == "CMakeLists.txt" or (lang.name != "C" and lang.name != "C++")]
-
         if len(detected_langs) > 1:
-            return None, ['Found multiple MyBot.* files: \n' + '\n'.join([dl.main_code_file for dl in detected_langs])]
+            return None, [_MANY_LANG_FOUND % '\n'.join([dl.main_code_file for dl in detected_langs])]
         elif len(detected_langs) == 0:
             return None, [_LANG_NOT_FOUND % ('\n'.join(lg.name + ': ' + lg.main_code_file for lg in languages))]
         else:
@@ -341,6 +338,7 @@ def detect_language_file(bot_dir):
         except IOError:
             return None
 
+
 def get_run_cmd(submission_dir):
     with CD(submission_dir):
         if os.path.exists('run.sh'):
@@ -348,6 +346,7 @@ def get_run_cmd(submission_dir):
                 for line in f:
                     if line[0] != '#':
                         return line.rstrip('\r\n')
+
 
 def get_run_lang(submission_dir):
     with CD(submission_dir):
@@ -419,7 +418,6 @@ def truncate_errors(install_stdout, install_errors, language_detection_errors,
 
         return length, result
 
-
     remaining_length = max_error_len
     if install_stdout or install_errors:
         result.append(INSTALL_ERROR_START)
@@ -447,10 +445,11 @@ def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, ma
 
     logging.info("Detecting language...")
     detected_language, language_errors = detect_language(bot_dir)
-    logging.info("Detected language: %s" % detected_language.name)
 
     if not detected_language:
         return "Unknown", truncate_errors(install_stdout, install_errors, language_errors, [], max_error_len)
+    else:
+        logging.info("Detected language: %s" % detected_language.name)
 
     logging.debug("Compiling...")
     compiled, compile_errors = compile_function(detected_language, bot_dir, compile_time_limit)
