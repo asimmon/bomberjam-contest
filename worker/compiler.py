@@ -106,17 +106,13 @@ def check_path(path, errors):
 
 
 class Compiler(object):
-    """
-    A way to compile an uploaded bot.
-    """
+    """A way to compile an uploaded bot."""
     def compile(self, bot_dir, globs, errors, timelimit):
         raise NotImplementedError
 
 
 class ChmodCompiler(Compiler):
-    """
-    A compiler that simply sets the executable flag on a file.
-    """
+    """A compiler that simply sets the executable flag on a file."""
     def __init__(self, language):
         self.language = language
 
@@ -244,13 +240,13 @@ setup(ext_modules = read_setup_file('setup_exts'), script_args = ['-q', 'build_e
 comp_args = {
     "C#": [
         ["dotnet", "restore"],
-        ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"],
+        ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"]
     ],
     "Java": [
-        ["javac", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT],
+        ["javac", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
     ],
     "Python": [
-        ["python3.6", "-c", PYTHON_EXT_COMPILER],
+        ["python3.9", "-c", PYTHON_EXT_COMPILER]
     ]
 }
 
@@ -272,18 +268,18 @@ languages = (
                 stdout_is_error=True)),
         ]
     ),
-    Language("Java", BOT +".java", "MyBot.java",
+    Language("Java", BOT + ".java", "MyBot.java",
         "java MyBot",
         ["*.class", "*.jar"],
         [(["*.java"], ErrorFilterCompiler(comp_args["Java"][0], filter_stderr="Note:", out_files=["MyBot.class"]))]
     ),
-    Language("JavaScript", BOT +".js", "MyBot.js",
+    Language("JavaScript", BOT + ".js", "MyBot.js",
         "node MyBot.js",
         [],
         [(["*.js"], ChmodCompiler("JavaScript"))]
     ),
-    Language("Python", BOT +".py", "MyBot.py",
-        "python3.6 MyBot.py",
+    Language("Python", BOT + ".py", "MyBot.py",
+        "python3.9 MyBot.py",
         ["*.pyc"],
         [(["*.py"], ChmodCompiler("Python")),
         (["setup_exts"], ErrorFilterCompiler(comp_args["Python"][0], separate=True, filter_stderr='-Wstrict-prototypes'))]
