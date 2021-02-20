@@ -69,8 +69,8 @@ def nukeglob(pattern):
 def _run_cmd(cmd, working_dir, timelimit):
     """Run a compilation command in an isolated sandbox. Returns the value of stdout as well as any errors that occurred."""
     absolute_working_dir = os.path.abspath(working_dir)
-    cmd = 'sudo -H -iu bot_compilation bash -c "cd ' + absolute_working_dir + '; ' + cmd + '"'
-    logging.info("> %s" %cmd)
+    cmd = 'sudo -H -iu bot_compilation bash -c "cd ' + absolute_working_dir + ' && ' + cmd + '"'
+    logging.info("> %s" % cmd)
     process = subprocess.Popen(cmd, cwd=working_dir, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 
     try:
@@ -81,8 +81,11 @@ def _run_cmd(cmd, working_dir, timelimit):
         str_stderr = raw_strerr.decode("utf-8").strip()
         arr_stderr = str_stderr.split("\n") if not str_stderr.isspace() and str_stderr != "" else []
 
-        logging.info(str_stdout)
-        logging.info(str_stderr)
+        if str_stdout is not None and len(str_stdout) > 0:
+            logging.info(str_stdout)
+
+        if str_stderr is not None and len(str_stderr) > 0:
+            logging.info(str_stderr)
     except subprocess.TimeoutExpired:
         arr_stdout = []
         arr_stderr = ["Compilation timed out while executing command %s" % cmd]
@@ -148,7 +151,8 @@ class ExternalCompiler(Compiler):
 
     def compile(self, bot_dir, globs, errors, timelimit):
         with CD(bot_dir):
-            print("GLOBS: " + ", ".join(globs))
+            if len(globs) > 0:
+                logging.debug("Looking for files: " + ", ".join(globs))
             files = safeglob_multi(globs)
             if len("".join(globs)) != 0 and len(files) == 0:
                 # no files to compile
@@ -157,7 +161,7 @@ class ExternalCompiler(Compiler):
         try:
             if self.separate:
                 for filename in files:
-                    print("file: " + filename)
+                    logging.debug("Handling found file: " + filename)
                     cmdline = " ".join(self.args + [filename] + self.trailing_args)
                     cmd_out, cmd_errors, returncode = _run_cmd(cmdline, bot_dir, timelimit)
                     cmd_errors = self.cmd_error_filter(cmd_out, cmd_errors, returncode)
@@ -173,8 +177,9 @@ class ExternalCompiler(Compiler):
                         errors += cmd_errors
                         return False
             else:
+                if len(files) > 0:
+                    logging.debug("Handling found files: " + ", ".join(files))
                 cmdline = " ".join(self.args + files + self.trailing_args)
-                print("Files: " + " ".join(files))
                 cmd_out, cmd_errors, returncode = _run_cmd(cmdline, bot_dir, timelimit)
                 cmd_errors = self.cmd_error_filter(cmd_out, cmd_errors, returncode)
                 if not cmd_errors:
@@ -289,7 +294,7 @@ languages = (
 def compile_function(language, bot_dir, timelimit):
     with CD(bot_dir):
         for glob in language.nukeglobs:
-            logging.debug("Nuking " + glob)
+            logging.debug("Cleaning existing files: " + glob)
             nukeglob(glob)
 
     errors = []
