@@ -1,11 +1,3 @@
-interface JSON {
-  parse<T = any>(text: string): T;
-}
-
-interface Document {
-  getElementById<T extends HTMLElement>(elementId: string): T | null;
-}
-
 interface ISetTimeout {
   (callback: () => void, delay: number): void;
 }
@@ -21,6 +13,7 @@ interface IPlayer extends IHasPos {
   maxBombs: number;
   bombRange: number;
   isAlive: boolean;
+  timedOut: boolean;
   score: number;
   color: number;
   respawning: number;

@@ -8,6 +8,7 @@ interface IPlayerHudContainer extends Container {
   bombSprite: Sprite;
   bombCountText: Text;
   flameSprite: Sprite;
+  wifiOffSprite: Sprite;
   bombRangeText: Text;
   scoreText: Text;
 }
@@ -93,6 +94,9 @@ export default class GameHud extends GameContainer {
     hud.flameSprite.x = hud.bombCountText.x + hud.bombCountText.width + 10;
     hud.flameSprite.y = hud.bombSprite.y;
 
+    hud.wifiOffSprite.x = hud.playerSprite.x + ((hud.playerSprite.width - hud.wifiOffSprite.width) / 2);
+    hud.wifiOffSprite.y = hud.playerSprite.y + 40;
+
     hud.bombRangeText.text = player.bombRange.toString();
     hud.bombRangeText.x = hud.flameSprite.x + hud.flameSprite.width + 5;
     hud.bombRangeText.y = hud.bombSprite.y + 6;
@@ -103,6 +107,21 @@ export default class GameHud extends GameContainer {
 
     hud.y = playerPosition * (hud.height + 25);
     hud.alpha = player.isAlive ? 1 : 0.5;
+
+    if (player.isAlive) {
+      hud.alpha = 1;
+
+      if (player.timedOut) {
+        hud.playerSprite.alpha = 0.5;
+        hud.wifiOffSprite.alpha = 1;
+      } else {
+        hud.playerSprite.alpha = 1;
+        hud.wifiOffSprite.alpha = 0;
+      }
+    } else {
+      hud.playerSprite.alpha = 1;
+      hud.alpha = 0.5;
+    }
   }
 
   private addPlayerHud(playerId: string, player: IPlayer): void {
@@ -113,6 +132,7 @@ export default class GameHud extends GameContainer {
     hud.bombSprite = this.makeStaticSprite(this.textures.bomb[0]);
     hud.bombCountText = new Text(player.bombsLeft + '/' + player.maxBombs, GameHud.TextStyle);
     hud.flameSprite = this.makeStaticSprite(this.textures.flame[0]);
+    hud.wifiOffSprite = this.makeStaticSprite(this.textures.wifiOff[0]);
     hud.bombRangeText = new Text(player.bombRange.toString(), GameHud.TextStyle);
     hud.scoreText = new Text(`- score: ${player.score.toString()}`, GameHud.TextStyle);
 
@@ -122,6 +142,7 @@ export default class GameHud extends GameContainer {
       hud.bombSprite,
       hud.bombCountText,
       hud.flameSprite,
+      hud.wifiOffSprite,
       hud.bombRangeText,
       hud.scoreText
     );
