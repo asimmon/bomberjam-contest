@@ -243,7 +243,7 @@ comp_args = {
         ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"]
     ],
     "Java": [
-        ["javac", "-cp", "'*'", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
+        ["javac", "-cp", "'.:*'", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
     ],
     "Python": [
         ["python3.9", "-c", PYTHON_EXT_COMPILER]
@@ -271,7 +271,10 @@ languages = (
     Language("Java", BOT + ".java", "MyBot.java",
         "java -cp \".:*\" MyBot",
         ["*.class"],
-        [(["*.java"], ErrorFilterCompiler(comp_args["Java"][0], filter_stderr="Note:", out_files=["MyBot.class"]))]
+        [(["*.java"], ErrorFilterCompiler(
+            comp_args["Java"][0],
+            filter_stderr=": error:",
+            out_files=["MyBot.class"]))]
     ),
     Language("JavaScript", BOT + ".js", "MyBot.js",
         "node MyBot.js",
