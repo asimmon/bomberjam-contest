@@ -18,6 +18,7 @@ export default class TextureRegistry {
   public readonly flame: Texture[];
   public readonly fireBonus: Texture[];
   public readonly bombBonus: Texture[];
+  public readonly wifiOff: Texture[];
   public readonly tileSize: number = 48;
   public readonly spriteRatio: number;
 
@@ -46,6 +47,7 @@ export default class TextureRegistry {
     this.flame = this.spritesheet.animations[Sprites.flame];
     this.fireBonus = this.spritesheet.animations[Sprites.bonuses.flame];
     this.bombBonus = this.spritesheet.animations[Sprites.bonuses.bomb];
+    this.wifiOff = this.spritesheet.animations[Sprites.wifiOff];
 
     this.spriteRatio = this.tileSize / this.floor[0].width;
   }
@@ -72,6 +74,7 @@ export default class TextureRegistry {
     this.flame.forEach(t => t.destroy(true));
     this.fireBonus.forEach(t => t.destroy(true));
     this.bombBonus.forEach(t => t.destroy(true));
+    this.wifiOff.forEach(t => t.destroy(true));
 
     this.spritesheet.destroy(true);
   }

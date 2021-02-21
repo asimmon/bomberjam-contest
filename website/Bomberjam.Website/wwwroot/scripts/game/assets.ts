@@ -14,7 +14,8 @@ export const Sprites = {
   bonuses: {
     flame: 'bonus_flame',
     bomb: 'bonus_bomb'
-  }
+  },
+  wifiOff: 'wifi_off'
 };
 
 export const Musics = {
