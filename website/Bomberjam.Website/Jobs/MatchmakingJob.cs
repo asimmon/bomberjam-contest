@@ -55,23 +55,24 @@ namespace Bomberjam.Website.Jobs
 
             private IEnumerable<Match> Execute()
             {
-                if (this._sortedUsers.Count < 4)
-                    yield break;
-
-                foreach (var index in this._indexes)
-                    yield return this.CreateMatchForUserIndex(index);
+                return this._sortedUsers.Count >= 4
+                    ? this._indexes.SelectMany(this.CreateMatchForUserIndex)
+                    : Enumerable.Empty<Match>();
             }
 
-            private Match CreateMatchForUserIndex(int userIndex)
+            private IEnumerable<Match> CreateMatchForUserIndex(int userIndex)
             {
                 var user = this._sortedUsers[userIndex];
+                if (this.GetMatchCount(user) >= 3)
+                    yield break;
+
                 var participants = this._sortedUsers.GetNeighbors(userIndex, NeighborCount).OrderBy(this.GetMatchCount).Take(3).ToList();
                 participants.Add(user);
 
                 foreach (var participant in participants)
                     this.IncrementMatchCount(participant);
 
-                return new Match(participants);
+                yield return new Match(participants);
             }
 
             private int GetMatchCount(User user)
