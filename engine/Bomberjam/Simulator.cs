@@ -46,9 +46,9 @@ namespace Bomberjam
             this.State = this._gameState.Convert();
         }
 
-        public State ExecuteTick(IDictionary<string, string> actions)
+        public State ExecuteTick(IDictionary<string, string> actions, IDictionary<string, TimeSpan>? latencies = null)
         {
-            this._gameState.ExecuteTick(ParseActions(actions));
+            this._gameState.ExecuteTick(ParseActions(actions, latencies));
             return this.State = this._gameState.Convert();
         }
 
@@ -58,7 +58,7 @@ namespace Bomberjam
             this.State = this._gameState.Convert();
         }
 
-        private static IDictionary<string, PlayerAction> ParseActions(IDictionary<string, string> actions)
+        private static IDictionary<string, PlayerAction> ParseActions(IDictionary<string, string> actions, IDictionary<string, TimeSpan>? latencies)
         {
             var parsedActions = new Dictionary<string, PlayerAction>();
 
@@ -67,6 +67,11 @@ namespace Bomberjam
                 if (Translator.StringToActionCodeMappings.TryGetValue(action, out var actionCode))
                 {
                     parsedActions[playerId] = new PlayerAction(playerId, actionCode);
+
+                    if (latencies != null && latencies.TryGetValue(playerId, out var latency))
+                    {
+                        parsedActions[playerId].Latency = latency;
+                    }
                 }
             }
 

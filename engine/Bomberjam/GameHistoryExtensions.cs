@@ -22,15 +22,23 @@ namespace Bomberjam
             var state = gameState.Convert();
 
             var stringActions = new Dictionary<string, string?>();
+            var latencies = new Dictionary<string, double?>();
 
             foreach (var playerId in state.Players.Keys)
             {
-                stringActions[playerId] = actions.TryGetValue(playerId, out var action)
-                    ? action.Action.ToString().ToLowerInvariant()
-                    : null;
+                if (actions.TryGetValue(playerId, out var action))
+                {
+                    stringActions[playerId] = action.Action.ToString().ToLowerInvariant();
+                    latencies[playerId] = action.Latency.TotalSeconds;
+                }
+                else
+                {
+                    stringActions[playerId] = null;
+                    latencies[playerId] = null;
+                }
             }
 
-            var tickHistory = new TickHistory(state, stringActions);
+            var tickHistory = new TickHistory(state, stringActions, latencies);
             history.Ticks.Add(tickHistory);
 
             foreach (var (playerId, player) in state.Players)

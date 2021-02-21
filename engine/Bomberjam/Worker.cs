@@ -245,7 +245,8 @@ namespace Bomberjam
 
         private void ExecuteTick()
         {
-            var playerActions = new ConcurrentDictionary<string, string>();
+            var playerActions = new ConcurrentDictionary<string, string>(StringComparer.Ordinal);
+            var playerLatencies = new ConcurrentDictionary<string, TimeSpan>(StringComparer.Ordinal);
 
             using (var threadGroup = new ThreadGroup())
             {
@@ -263,7 +264,7 @@ namespace Bomberjam
                     }
                     else
                     {
-                        var threadState = new ThreadState(playerId, this._simulator.State, process, playerActions);
+                        var threadState = new ThreadState(playerId, this._simulator.State, process, playerActions, playerLatencies);
                         threadGroup.ExecuteThread(this.ExecuteTick, threadState);
                     }
                 }
@@ -294,7 +295,7 @@ namespace Bomberjam
                 }
 
                 this.Debug(this._simulator.State.Tick, null, $"Executing tick with {validPlayerActions.Count} valid player actions after waiting {threadGroup.Elapsed.TotalSeconds:F4} seconds");
-                this._simulator.ExecuteTick(validPlayerActions);
+                this._simulator.ExecuteTick(validPlayerActions, playerLatencies);
 
                 this.Debug(this._simulator.State.Tick, null, "Tiles: " + this._simulator.State.Tiles);
             }
@@ -334,6 +335,7 @@ namespace Bomberjam
             watch.Start();
             var action = x.Process.ReadLineForTick(x.GameState.Tick, threadGroupToken);
             watch.Stop();
+            x.ProcessLatencies[x.PlayerId] = watch.Elapsed;
 
             if (action == null)
             {
@@ -424,11 +426,17 @@ namespace Bomberjam
         private sealed class ThreadState
         {
             public ThreadState(string playerId, State gameState, BotProcess process, ConcurrentDictionary<string, string> processOutput)
+                : this(playerId, gameState, process, processOutput, new ConcurrentDictionary<string, TimeSpan>(StringComparer.Ordinal))
+            {
+            }
+
+            public ThreadState(string playerId, State gameState, BotProcess process, ConcurrentDictionary<string, string> processOutput, ConcurrentDictionary<string, TimeSpan> processLatencies)
             {
                 this.PlayerId = playerId;
                 this.GameState = gameState;
                 this.Process = process;
                 this.ProcessOutput = processOutput;
+                this.ProcessLatencies = processLatencies;
             }
 
             public string PlayerId { get; }
@@ -438,6 +446,8 @@ namespace Bomberjam
             public BotProcess Process { get; }
 
             public ConcurrentDictionary<string, string> ProcessOutput { get; }
+
+            public ConcurrentDictionary<string, TimeSpan> ProcessLatencies { get; }
         }
     }
 }
