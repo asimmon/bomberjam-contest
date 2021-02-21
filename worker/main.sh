@@ -18,4 +18,5 @@ iptables -A OUTPUT -m owner --uid-owner bot_3 -j DROP
 iptables-save | tee /etc/iptables/rules.v4
 ip6tables-save | tee /etc/iptables/rules.v6
 
+## Start the main script
 sudo -H --preserve-env=API_BASE_URL --preserve-env=API_AUTH -iu worker bash -c "python3 /home/worker/worker.py"

@@ -148,7 +148,7 @@ class ExternalCompiler(Compiler):
     def compile(self, bot_dir, globs, errors, timelimit):
         with CD(bot_dir):
             if len(globs) > 0:
-                logging.debug("Looking for files: " + ", ".join(globs))
+                logging.debug("Searching for files matching: " + ", ".join(globs))
             files = safeglob_multi(globs)
             if len("".join(globs)) != 0 and len(files) == 0:
                 # no files to compile
@@ -157,7 +157,7 @@ class ExternalCompiler(Compiler):
         try:
             if self.separate:
                 for filename in files:
-                    logging.debug("Handling found file: " + filename)
+                    logging.debug("Handling file: " + filename)
                     cmdline = " ".join(self.args + [filename] + self.trailing_args)
                     cmd_out, cmd_errors, returncode = _run_cmd(cmdline, bot_dir, timelimit)
                     cmd_errors = self.cmd_error_filter(cmd_out, cmd_errors, returncode)
@@ -174,7 +174,7 @@ class ExternalCompiler(Compiler):
                         return False
             else:
                 if len(files) > 0:
-                    logging.debug("Handling found files: " + ", ".join(files))
+                    logging.debug("Handling files: " + ", ".join(files))
                 cmdline = " ".join(self.args + files + self.trailing_args)
                 cmd_out, cmd_errors, returncode = _run_cmd(cmdline, bot_dir, timelimit)
                 cmd_errors = self.cmd_error_filter(cmd_out, cmd_errors, returncode)
@@ -243,7 +243,7 @@ comp_args = {
         ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"]
     ],
     "Java": [
-        ["javac", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
+        ["javac", "-cp", "'*'", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
     ],
     "Python": [
         ["python3.9", "-c", PYTHON_EXT_COMPILER]
@@ -269,8 +269,8 @@ languages = (
         ]
     ),
     Language("Java", BOT + ".java", "MyBot.java",
-        "java MyBot",
-        ["*.class", "*.jar"],
+        "java -cp \".:*\" MyBot",
+        ["*.class"],
         [(["*.java"], ErrorFilterCompiler(comp_args["Java"][0], filter_stderr="Note:", out_files=["MyBot.class"]))]
     ),
     Language("JavaScript", BOT + ".js", "MyBot.js",
@@ -290,7 +290,7 @@ languages = (
 def compile_function(language, bot_dir, timelimit):
     with CD(bot_dir):
         for glob in language.nukeglobs:
-            logging.debug("Cleaning existing files: " + glob)
+            logging.debug("Removing any existing files matching: " + glob)
             nukeglob(glob)
 
     errors = []
@@ -471,13 +471,3 @@ def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, ma
         return detected_language.name, truncate_errors(install_stdout, install_errors, language_errors, compile_errors, max_error_len)
 
     return detected_language.name, None
-
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        workingPath = sys.argv[1]
-        lang, errors = compile_anything(workingPath)
-        print("Language:", lang)
-        if errors:
-            print("--- Errors: ---")
-            print("\n".join(errors))

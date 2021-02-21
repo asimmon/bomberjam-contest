@@ -20,6 +20,7 @@ namespace Bomberjam
         private readonly string _command;
         private readonly BlockingCollection<ProcessMessage> _messages;
         private readonly StringBuilder _errorLines;
+        private readonly StringBuilder _discardedLines;
         private readonly Process _process;
 
         public BotProcess(string command)
@@ -42,6 +43,7 @@ namespace Bomberjam
 
             this._messages = new BlockingCollection<ProcessMessage>();
             this._errorLines = new StringBuilder();
+            this._discardedLines = new StringBuilder();
             this._process = new Process
             {
                 StartInfo = processStartInfo,
@@ -57,7 +59,7 @@ namespace Bomberjam
 
         public string Error
         {
-            get => this._errorLines.ToString();
+            get => this._discardedLines.ToString() + this._errorLines.ToString();
         }
 
         public void Start()
@@ -84,11 +86,15 @@ namespace Bomberjam
                 return;
             }
 
-            if (ProcessMessageRegex.Match(args.Data.Trim()) is { Success: true } match)
+            var stdinLine = args.Data.Trim();
+            if (ProcessMessageRegex.Match(stdinLine) is { Success: true } match)
             {
                 var tick = int.Parse(match.Groups["tick"].Value, NumberStyles.Integer);
-                var message = new ProcessMessage(tick, match.Groups["message"].Value);
-                this._messages.Add(message);
+                this._messages.Add(new ProcessMessage(tick, match.Groups["message"].Value));
+            }
+            else if (!string.IsNullOrWhiteSpace(stdinLine))
+            {
+                this._messages.Add(new ProcessMessage(stdinLine));
             }
         }
 
@@ -129,9 +135,9 @@ namespace Bomberjam
                 {
                     var message = this._messages.Take(token);
                     if (message.Tick == tick)
-                    {
                         return message;
-                    }
+
+                    this._discardedLines.AppendLine($"[{tick}] {message.Message}");
                 }
                 while (!token.IsCancellationRequested);
 

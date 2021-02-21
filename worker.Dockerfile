@@ -58,8 +58,6 @@ RUN pip3 install -r requirements.txt && \
 WORKDIR /root
 COPY ["worker/cgconfig.conf", "/etc/cgconfig.conf"]
 COPY ["worker/main.sh", "./"]
-RUN chmod 0400 main.sh && \
-    # to delete
-    cp /home/worker/*.py /home/worker/requirements.txt /home/worker/bomberjam . && ls -la .
+RUN chmod 0400 main.sh
 
 CMD /bin/bash /root/main.sh

@@ -81,7 +81,7 @@ def get_player_compiled_bot_id(player_id):
     r = requests.get(request_url, headers=request_headers, verify=False)
     r.raise_for_status()
 
-    bot_id = r.text;
+    bot_id = r.text
     logging.info("Latest compiled bot ID for player %s: %s" % (player_id, bot_id))
     return bot_id
 
