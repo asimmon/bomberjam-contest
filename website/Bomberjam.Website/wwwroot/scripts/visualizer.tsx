@@ -135,7 +135,7 @@ export const Visualizer = (props: VisualizerProps) => {
       <p className="lead">Select a replay file</p>
       <div className="custom-file mb-3">
         <input type="file" className="custom-file-input" onChange={onFileChanged} />
-        <label className="custom-file-label" />
+        <label className="custom-file-label">Select a *.json file</label>
       </div>
     </div>
 

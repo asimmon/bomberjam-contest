@@ -1,4 +1,5 @@
-﻿@model AccountReadViewModel
+﻿@using Bomberjam.Website.Utils
+@model AccountReadViewModel
 
 @{
   ViewData["Title"] = "Account";
@@ -32,8 +33,8 @@
       <tr>
         <td>@bot.Created</td>
         <td>@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
-        <td style="white-space: pre-line">@bot.Errors</td>
-        <td>@bot.Status.ToString()</td>
+        <td><pre><code>@bot.Errors</code></pre></td>
+        <td>@bot.Status.ToDisplayString()</td>
       </tr>
     }
     @if (Model.Bots.Count == 0)

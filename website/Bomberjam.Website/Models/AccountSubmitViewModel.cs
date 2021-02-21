@@ -7,7 +7,7 @@ namespace Bomberjam.Website.Models
     public class AccountSubmitViewModel
     {
         [DataType(DataType.Upload)]
-        [Display(Name = "Select a .zip file to upload your bot")]
+        [Display(Name = "Select a .zip bot file")]
         [Required(ErrorMessage = "You must select a .zip file")]
         [AllowedExtensions(".zip", ErrorMessage = "You must select a .zip file")]
         [NotEmptyFormFileAttribute(ErrorMessage = "The .zip file cannot be empty")]

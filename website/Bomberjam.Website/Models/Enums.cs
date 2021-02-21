@@ -1,4 +1,6 @@
-﻿namespace Bomberjam.Website.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Bomberjam.Website.Models
 {
     public enum QueuedTaskType
     {
@@ -17,9 +19,16 @@
 
     public enum CompilationStatus
     {
+        [Display(Name = "Unknown")]
         Unknown = 0,
+
+        [Display(Name = "Not compiled yet")]
         NotCompiled = 1,
+
+        [Display(Name = "Compilation succeeded")]
         CompilationSucceeded = 2,
+
+        [Display(Name = "Compilation failed")]
         CompilationFailed = 3
     }
 

@@ -41,13 +41,12 @@
                 }
 
                 <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
-                  <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="img-fluid rounded"/>
+                  <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="img-fluid rounded" alt=""/>
                 </a>
               }
             </td>
             <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
-            <td><span format-points="@points" show-sign="true"></span>
-            </td>
+            <td><span format-points="@points" show-sign="true"></span></td>
             <td>
               <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
                 <i class="fas fa-video"></i>
