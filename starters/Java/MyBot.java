@@ -18,7 +18,7 @@ public class MyBot {
             System.out.flush();
 
             // 2) Receive your player ID from the standard input
-            String playerId = stdin.readLine();
+            String myPlayerId = stdin.readLine();
 
             while (true) {
                 // 3) Each tick, you'll receive the current game state serialized as JSON

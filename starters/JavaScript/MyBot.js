@@ -21,7 +21,7 @@ const main = async () => {
   console.log('0:MyName' + (Math.random() * (9999 - 1000) + 1000));
 
   // 2) Receive your player ID from the standard input
-  const playerId = await readlineAsync();
+  const myPlayerId = await readlineAsync();
 
   while (true) {
     // 3) Each tick, you'll receive the current game state serialized as JSON

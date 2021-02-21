@@ -9,7 +9,7 @@ import random
 print("0:MyName" + str(random.randint(1000, 9999)), flush=True)
 
 # 2) Receive your player ID from the standard input
-player_id = input()
+my_player_id = input()
 
 while True:
     # 3) Each tick, you'll receive the current game state serialized as JSON
