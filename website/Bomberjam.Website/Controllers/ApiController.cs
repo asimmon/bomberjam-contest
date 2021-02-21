@@ -182,7 +182,7 @@ namespace Bomberjam.Website.Controllers
 
             var gameId = await this.Repository.AddGame(gameHistory.Summary);
 
-            var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(RemoveWebsiteIds(gameHistory));
+            var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
             await this.BotStorage.UploadGameResult(gameId, jsonGameHistoryStream);
 
             return this.Ok();
@@ -217,33 +217,25 @@ namespace Bomberjam.Website.Controllers
 
         private static void ComputeBotResponsiveness(GameHistory gameHistory)
         {
-            var botResponsivenesses = gameHistory.Summary.Players.Keys.ToDictionary(idx => idx, _ => 0);
+            var botResponsivenesses = gameHistory.Summary.Players.Keys.ToDictionary(idx => idx, _ => new List<int>());
 
-            foreach (var tick in gameHistory.Ticks)
+            foreach (var playerIndex in gameHistory.Summary.Players.Keys)
             {
-                foreach (var (playerIndex, player) in tick.State.Players)
+                foreach (var tick in gameHistory.Ticks)
                 {
-                    if (!player.IsTimedOut) botResponsivenesses[playerIndex]++;
+                    if (tick.State.Players.TryGetValue(playerIndex, out var player) && player.IsAlive)
+                    {
+                        botResponsivenesses[playerIndex].Add(player.IsTimedOut ? 0 : 1);
+                    }
                 }
             }
 
-            foreach (var (playerIndex, responseCount) in botResponsivenesses)
+            foreach (var (playerIndex, botResponsiveness) in botResponsivenesses)
             {
-                gameHistory.Summary.Players[playerIndex].Responsiveness = 1f * responseCount / gameHistory.Ticks.Count;
+                gameHistory.Summary.Players[playerIndex].Responsiveness = botResponsiveness.Count > 0
+                    ? 1f * botResponsiveness.Sum() / botResponsiveness.Count
+                    : 0f;
             }
-        }
-
-        private static GameHistory RemoveWebsiteIds(GameHistory gh)
-        {
-            if (gh.Summary is { Players: var players })
-            {
-                foreach (var (_, playerSummary) in players)
-                {
-                    playerSummary.WebsiteId = null;
-                }
-            }
-
-            return gh;
         }
 
         private static MemoryStream SerializeGameHistoryToJsonStream(GameHistory gh)

@@ -120,6 +120,7 @@ export default class GameHud extends GameContainer {
       }
     } else {
       hud.playerSprite.alpha = 1;
+      hud.wifiOffSprite.alpha = 0;
       hud.alpha = 0.5;
     }
   }
