@@ -15,7 +15,7 @@ namespace Bomberjam.Website.Database
         {
             return await this._dbContext.Bots
                 .Where(b => b.UserId == userId)
-                .OrderByDescending(b => b.Updated)
+                .OrderByDescending(b => b.Created)
                 .Select(b => MapBot(b))
                 .ToListAsync()
                 .ConfigureAwait(false);
