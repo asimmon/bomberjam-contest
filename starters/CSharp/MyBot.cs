@@ -34,7 +34,7 @@ namespace MyBot
                     Console.Out.WriteLine(state.GetProperty("tick") + ":" + action);
                     Console.Out.Flush();
                 }
-                catch (Exception ex)
+                catch
                 {
                     // Handle your exceptions per tick
                 }
