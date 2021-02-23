@@ -1,3 +1,5 @@
 #!/bin/sh
 
-npm install
+if [ -f "package.json" ]; then
+    npm install
+fi
