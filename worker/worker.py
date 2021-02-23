@@ -64,8 +64,8 @@ def handle_compile_task(bot_id):
             # Give the compilation user access
             os.chmod(temp_dir, 0o755)
 
-            # User needs to be able to write to the directory and create files
-            util.give_ownership(temp_dir, "bots", 0o2770)
+            # Compilation user needs to be able to write to the directory and create files
+            util.give_ownership(temp_dir, "bot_compilation", 0o2770)
 
             # Reset cwd before compilation, in case it was in a deleted temporary folder
             os.chdir(os.path.dirname(os.path.realpath(sys.argv[0])))
@@ -119,12 +119,7 @@ def setup_participant(player, temp_dir):
     # Make the start script executable
     os.chmod(os.path.join(bot_dir, 'run.sh'), 0o755)
 
-    # Give the bot user ownership of their directory
-    # We should set up each user's default group as a group that the
-    # worker is also a part of. Then we always have access to their
-    # files, but not vice versa.
-    # https://superuser.com/questions/102253/how-to-make-files-created-in-a-directory-owned-by-directory-group
-
+    # Give the bot user ownership of their directory, worker still have access through each user's default group
     bot_user = "bot_%s" % player.player_index
     bot_group = "bot_%s" % player.player_index
     bot_cgroup = "bot_%s" % player.player_index
