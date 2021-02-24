@@ -49,7 +49,6 @@ export const ViewerWithControls = (props: VisualizerProps) => {
     if (props.gameHistory && canvasContainer.current) {
       const loadedGameHistory = props.gameHistory;
       replayGame(canvasContainer.current, loadedGameHistory, onStateChanged).then(newReplayCtrl => {
-
         setReplayCtrl(newReplayCtrl);
         setMinStateIdx(0);
         setMaxStateIdx(loadedGameHistory.ticks.length - 1);
@@ -59,32 +58,40 @@ export const ViewerWithControls = (props: VisualizerProps) => {
     }
   }, [props.gameHistory]);
 
-  return <div className={isStarted ? '' : 'd-none'}>
-    <div ref={canvasContainer} className="canvas"/>
+  return <div>
+    <div className="canvas-wrapper">
+      <div className="loading-wrapper" />
+      <div ref={canvasContainer} className="canvas"/>
+    </div>
 
-    <div className={isStarted ? 'form mt-2' : 'd-none'}>
+    <div className="border rounded mt-2">
       <div className="form-row">
         <div className="col-md-auto">
-          <a onClick={pauseOrResumeGame} className="btn btn-primary btn-sm mr-2">
-            <span className={isPlaying ? '' : 'd-none'}><i className="fas fa-pause"/></span>
-            <span className={isPlaying ? 'd-none' : ''}><i className="fas fa-play"/></span>
-          </a>
-          <div className="btn-group btn-group-sm" role="group">
-            <a onClick={decreaseSpeed} className="btn btn-primary">Slower</a>
-            <a onClick={increaseSpeed} className="btn btn-primary">Faster</a>
+          <div className="m-2">
+            <button onClick={pauseOrResumeGame} className="btn btn-primary btn-sm mr-2" disabled={!isStarted}>
+              <span className={isPlaying ? '' : 'd-none'}><i className="fas fa-pause"/></span>
+              <span className={isPlaying ? 'd-none' : ''}><i className="fas fa-play"/></span>
+            </button>
+            <div className="btn-group btn-group-sm" role="group">
+              <button onClick={decreaseSpeed} className="btn btn-primary" disabled={!isStarted}>Slower</button>
+              <button onClick={increaseSpeed} className="btn btn-primary" disabled={!isStarted}>Faster</button>
+            </div>
           </div>
         </div>
         <div className="col">
-          <input
-            type="range"
-            className="custom-range"
-            min={minStateIdx}
-            max={maxStateIdx}
-            value={selectedStateIdx}
-            onChange={onRangeValueChanged}
-            onMouseDown={onRangeMouseDown}
-            onMouseUp={onRangeMouseUp}
-          />
+          <div className="range-wrapper mx-2">
+            <input
+              type="range"
+              disabled={!isStarted}
+              className="custom-range"
+              min={minStateIdx}
+              max={maxStateIdx}
+              value={selectedStateIdx}
+              onChange={onRangeValueChanged}
+              onMouseDown={onRangeMouseDown}
+              onMouseUp={onRangeMouseUp}
+            />
+          </div>
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 const path = require('path');
+const {SourceMapDevToolPlugin} = require("webpack");
 const {CleanWebpackPlugin} = require('clean-webpack-plugin');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
 
@@ -19,6 +20,11 @@ module.exports = (env, argv) => {
     module: {
       rules: [
         {
+          test: /\.js$/,
+          enforce: "pre",
+          use: ["source-map-loader"],
+        },
+        {
           test: /\.tsx?$/,
           use: 'ts-loader',
           exclude: /node_modules/,
@@ -29,8 +35,12 @@ module.exports = (env, argv) => {
         }
       ]
     },
+    devtool: "source-map",
     plugins: [
       new CleanWebpackPlugin(),
+      new SourceMapDevToolPlugin({
+        filename: "[file].map"
+      }),
       new BrowserSyncPlugin({
         host: 'localhost',
         port: 5002,

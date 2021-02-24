@@ -34,7 +34,12 @@ export const GameFileLoader = (props: GameFileLoaderProps) => {
     });
   };
 
+  const sleepAsync = (milliseconds: number): Promise<void> => {
+    return new Promise(resolve => window.setTimeout(resolve, milliseconds));
+  };
+
   const downloadGameHistory = async (gameId: string): Promise<IGameHistory> => {
+    await sleepAsync(5000);
     const response = await fetch('/api/game/' + gameId);
     if (response.ok) return response.json();
     throw new Error('API returned: ' + response.status + ' ' + response.statusText);

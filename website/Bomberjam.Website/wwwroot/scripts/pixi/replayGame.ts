@@ -1,4 +1,4 @@
-import { Application, Texture } from 'pixi.js';
+import { Application, Texture, utils } from 'pixi.js';
 import { Sprites } from './assets';
 import BomberjamRenderer from './bomberjamRenderer';
 import SoundRegistry from './soundRegistry';
@@ -7,6 +7,8 @@ import TextureRegistry from './textureRegistry';
 type StateChangedCallback = (stateIdx: number) => void;
 
 export default async function replayGame(pixiContainer: HTMLElement, history: IGameHistory, stateChangedCallback: StateChangedCallback): Promise<IReplayGameController> {
+  utils.skipHello();
+
   const pixiApp = new Application({
     antialias: true,
     backgroundColor: 0xffffff,
@@ -78,11 +80,11 @@ export default async function replayGame(pixiContainer: HTMLElement, history: IG
     pauseGame: () => {
       gameRenderer.resetPlayerPositions();
       paused = true;
-      sounds.pause.play({
+      /*sounds.pause.play({
         complete: () => {
           sounds.pauseAll();
         }
-      });
+      });*/
     },
     resumeGame: () => {
       sounds.resumeAll();

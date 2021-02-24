@@ -1,6 +1,24 @@
 #visualizer {
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .loading-wrapper {
+    // Dimensions of the real pixi canvas
+    $canvas-width: 1070;
+    $canvas-height: 624;
+    padding-bottom: 100% * ($canvas-height / $canvas-width);
+  }
+
   .canvas {
     @extend .border, .rounded;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: $jumbotron-bg;
     overflow: hidden;
   }
 
@@ -9,7 +27,11 @@
     width: 100%;
   }
 
-  input[type="range"] {
+  .range-wrapper {
     height: 100%;
+
+    input[type="range"] {
+      height: 100%;
+    }
   }
 }
