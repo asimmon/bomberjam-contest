@@ -1,14 +1,12 @@
 import { Application } from 'pixi.js'
 import GameHud from './gameHud';
 import GameMap from './gameMap';
-import SoundRegistry from './soundRegistry';
 import TextureRegistry from './textureRegistry';
 
 export default class BomberjamRenderer {
   private readonly stateProvider: IStateProvider;
   private readonly pixiApp: Application;
   private readonly textures: TextureRegistry;
-  private readonly sounds: SoundRegistry;
   private prevState: IGameState;
   private totalTime: number;
 
@@ -20,18 +18,16 @@ export default class BomberjamRenderer {
     stateProvider: IStateProvider,
     pixiApp: Application,
     textures: TextureRegistry,
-    sounds: SoundRegistry,
     isReplay: boolean = false
   ) {
     this.stateProvider = stateProvider;
     this.pixiApp = pixiApp;
     this.textures = textures;
-    this.sounds = sounds;
     this.isReplay = isReplay;
 
     this.prevState = this.stateProvider.state;
     this.totalTime = 0;
-    this.map = new GameMap(stateProvider, textures, sounds);
+    this.map = new GameMap(stateProvider, textures);
     this.hud = new GameHud(stateProvider, textures);
 
     this.initialize();
@@ -48,11 +44,6 @@ export default class BomberjamRenderer {
     this.registerStateChangeHandlers();
 
     this.pixiApp.renderer.resize(this.pixiApp.stage.width, this.pixiApp.stage.height);
-    if (!this.stateProvider.state.isFinished) {
-      //TODO this.sounds.level.play();
-    } else {
-      //TODO this.sounds.waiting.play();
-    }
   }
 
   public registerStateChangeHandlers() {

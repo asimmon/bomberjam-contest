@@ -1,7 +1,6 @@
 import { Application, Texture, utils } from 'pixi.js';
 import { Sprites } from './assets';
 import BomberjamRenderer from './bomberjamRenderer';
-import SoundRegistry from './soundRegistry';
 import TextureRegistry from './textureRegistry';
 
 type StateChangedCallback = (stateIdx: number) => void;
@@ -16,7 +15,6 @@ export default async function replayGame(pixiContainer: HTMLElement, history: IG
   });
 
   const textures = await loadTexturesAsync(pixiApp);
-  const sounds = await loadSoundsAsync(pixiApp);
 
   let initialized = false;
   let stopped = false;
@@ -59,7 +57,7 @@ export default async function replayGame(pixiContainer: HTMLElement, history: IG
     if (stopped) return;
 
     if (!initialized) {
-      gameRenderer = new BomberjamRenderer(stateProvider, pixiApp, textures, sounds, true);
+      gameRenderer = new BomberjamRenderer(stateProvider, pixiApp, textures, true);
       pixiContainer.appendChild(pixiApp.view);
       pixiApp.ticker.add(() => gameRenderer.onPixiFrameUpdated(pixiApp.ticker.elapsedMS));
       initialized = true;
@@ -80,15 +78,8 @@ export default async function replayGame(pixiContainer: HTMLElement, history: IG
     pauseGame: () => {
       gameRenderer.resetPlayerPositions();
       paused = true;
-      /*sounds.pause.play({
-        complete: () => {
-          sounds.pauseAll();
-        }
-      });*/
     },
     resumeGame: () => {
-      sounds.resumeAll();
-      //TODO sounds.unpause.play();
       paused = false;
     },
     goToStateIdx: (newStateIdx: number) => {
@@ -99,7 +90,7 @@ export default async function replayGame(pixiContainer: HTMLElement, history: IG
     },
     destroy: () => {
       stopped = true;
-      cleanupPixiApp(pixiContainer, pixiApp, textures, sounds);
+      cleanupPixiApp(pixiContainer, pixiApp, textures);
     }
   };
 }
@@ -120,24 +111,7 @@ function loadTexturesAsync(pixiApp: Application): Promise<TextureRegistry> {
   });
 }
 
-function loadSoundsAsync(pixiApp: Application): Promise<SoundRegistry> {
-  return new Promise<SoundRegistry>((resolve, reject) => {
-    try {
-      SoundRegistry.loadResources(pixiApp.loader);
-      pixiApp.loader.load(() => {
-        const sounds = new SoundRegistry(pixiApp.loader.resources);
-        resolve(sounds);
-      });
-    } catch (err) {
-      try {
-        pixiApp.loader.reset();
-      } catch {}
-      reject(err);
-    }
-  });
-}
-
-function cleanupPixiApp(pixiContainer: HTMLElement, pixiApp: Application, textures: TextureRegistry, sounds: SoundRegistry) {
+function cleanupPixiApp(pixiContainer: HTMLElement, pixiApp: Application, textures: TextureRegistry) {
   // Omg so much code to clear the pixi gpu texture cache
   // Some instructions might not be effective but overall it seems to work
   try {
@@ -147,7 +121,6 @@ function cleanupPixiApp(pixiContainer: HTMLElement, pixiApp: Application, textur
     pixiApp.stop();
 
     textures.destroy();
-    sounds.destroy();
 
     for (const id in pixiApp.loader.resources) {
       if (pixiApp.loader.resources.hasOwnProperty(id)) {

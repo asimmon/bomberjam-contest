@@ -1,11 +1,9 @@
 import { AnimatedSprite, Container, DisplayObject, Sprite, Texture, TilingSprite } from 'pixi.js';
 import GameContainer from './gameContainer';
-import SoundRegistry from './soundRegistry';
 import TextureRegistry from './textureRegistry';
 
 export default class GameMap extends GameContainer {
   private readonly textures: TextureRegistry;
-  private readonly sounds: SoundRegistry;
   private readonly mapContainer: Container;
 
   private wallSprites: { [idx: number]: AnimatedSprite } = {};
@@ -15,11 +13,10 @@ export default class GameMap extends GameContainer {
   private bonusesSprites: { [bonusId: string]: AnimatedSprite } = {};
   private flameSprites: AnimatedSprite[] = [];
 
-  constructor(stateProvider: IStateProvider, textures: TextureRegistry, sounds: SoundRegistry) {
+  constructor(stateProvider: IStateProvider, textures: TextureRegistry) {
     super(stateProvider);
 
     this.textures = textures;
-    this.sounds = sounds;
     this.mapContainer = new Container();
   }
 
@@ -55,17 +52,14 @@ export default class GameMap extends GameContainer {
 
   onPlayerAdded(playerId: string, player: IPlayer): void {
     this.registerPlayer(playerId, player);
-    //TODO this.sounds.coin.play();
   }
 
   onPlayerRemoved(playerId: string, player: IPlayer): void {
     this.unregisterObjectSprite(this.playerSprites, playerId);
-    //TODO this.sounds.error.play();
   }
 
   onBombAdded(bombId: string, bomb: IBomb): void {
     this.registerBomb(bombId, bomb);
-    //TODO this.sounds.bomb.play();
   }
 
   onBombRemoved(bombId: string, bomb: IBomb): void {
@@ -78,14 +72,6 @@ export default class GameMap extends GameContainer {
 
   onBonusRemoved(bonusId: string, bonus: IBonus): void {
     this.unregisterObjectSprite(this.bonusesSprites, bonusId);
-
-    // If player got Bonus
-    for (const playerId in this.state.players) {
-      const player: IPlayer = this.state.players[playerId];
-      if (bonus.x === player.x && bonus.y === player.y) {
-        //TODO this.sounds.powerup.play();
-      }
-    }
   }
 
   public onStateChanged(prevState: IGameState) {
@@ -134,34 +120,13 @@ export default class GameMap extends GameContainer {
       }
     }
 
-    // Game started
-    if (prevState.tick === 1 && this.state.tick > 1) {
-      this.sounds.waiting.stop();
-      //TODO this.sounds.level.play();
-    }
-    // Game ended
-    else if (!prevState.isFinished && this.state.isFinished) {
-      this.sounds.level.stop();
-      //TODO this.sounds.victory.play();
-    }
-    // Game was ended but the replay started the game again
-    else if (prevState.isFinished && !this.state.isFinished) {
-      this.sounds.victory.stop();
-      //TODO this.sounds.level.play();
-    }
-
     // Hide bombs that just exploded
     for (const bombId in this.state.bombs) {
       const bomb: IBomb = this.state.bombs[bombId];
       const bombSprite: Sprite = this.bombSprites[bombId];
 
       if (bombSprite) {
-        if (bomb.countdown <= 0) {
-          bombSprite.visible = false;
-          //TODO this.sounds.explosion.play();
-        } else {
-          bombSprite.visible = true;
-        }
+        bombSprite.visible = bomb.countdown > 0;
       }
     }
 
@@ -178,13 +143,6 @@ export default class GameMap extends GameContainer {
           playerSprite.visible = true;
         }
 
-        if (
-          (oldPlayer && oldPlayer.isAlive !== newPlayer.isAlive) ||
-          newPlayer.respawning === this.stateProvider.configuration.respawnTime
-        ) {
-          //TODO this.sounds.death.play();
-        }
-
         // Restore player transparency if not respawning
         if (newPlayer.isAlive && newPlayer.respawning === 0) {
           playerSprite.alpha = 1;
@@ -199,7 +157,6 @@ export default class GameMap extends GameContainer {
     const currentWallCount = Object.keys(this.wallSprites).length;
 
     // New wall has dropped.
-    //TODO if (previousWallCount !== currentWallCount) this.sounds.stomp.play();
   }
 
   private fixZOrdering(): void {
@@ -247,7 +204,6 @@ export default class GameMap extends GameContainer {
     sprite.tint = player.color;
     this.playerSprites[playerId] = sprite;
     this.mapContainer.addChild(sprite);
-    //TODO this.sounds.footsteps.play();
   }
 
   private registerBomb(bombId: string, bomb: IBomb) {
