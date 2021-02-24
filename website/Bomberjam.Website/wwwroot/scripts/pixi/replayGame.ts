@@ -4,11 +4,9 @@ import BomberjamRenderer from './bomberjamRenderer';
 import SoundRegistry from './soundRegistry';
 import TextureRegistry from './textureRegistry';
 
-export default async function replayGame(
-  history: IGameHistory,
-  stateChangedCallback: (stateIdx: number, state: IGameState) => void,
-  setTimeout: ISetTimeout
-): Promise<IReplayGameController> {
+type StateChangedCallback = (stateIdx: number) => void;
+
+export default async function replayGame(pixiContainer: HTMLElement, history: IGameHistory, stateChangedCallback: StateChangedCallback): Promise<IReplayGameController> {
   const pixiApp = new Application({
     antialias: true,
     backgroundColor: 0xffffff,
@@ -17,7 +15,6 @@ export default async function replayGame(
 
   const textures = await loadTexturesAsync(pixiApp);
   const sounds = await loadSoundsAsync(pixiApp);
-  const pixiContainer = document.getElementById('canvas') as HTMLElement;
 
   let initialized = false;
   let stopped = false;
@@ -33,7 +30,7 @@ export default async function replayGame(
   };
 
   // hack: does not block function exit so we can return the controller
-  setTimeout(async () => {
+  window.setTimeout(async () => {
     while (!stopped) {
       displayState(stateIdx);
 
@@ -42,14 +39,14 @@ export default async function replayGame(
         if (stateIdx >= states.length) stateIdx = states.length - 1;
       }
 
-      await sleepAsync(setTimeout, tickDuration);
+      await sleepAsync(tickDuration);
     }
   }, 0);
 
   function displayState(stateIdx: number) {
     stateProvider.state = states[stateIdx];
     stateProvider.state.tickDuration = tickDuration;
-    stateChangedCallback(stateIdx, stateProvider.state);
+    stateChangedCallback(stateIdx);
 
     onStateChanged(stateProvider.state);
   }
@@ -175,6 +172,6 @@ function cleanupPixiApp(pixiContainer: HTMLElement, pixiApp: Application, textur
   } catch {}
 }
 
-async function sleepAsync(setTimeout: ISetTimeout, milliseconds: number): Promise<void> {
-  return new Promise(resolve => setTimeout(resolve, milliseconds));
+async function sleepAsync(milliseconds: number): Promise<void> {
+  return new Promise(resolve => window.setTimeout(resolve, milliseconds));
 }

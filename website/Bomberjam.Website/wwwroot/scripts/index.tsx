@@ -1,15 +1,17 @@
 ﻿import './fontawesome'
 import React from "react";
 import {render} from 'react-dom';
-import {onDocumentReady} from './utils';
-import {Visualizer} from './visualizer'
+import {Application} from "./react/application";
+
+function onDocumentReady(callback: () => void) {
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    window.setTimeout(callback, 1);
+  } else {
+    document.addEventListener('DOMContentLoaded', callback);
+  }
+}
 
 onDocumentReady(() => {
-  const visualizerEl = document.getElementById('visualizer');
-  if (visualizerEl) {
-    render(<Visualizer gameId={visualizerEl.dataset['gameId'] ?? ''}/>, visualizerEl);
-  }
-
   // Adding Bootstrap nav toggler behavior without jQuery
   const navbarToggler = document.querySelector<HTMLElement>("button.navbar-toggler");
   if (navbarToggler) {
@@ -41,4 +43,10 @@ onDocumentReady(() => {
     }
 
   }, false);
+
+  // Render the React game viewer app
+  const visualizerEl = document.getElementById('visualizer');
+  if (visualizerEl) {
+    render(<Application gameId={visualizerEl.dataset['gameId'] ?? ''}/>, visualizerEl);
+  }
 });

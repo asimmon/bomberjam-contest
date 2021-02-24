@@ -1,5 +1,6 @@
 #visualizer {
-  #canvas {
+  .canvas {
+    @extend .border, .rounded;
     overflow: hidden;
   }
 

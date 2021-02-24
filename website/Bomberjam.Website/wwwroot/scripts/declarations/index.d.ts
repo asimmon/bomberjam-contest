@@ -54,25 +54,34 @@ interface IGameState {
   tickDuration: number;
 }
 
-interface ITickHistory {
-  state: IGameState;
-  actions: { [id: string]: string | null };
-}
-
-interface IPlayerErrorHistory {
-  playerId: string;
-  tick: number | null;
-  error: string;
-}
-
 interface IGameConfiguration {
   suddenDeathCountdown: number;
   respawnTime: number;
 }
 
+interface IPlayerSummary {
+  id: string;
+  name: string;
+  rank: number;
+  score: number | null;
+  points: number | null;
+  deltaPoints: number | null;
+  responsiveness: number;
+}
+
+interface IGameSummary {
+  players: { [id: string]: IPlayerSummary };
+}
+
+interface ITickHistory {
+  state: IGameState;
+  actions: { [id: string]: string | null };
+  latencies: { [id: string]: number | null };
+}
+
 interface IGameHistory {
   configuration: IGameConfiguration;
-  errors: IPlayerErrorHistory[];
+  summary: IGameSummary;
   ticks: ITickHistory[];
 }
 

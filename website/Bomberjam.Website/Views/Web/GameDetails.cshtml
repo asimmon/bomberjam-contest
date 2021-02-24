@@ -9,27 +9,3 @@
 </h1>
 
 <div id="visualizer" data-game-id="@Model.Id" class="my-4"></div>
-
-<h2>Statistics</h2>
-
-<div class="table-responsive">
-  <table class="table table-sm table-bordered table-striped">
-    <thead>
-    <tr>
-      <th>Username</th>
-      <th>Points</th>
-      <th>Responsiveness</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var user in Model.Users)
-    {
-      <tr>
-        <td>@user.UserName</td>
-        <td><span format-points="@user.DeltaPoints" show-sign="true"></span>
-        <td>@Math.Round(100f * user.Responsiveness)%</td>
-      </tr>
-    }
-    </tbody>
-  </table>
-</div>
