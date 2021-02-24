@@ -3,6 +3,7 @@ import replayGame from "../pixi/replayGame";
 
 interface VisualizerProps {
   gameHistory: IGameHistory | null;
+  loadingText: string;
 }
 
 export const ViewerWithControls = (props: VisualizerProps) => {
@@ -44,8 +45,6 @@ export const ViewerWithControls = (props: VisualizerProps) => {
   };
 
   useEffect(() => {
-    replayCtrl?.destroy();
-
     if (props.gameHistory && canvasContainer.current) {
       const loadedGameHistory = props.gameHistory;
       replayGame(canvasContainer.current, loadedGameHistory, onStateChanged).then(newReplayCtrl => {
@@ -58,10 +57,19 @@ export const ViewerWithControls = (props: VisualizerProps) => {
     }
   }, [props.gameHistory]);
 
+  useEffect(() => {
+    if (props.loadingText.length > 0) {
+      replayCtrl?.destroy();
+    }
+  }, [props.loadingText]);
+
   return <div>
     <div className="canvas-wrapper">
       <div className="loading-wrapper" />
       <div ref={canvasContainer} className="canvas"/>
+      <div className="loading-text">
+        <span>{props.loadingText}</span>
+      </div>
     </div>
 
     <div className="border rounded mt-2">

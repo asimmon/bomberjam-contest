@@ -11,13 +11,27 @@
     padding-bottom: 100% * ($canvas-height / $canvas-width);
   }
 
-  .canvas {
-    @extend .border, .rounded;
+  .loading-text, .canvas {
     position: absolute;
     top: 0;
     bottom: 0;
     left: 0;
     right: 0;
+  }
+
+  .loading-text {
+    text-align:center;
+
+    span {
+      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
+      color: $gray-500;
+    }
+  }
+
+  .canvas {
+    @extend .border, .rounded;
     background: $jumbotron-bg;
     overflow: hidden;
   }

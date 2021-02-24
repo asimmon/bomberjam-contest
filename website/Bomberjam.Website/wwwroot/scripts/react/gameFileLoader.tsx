@@ -2,7 +2,8 @@ import React, {ChangeEvent, useEffect} from "react";
 
 interface GameFileLoaderProps {
   gameId: string;
-  onLoad: (gameHistory: IGameHistory) => void;
+  onLoading: (loadingText: string) => void;
+  onLoaded: (gameHistory: IGameHistory) => void;
   onError: (error: string) => void;
 }
 
@@ -34,20 +35,21 @@ export const GameFileLoader = (props: GameFileLoaderProps) => {
     });
   };
 
-  const sleepAsync = (milliseconds: number): Promise<void> => {
+  const sleep = (milliseconds: number): Promise<void> => {
     return new Promise(resolve => window.setTimeout(resolve, milliseconds));
   };
 
   const downloadGameHistory = async (gameId: string): Promise<IGameHistory> => {
-    await sleepAsync(5000);
-    const response = await fetch('/api/game/' + gameId);
+    const responsePromise = fetch('/api/game/' + gameId);
+    const sleepPromise = sleep(1000);
+    const [response] = await Promise.all([responsePromise, sleepPromise]);
     if (response.ok) return response.json();
-    throw new Error('API returned: ' + response.status + ' ' + response.statusText);
+    throw new Error('Error ' + response.status + ' ' + response.statusText);
   };
 
   const onFileChanged = async (event: ChangeEvent<HTMLInputElement>): Promise<void> => {
     if (!event.target.files || event.target.files.length === 0 || !event.target.files[0])
-      return props.onError('No file selected');
+      return;
 
     const file = event.target.files[0];
     if (!file.name.toUpperCase().endsWith('.JSON'))
@@ -57,10 +59,14 @@ export const GameFileLoader = (props: GameFileLoaderProps) => {
     if (!file.size || file.size > maxUploadSize)
       return props.onError('File is either empty or greater than 2MB');
 
+    props.onLoading('Loading file ' + file.name);
+
     try {
       const fileContents = await readFileAsText(file);
-      const gameHistory = await parseGameHistoryFromText(fileContents);
-      return props.onLoad(gameHistory);
+      const gameHistoryPromise = parseGameHistoryFromText(fileContents);
+      const sleepPromise = sleep(1000);
+      const [gameHistory] = await Promise.all([gameHistoryPromise, sleepPromise]);
+      return props.onLoaded(gameHistory);
     } catch (err) {
       return props.onError(err.toString());
     }
@@ -68,8 +74,9 @@ export const GameFileLoader = (props: GameFileLoaderProps) => {
 
   useEffect(() => {
     if (props.gameId.length > 0) {
+      props.onLoading('Downloading game ' + props.gameId + '.json');
       downloadGameHistory(props.gameId).then(gameHistory => {
-        props.onLoad(gameHistory);
+        props.onLoaded(gameHistory);
       }, err => {
         props.onError(err.toString());
       });
@@ -79,7 +86,7 @@ export const GameFileLoader = (props: GameFileLoaderProps) => {
   return <div className={props.gameId.length > 0 ? 'd-none' : ''}>
     <p className="lead">Select a replay file</p>
     <div className="custom-file mb-3">
-      <input type="file" className="custom-file-input" onChange={onFileChanged} />
+      <input type="file" className="custom-file-input" onChange={onFileChanged}/>
       <label className="custom-file-label">Select a *.json file</label>
     </div>
   </div>

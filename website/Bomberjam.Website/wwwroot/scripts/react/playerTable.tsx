@@ -18,8 +18,8 @@ export const PlayerTable = (props: PlayerStatisticsProps) => {
     <PlayerRow key={idx} playerIndex={idx} gameHistory={props.gameHistory!} />
   );
 
-  return <div className={!props.gameHistory ? 'd-none' : 'mt-4'}>
-    <div className="table-responsive">
+  return <div className="mt-4">
+    <div className="table-responsive rounded">
       <table className="table table-sm table-bordered table-striped">
         <thead>
         <tr>
@@ -27,6 +27,11 @@ export const PlayerTable = (props: PlayerStatisticsProps) => {
         </tr>
         </thead>
         <tbody>{playerRows}</tbody>
+        <tfoot className={playerIndexes.length ? 'd-none' : ''}>
+          <tr>
+            <td className="text-center">Player statistics will be shown here</td>
+          </tr>
+        </tfoot>
       </table>
     </div>
   </div>
