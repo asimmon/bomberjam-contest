@@ -8,7 +8,8 @@ import util
 
 
 API_BASE_URL = util.get_env_or_default('API_BASE_URL', 'https://localhost:5001/api/')
-API_AUTH = util.get_env_or_default('API_AUTH', 'yolo')
+API_AUTH_TOKEN = util.get_env_or_default('API_AUTH_TOKEN', 'yolo')
+API_VERIFY_SSL = util.get_env_or_default('API_VERIFY_SSL', '1') == '1'
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -18,9 +19,9 @@ def download_bot(bot_id, storage_dir, is_compiled=False):
     logging.debug(f"Downloading {('compiled' if is_compiled else 'source code')} bot {bot_id}...")
 
     request_url = API_BASE_URL + (f"bot/%s/download?compiled=%s" % (bot_id, "true" if is_compiled else "false"))
-    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
 
-    r = requests.get(request_url, headers=request_headers, verify=False)
+    r = requests.get(request_url, headers=request_headers, verify=API_VERIFY_SSL)
     r.raise_for_status()
 
     local_file_name = "bot-%s-%s.zip" % (bot_id, "1" if is_compiled else "0")
@@ -45,9 +46,9 @@ def upload_bot(bot_id, zip_file_path):
         file_bytes = f.read()
 
     request_url = API_BASE_URL + ("bot/%s/upload" % bot_id)
-    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
 
-    r = requests.post(request_url, data=file_bytes, headers=request_headers, verify=False)
+    r = requests.post(request_url, data=file_bytes, headers=request_headers, verify=API_VERIFY_SSL)
     r.raise_for_status()
 
     logging.debug(f"Uploaded %s bytes" % len(file_bytes))
@@ -59,10 +60,10 @@ def send_compilation_result(bot_id, did_compile, language, compilation_errors):
 
     request_url = API_BASE_URL + ("bot/%s/compilation-result" % bot_id)
     request_headers = {
-        'Authorization': 'Secret ' + API_AUTH,
+        'Authorization': 'Secret ' + API_AUTH_TOKEN,
         'Content-Type': 'application/json'
     }
-    r = requests.post(request_url, headers=request_headers, verify=False, json={
+    r = requests.post(request_url, headers=request_headers, verify=API_VERIFY_SSL, json={
         'botId': bot_id,
         'didCompile': True if did_compile else False,
         'language': language,
@@ -76,9 +77,9 @@ def get_player_compiled_bot_id(player_id):
     logging.debug(f"Retrieving the latest compiled bot ID for player {player_id}...")
 
     request_url = API_BASE_URL + ("user/%s/bot" % player_id)
-    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
 
-    r = requests.get(request_url, headers=request_headers, verify=False)
+    r = requests.get(request_url, headers=request_headers, verify=API_VERIFY_SSL)
     r.raise_for_status()
 
     bot_id = r.text
@@ -91,10 +92,10 @@ def send_game_result(game):
 
     request_url = API_BASE_URL + "game"
     request_headers = {
-        'Authorization': 'Secret ' + API_AUTH,
+        'Authorization': 'Secret ' + API_AUTH_TOKEN,
         'Content-Type': 'application/json'
     }
-    r = requests.post(request_url, headers=request_headers, verify=False, json={
+    r = requests.post(request_url, headers=request_headers, verify=API_VERIFY_SSL, json={
         'serializedHistory': game.game_result,
         'standardOutput': game.game_stdout,
         'standardError': game.game_stderr
@@ -108,9 +109,9 @@ def get_next_task():
     logging.debug(f"Retrieving the next task to execute...")
 
     request_url = API_BASE_URL + 'task/next'
-    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
 
-    r = requests.get(request_url, headers=request_headers, verify=False)
+    r = requests.get(request_url, headers=request_headers, verify=API_VERIFY_SSL)
 
     if r.status_code == 404:
         return None
@@ -126,9 +127,9 @@ def mark_task_started(task_id):
     logging.debug(f"Marking task {task_id} as started...")
 
     request_url = API_BASE_URL + ("task/%s/started" % task_id)
-    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
 
-    r = requests.get(request_url, headers=request_headers, verify=False)
+    r = requests.get(request_url, headers=request_headers, verify=API_VERIFY_SSL)
     r.raise_for_status()
 
     logging.info(f"Marked task: {task_id} as started")
@@ -138,9 +139,9 @@ def mark_task_finished(task_id):
     logging.debug(f"Marking task {task_id} as finished...")
 
     request_url = API_BASE_URL + ("task/%s/finished" % task_id)
-    request_headers = {'Authorization': 'Secret ' + API_AUTH}
+    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
 
-    r = requests.get(request_url, headers=request_headers, verify=False)
+    r = requests.get(request_url, headers=request_headers, verify=API_VERIFY_SSL)
     r.raise_for_status()
 
     logging.info(f"Marked task: {task_id} as finished")

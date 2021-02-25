@@ -14,10 +14,13 @@ services:
       - "./https/:/https/"
       - "./tmp/:/tmp/"
   worker:
+    depends_on:
+      - web
     image: bomberjam-worker
     restart: unless-stopped
     privileged: true
     init: true
     environment:
       - API_BASE_URL=https://web/api/
-      - API_AUTH=verysecret
+      - API_AUTH_TOKEN=verysecret
+      - API_VERIFY_SSL=0

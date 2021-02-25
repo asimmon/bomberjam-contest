@@ -78,8 +78,7 @@ namespace Bomberjam.Website
             services.AddSingleton<IBotStorage>(fileBotStorage);
             services.AddSingleton<IObjectCache, ObjectCache>();
 
-            var dbConnName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "BomberjamContextWin" : "BomberjamContextLin";
-            var dbConnStr = this.Configuration.GetConnectionString(dbConnName);
+            var dbConnStr = this.Configuration.GetConnectionString("BomberjamContext");
 
             services.AddDbContext<BomberjamContext>(options =>
             {
