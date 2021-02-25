@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Globalization;
 using System.IO;
 using System.Threading.Tasks;
 
 namespace Bomberjam.Website.Storage
 {
-    public sealed class LocalFileBotStorage : IBotStorage
+    public sealed class LocalFileBotStorage : BaseBotStorage, IBotStorage
     {
         private const string BomberjamDirName = "Bomberjam";
         private const string BotsDirName = "Bots";
@@ -25,43 +24,38 @@ namespace Bomberjam.Website.Storage
 
         public Task UploadBotSourceCode(Guid botId, Stream fileStream)
         {
-            return this.UploadBotSourceCode(botId, false, fileStream);
+            return this.UploadBot(botId, false, fileStream);
         }
 
         public Task UploadCompiledBot(Guid botId, Stream fileStream)
         {
-            return this.UploadBotSourceCode(botId, true, fileStream);
+            return this.UploadBot(botId, true, fileStream);
         }
 
-        private async Task UploadBotSourceCode(Guid botId, bool isCompiled, Stream fileStream)
+        private async Task UploadBot(Guid botId, bool isCompiled, Stream fileStream)
         {
             await using (fileStream)
             {
                 var filePath = Path.Join(this._botsDirPath, MakeBotFileName(botId, isCompiled));
                 await using var localFile = File.Open(filePath, FileMode.Create);
-                await fileStream.CopyToAsync(localFile);
+                await fileStream.CopyToAsync(localFile).ConfigureAwait(false);
             }
         }
 
-        private static string MakeBotFileName(Guid userId, bool isCompiled)
+        public Task<Stream> DownloadBotSourceCode(Guid botId)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}-{1}.zip", userId.ToString("D"), isCompiled ? 1 : 0);
+            return this.DownloadBot(botId, false);
         }
 
-        public Stream DownloadBotSourceCode(Guid botId)
+        public Task<Stream> DownloadCompiledBot(Guid botId)
         {
-            return this.DownloadBotSourceCode(botId, false);
+            return this.DownloadBot(botId, true);
         }
 
-        public Stream DownloadCompiledBot(Guid botId)
-        {
-            return this.DownloadBotSourceCode(botId, true);
-        }
-
-        private Stream DownloadBotSourceCode(Guid botId, bool isCompiled)
+        private Task<Stream> DownloadBot(Guid botId, bool isCompiled)
         {
             var filePath = Path.Join(this._botsDirPath, MakeBotFileName(botId, isCompiled));
-            return File.OpenRead(filePath);
+            return Task.FromResult<Stream>(File.OpenRead(filePath));
         }
 
         public async Task UploadGameResult(Guid botId, Stream fileStream)
@@ -70,19 +64,14 @@ namespace Bomberjam.Website.Storage
             {
                 var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(botId));
                 await using var localFile = File.Open(filePath, FileMode.Create);
-                await fileStream.CopyToAsync(localFile);
+                await fileStream.CopyToAsync(localFile).ConfigureAwait(false);;
             }
         }
 
-        public Stream DownloadGameResult(Guid botId)
+        public Task<Stream> DownloadGameResult(Guid botId)
         {
             var filePath = Path.Join(this._gamesDirPath, MakeGameFileName(botId));
-            return File.OpenRead(filePath);
-        }
-
-        private static string MakeGameFileName(Guid gameId)
-        {
-            return string.Format(CultureInfo.InvariantCulture, "{0}.json", gameId.ToString("D"));
+            return Task.FromResult<Stream>(File.OpenRead(filePath));
         }
     }
 }

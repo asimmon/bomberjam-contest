@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using Bomberjam.Website.Authentication;
-using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Storage;
@@ -73,9 +72,19 @@ namespace Bomberjam.Website
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Bomberjam API", Version = "v1" });
             });
 
-            var fileBotStorage = new LocalFileBotStorage(Path.GetTempPath());
-            services.AddSingleton<IBotStorage>(fileBotStorage);
-            services.AddSingleton<IObjectCache, ObjectCache>();
+            IBotStorage botStorage;
+            if (this.Configuration.GetConnectionString("BomberjamStorage") is { Length: > 0 } storageConnStr)
+            {
+                botStorage = storageConnStr.StartsWith("DefaultEndpointsProtocol", StringComparison.OrdinalIgnoreCase)
+                    ? (IBotStorage)new AzureStorageBotStorage(storageConnStr)
+                    : new LocalFileBotStorage(storageConnStr);
+            }
+            else
+            {
+                botStorage = new LocalFileBotStorage(Path.GetTempPath());
+            }
+
+            services.AddSingleton(botStorage);
 
             var dbConnStr = this.Configuration.GetConnectionString("BomberjamContext");
 
@@ -114,13 +123,13 @@ namespace Bomberjam.Website
                     zippedBotFileStream.CopyTo(zippedBotFileMs);
                     var zippedBotFileBytes = zippedBotFileMs.ToArray();
 
-                    fileBotStorage.UploadBotSourceCode(Constants.UserAskaiserId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserFalgarId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserXenureId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserMintyId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserKalmeraId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserPandarfId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserMireId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserAskaiserId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserFalgarId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserXenureId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserMintyId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserKalmeraId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserPandarfId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserMireId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
                 }
             }
         }
