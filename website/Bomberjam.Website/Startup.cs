@@ -1,6 +1,5 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
@@ -62,12 +61,12 @@ namespace Bomberjam.Website
                 })
                 .AddGitHub(options =>
                 {
-                    options.ClientId = Configuration["GitHub:ClientId"];
-                    options.ClientSecret = Configuration["GitHub:ClientSecret"];
+                    options.ClientId = this.Configuration["GitHub:ClientId"];
+                    options.ClientSecret = this.Configuration["GitHub:ClientSecret"];
                     options.Scope.Add("user:email");
                     options.CallbackPath = "/signin-github-callback";
                 })
-                .AddSecret(Configuration["SecretAuth:Secret"]);
+                .AddSecret(this.Configuration["SecretAuth:Secret"]);
 
             services.AddSwaggerGen(c =>
             {
@@ -128,6 +127,18 @@ namespace Bomberjam.Website
 
         public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs)
         {
+            if ("true".Equals(this.Configuration["EnableAutomaticMigrations"], StringComparison.OrdinalIgnoreCase))
+            {
+                var scopeFactory = app.ApplicationServices.GetService<IServiceScopeFactory>();
+                if (scopeFactory != null)
+                {
+                    using (var scope = scopeFactory.CreateScope())
+                    {
+                        scope.ServiceProvider.GetRequiredService<BomberjamContext>().Database.Migrate();
+                    }
+                }
+            }
+
             app.UseResponseCompression();
 
             if (this.Environment.IsDevelopment())

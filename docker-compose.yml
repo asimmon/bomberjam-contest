@@ -7,6 +7,7 @@ services:
       - "8080:443"
     environment:
       - SecretAuth__Secret=verysecret
+      - EnableAutomaticMigrations=true
       - ASPNETCORE_URLS=https://+;http://+
       - ASPNETCORE_Kestrel__Certificates__Default__Password=mysuperpassword
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
