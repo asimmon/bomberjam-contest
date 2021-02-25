@@ -16,12 +16,10 @@
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Release' And '$(OS)' == 'Windows_NT' ">
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Release' And '$(OS)' != 'Windows_NT' ">
-    <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
     <PublishReadyToRun>false</PublishReadyToRun>
   </PropertyGroup>
 

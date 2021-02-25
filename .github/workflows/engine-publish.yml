@@ -1,0 +1,49 @@
+name: Publish
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  publish:
+    name: Publish for ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+            binary_name: bomberjam.exe
+            artifact_name: bomberjam-win.exe
+          - os: ubuntu-latest
+            rid: linux-x64
+            binary_name: bomberjam
+            artifact_name: bomberjam-linux
+          - os: macos-latest
+            rid: osx-x64
+            binary_name: bomberjam
+            artifact_name: bomberjam-osx
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Restore
+      working-directory: ./engine/Bomberjam
+      run: dotnet restore --nologo
+
+    - name: Publish
+      working-directory: ./engine/Bomberjam
+      run: dotnet publish -c Release -r ${{ matrix.rid }} --nologo
+
+    - name: Upload
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.artifact_name }}
+        path: ./engine/Bomberjam/bin/Release/net5.0/${{ matrix.rid }}/publish/${{ matrix.binary_name }}
