@@ -36,11 +36,11 @@ jobs:
 
     - name: Restore
       working-directory: ./engine/Bomberjam
-      run: dotnet restore --nologo
+      run: dotnet restore
 
     - name: Publish
       working-directory: ./engine/Bomberjam
-      run: dotnet publish -c Release -r ${{ matrix.rid }} --nologo
+      run: dotnet publish -c Release -r ${{ matrix.rid }}
 
     - name: Upload
       uses: actions/upload-artifact@v2
