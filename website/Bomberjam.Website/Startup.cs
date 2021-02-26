@@ -200,7 +200,11 @@ namespace Bomberjam.Website
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapHangfireDashboard();
+
+                if (this.Environment.IsDevelopment())
+                {
+                    endpoints.MapHangfireDashboard();
+                }
             });
 
             recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), "*/5 * * * *");
