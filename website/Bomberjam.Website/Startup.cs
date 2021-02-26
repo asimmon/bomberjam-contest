@@ -5,6 +5,7 @@ using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Storage;
+using Bomberjam.Website.Utils;
 using Hangfire;
 using Hangfire.Storage.SQLite;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -38,6 +39,7 @@ namespace Bomberjam.Website
         {
             services.AddRouting();
             services.AddMvc();
+            services.AddScoped<PushFileStreamResultExecutor>();
 
             services.AddResponseCompression(opts =>
             {
@@ -157,18 +159,6 @@ namespace Bomberjam.Website
 
         public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs)
         {
-            if ("true".Equals(this.Configuration["EnableAutomaticMigrations"], StringComparison.OrdinalIgnoreCase))
-            {
-                var scopeFactory = app.ApplicationServices.GetService<IServiceScopeFactory>();
-                if (scopeFactory != null)
-                {
-                    using (var scope = scopeFactory.CreateScope())
-                    {
-                        scope.ServiceProvider.GetRequiredService<BomberjamContext>().Database.Migrate();
-                    }
-                }
-            }
-
             app.UseResponseCompression();
 
             if (this.Environment.IsDevelopment())

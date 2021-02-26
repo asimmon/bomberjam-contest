@@ -11,6 +11,7 @@ using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
+using Bomberjam.Website.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -30,21 +31,22 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("bot/{botId}/download")]
-        public async Task<IActionResult> DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
+        public IActionResult DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
-            var fileStream = isCompiled ? await this.Storage.DownloadCompiledBot(botId) : await this.Storage.DownloadBotSourceCode(botId);
-            var fileBytes = await StreamToByteArray(fileStream);
-            return this.File(fileBytes, "application/octet-stream", $"bot-{botId:D}.zip");
-        }
-
-        private static async Task<byte[]> StreamToByteArray(Stream stream)
-        {
-            await using (stream)
+            return this.PushFileStream(MediaTypeNames.Application.Json, $"bot-{botId:D}.zip", async responseStream =>
             {
-                await using var memoryStream = new MemoryStream();
-                await stream.CopyToAsync(memoryStream);
-                return memoryStream.ToArray();
-            }
+                await using (responseStream)
+                {
+                    if (isCompiled)
+                    {
+                        await this.Storage.DownloadCompiledBotTo(botId, responseStream);
+                    }
+                    else
+                    {
+                        await this.Storage.DownloadBotSourceCodeTo(botId, responseStream);
+                    }
+                }
+            });
         }
 
         [HttpPost("bot/{botId}/upload")]
@@ -155,10 +157,15 @@ namespace Bomberjam.Website.Controllers
 
         [AllowAnonymous]
         [HttpGet("game/{gameId}")]
-        public async Task<IActionResult> GetGame(Guid gameId)
+        public IActionResult GetGameWithStreaming(Guid gameId)
         {
-            var fileStream = await this.Storage.DownloadGameResult(gameId);
-            return this.File(fileStream, MediaTypeNames.Application.Json, $"game-{gameId:D}.json");
+            return this.PushFileStream(MediaTypeNames.Application.Json, $"game-{gameId:D}.json", async responseStream =>
+            {
+                await using (responseStream)
+                {
+                    await this.Storage.DownloadGameResultTo(gameId, responseStream);
+                }
+            });
         }
 
         [HttpPost("game")]

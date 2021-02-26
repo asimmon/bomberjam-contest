@@ -5,7 +5,7 @@ using Azure.Storage.Blobs;
 
 namespace Bomberjam.Website.Storage
 {
-    public sealed class AzureStorageBomberjamStorage : BaseBotStorage, IBomberjamStorage
+    public sealed class AzureStorageBomberjamStorage : BaseBomberjamStorage
     {
         private const string BotsContainerName = "bots";
         private const string GamesContainerName = "games";
@@ -26,17 +26,7 @@ namespace Bomberjam.Website.Storage
             containerClient.CreateIfNotExists();
         }
 
-        public Task UploadBotSourceCode(Guid botId, Stream fileStream)
-        {
-            return this.UploadBot(botId, false, fileStream);
-        }
-
-        public Task UploadCompiledBot(Guid botId, Stream fileStream)
-        {
-            return this.UploadBot(botId, true, fileStream);
-        }
-
-        private async Task UploadBot(Guid botId, bool isCompiled, Stream fileStream)
+        protected override async Task UploadBot(Guid botId, Stream fileStream, bool isCompiled)
         {
             var blobService = new BlobServiceClient(this._connectionString);
             var containerClient = blobService.GetBlobContainerClient(BotsContainerName);
@@ -48,29 +38,15 @@ namespace Bomberjam.Website.Storage
             }
         }
 
-        public Task<Stream> DownloadBotSourceCode(Guid botId)
-        {
-            return this.DownloadBot(botId, false);
-        }
-
-        public Task<Stream> DownloadCompiledBot(Guid botId)
-        {
-            return this.DownloadBot(botId, true);
-        }
-
-        private async Task<Stream> DownloadBot(Guid botId, bool isCompiled)
+        protected override async Task DownloadBotTo(Guid botId, Stream destinationStream, bool isCompiled)
         {
             var blobService = new BlobServiceClient(this._connectionString);
             var containerClient = blobService.GetBlobContainerClient(BotsContainerName);
             var blobClient = containerClient.GetBlobClient(MakeBotFileName(botId, isCompiled));
-
-            var botStream = new MemoryStream();
-            using var response = await blobClient.DownloadToAsync(botStream).ConfigureAwait(false);
-            botStream.Seek(0, SeekOrigin.Begin);
-            return botStream;
+            await blobClient.DownloadToAsync(destinationStream).ConfigureAwait(false);
         }
 
-        public async Task UploadGameResult(Guid botId, Stream fileStream)
+        public override async Task UploadGameResult(Guid botId, Stream fileStream)
         {
             var blobService = new BlobServiceClient(this._connectionString);
             var containerClient = blobService.GetBlobContainerClient(GamesContainerName);
@@ -82,16 +58,12 @@ namespace Bomberjam.Website.Storage
             }
         }
 
-        public async Task<Stream> DownloadGameResult(Guid botId)
+        public override async Task DownloadGameResultTo(Guid botId, Stream destinationStream)
         {
             var blobService = new BlobServiceClient(this._connectionString);
             var containerClient = blobService.GetBlobContainerClient(GamesContainerName);
             var blobClient = containerClient.GetBlobClient(MakeGameFileName(botId));
-
-            var gameStream = new MemoryStream();
-            using var response = await blobClient.DownloadToAsync(gameStream).ConfigureAwait(false);
-            gameStream.Seek(0, SeekOrigin.Begin);
-            return gameStream;
+            await blobClient.DownloadToAsync(destinationStream).ConfigureAwait(false);
         }
     }
 }

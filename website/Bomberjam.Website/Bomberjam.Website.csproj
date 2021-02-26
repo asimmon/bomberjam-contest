@@ -31,14 +31,6 @@
     <EmbeddedResource Include="MyBot.zip" />
   </ItemGroup>
 
-  <ItemGroup>
-    <_ContentIncludedByDefault Remove="wwwroot\dist\bundle.js" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Migrations" />
-  </ItemGroup>
-
   <Target Name="DeleteNodeModulesDirectory" BeforeTargets="BuildFrontend" Condition=" '$(OS)' != 'Windows_NT' ">
     <RemoveDir Directories="$(ProjectDir)node_modules" />
   </Target>
