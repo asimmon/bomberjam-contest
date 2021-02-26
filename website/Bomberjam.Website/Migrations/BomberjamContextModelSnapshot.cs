@@ -3,6 +3,7 @@ using System;
 using Bomberjam.Website.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Bomberjam.Website.Migrations
@@ -14,31 +15,33 @@ namespace Bomberjam.Website.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.0");
+                .UseIdentityColumns()
+                .HasAnnotation("Relational:MaxIdentifierLength", 128)
+                .HasAnnotation("ProductVersion", "5.0.3");
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbBot", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Errors")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Language")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Updated")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -52,71 +55,71 @@ namespace Bomberjam.Website.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(7145),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(6160),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(7395),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(6410),
                             UserId = new Guid("00000000-0000-0000-0000-000000000001")
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8441),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7662),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8443),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7664),
                             UserId = new Guid("00000000-0000-0000-0000-000000000002")
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8445),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7667),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8446),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7667),
                             UserId = new Guid("00000000-0000-0000-0000-000000000003")
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8447),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7668),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8447),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7669),
                             UserId = new Guid("00000000-0000-0000-0000-000000000004")
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8448),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7670),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8449),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7671),
                             UserId = new Guid("00000000-0000-0000-0000-000000000005")
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000006"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8450),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7672),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8451),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7673),
                             UserId = new Guid("00000000-0000-0000-0000-000000000006")
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000007"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8452),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7674),
                             Errors = "",
                             Language = "",
                             Status = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 168, DateTimeKind.Utc).AddTicks(8452),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 387, DateTimeKind.Utc).AddTicks(7675),
                             UserId = new Guid("00000000-0000-0000-0000-000000000007")
                         });
                 });
@@ -125,28 +128,28 @@ namespace Bomberjam.Website.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Errors")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<double?>("GameDuration")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.Property<double?>("InitDuration")
-                        .HasColumnType("REAL");
+                        .HasColumnType("float");
 
                     b.Property<string>("Stderr")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Stdout")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Updated")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -156,31 +159,31 @@ namespace Bomberjam.Website.Migrations
             modelBuilder.Entity("Bomberjam.Website.Database.DbGameUser", b =>
                 {
                     b.Property<Guid>("GameId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<float>("DeltaPoints")
-                        .HasColumnType("REAL");
+                        .HasColumnType("real");
 
                     b.Property<string>("Errors")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Rank")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<float>("Responsiveness")
-                        .HasColumnType("REAL");
+                        .HasColumnType("real");
 
                     b.Property<int>("Score")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Updated")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("GameId", "UserId");
 
@@ -193,25 +196,25 @@ namespace Bomberjam.Website.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Data")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Status")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<int>("Type")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Updated")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<Guid?>("UserId")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
 
@@ -228,66 +231,66 @@ namespace Bomberjam.Website.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("84c80409-f8a7-4fa5-94f1-2b4841d97056"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(1868),
+                            Id = new Guid("1ca68972-7ecb-446a-9803-3832a1f58c90"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(940),
                             Data = "00000000-0000-0000-0000-000000000001",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(2214)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(1180)
                         },
                         new
                         {
-                            Id = new Guid("8bdd023b-2c32-440f-b2af-96c56db4594c"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3006),
+                            Id = new Guid("ed2a86a3-674e-4a40-85f3-446b1273d016"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(1998),
                             Data = "00000000-0000-0000-0000-000000000002",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3007)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2001)
                         },
                         new
                         {
-                            Id = new Guid("a2b02f33-82f0-428b-899a-f8816e272607"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3012),
+                            Id = new Guid("2ce8a06a-6438-4a1a-aa4c-a09edbc7b96e"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2005),
                             Data = "00000000-0000-0000-0000-000000000003",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3013)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2006)
                         },
                         new
                         {
-                            Id = new Guid("83baa9b0-ddf1-4d92-b46a-38dd3d954913"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3014),
+                            Id = new Guid("85f51f94-6e23-4ccb-ae23-e13460abd497"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2008),
                             Data = "00000000-0000-0000-0000-000000000004",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3015)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2009)
                         },
                         new
                         {
-                            Id = new Guid("e6a62b3e-1e00-4fba-8273-c075b9881304"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3018),
+                            Id = new Guid("72e6044b-bf11-4996-ae1a-4016bda9fedc"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2011),
                             Data = "00000000-0000-0000-0000-000000000005",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3018)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2011)
                         },
                         new
                         {
-                            Id = new Guid("5ab114b1-fc27-4567-8ac6-ccb40acd203f"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3020),
+                            Id = new Guid("443b71a5-3f7b-4427-b7f5-929d73522b9b"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2013),
                             Data = "00000000-0000-0000-0000-000000000006",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3021)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2014)
                         },
                         new
                         {
-                            Id = new Guid("e8e6ad71-f191-42e4-8559-62b4966bc98f"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3023),
+                            Id = new Guid("efced929-e8e1-44ac-a83e-132e3a8a0c5d"),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2027),
                             Data = "00000000-0000-0000-0000-000000000007",
                             Status = 0,
                             Type = 1,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 169, DateTimeKind.Utc).AddTicks(3023)
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 388, DateTimeKind.Utc).AddTicks(2028)
                         });
                 });
 
@@ -295,36 +298,38 @@ namespace Bomberjam.Website.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("TEXT");
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<DateTime>("Created")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Email")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("GithubId")
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("int");
 
                     b.Property<float>("Points")
-                        .HasColumnType("REAL");
+                        .HasColumnType("real");
 
                     b.Property<DateTime>("Updated")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("UserName")
-                        .HasColumnType("TEXT");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[Email] IS NOT NULL");
 
                     b.HasIndex("GithubId")
                         .IsUnique();
 
                     b.HasIndex("UserName")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[UserName] IS NOT NULL");
 
                     b.ToTable("App_Users");
 
@@ -332,71 +337,71 @@ namespace Bomberjam.Website.Migrations
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000001"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(5075),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(4146),
                             Email = "simmon.anthony@gmail.com",
                             GithubId = 14242083,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(5322),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(4384),
                             UserName = "Askaiser"
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000002"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6083),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5168),
                             Email = "falgar@gmail.com",
                             GithubId = 36072624,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6085),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5171),
                             UserName = "Falgar"
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000003"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6086),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5173),
                             Email = "xenure@gmail.com",
                             GithubId = 9208753,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6087),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5174),
                             UserName = "Xenure"
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000004"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6088),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5175),
                             Email = "minty@gmail.com",
                             GithubId = 26142591,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6088),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5176),
                             UserName = "Minty"
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000005"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6089),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5177),
                             Email = "kalmera@gmail.com",
                             GithubId = 5122918,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6090),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5178),
                             UserName = "Kalmera"
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000006"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6091),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5179),
                             Email = "pandarf@gmail.com",
                             GithubId = 1035273,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6092),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5179),
                             UserName = "Pandarf"
                         },
                         new
                         {
                             Id = new Guid("00000000-0000-0000-0000-000000000007"),
-                            Created = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6093),
+                            Created = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5182),
                             Email = "mire@gmail.com",
                             GithubId = 5489330,
                             Points = 1500f,
-                            Updated = new DateTime(2021, 2, 23, 16, 49, 35, 167, DateTimeKind.Utc).AddTicks(6094),
+                            Updated = new DateTime(2021, 2, 26, 0, 53, 21, 386, DateTimeKind.Utc).AddTicks(5182),
                             UserName = "Mire"
                         });
                 });

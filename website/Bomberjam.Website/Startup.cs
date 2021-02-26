@@ -90,7 +90,14 @@ namespace Bomberjam.Website
 
             services.AddDbContext<BomberjamContext>(options =>
             {
-                options.UseSqlite(dbConnStr).EnableSensitiveDataLogging();
+                var dbBuilder = SqliteDataSourceRegex.IsMatch(dbConnStr)
+                    ? options.UseSqlite(dbConnStr)
+                    : options.UseSqlServer(dbConnStr);
+
+                if (this.Environment.IsDevelopment())
+                {
+                    dbBuilder.EnableSensitiveDataLogging();
+                }
             });
 
             services.AddScoped<IRepository, DatabaseRepository>();
@@ -105,11 +112,11 @@ namespace Bomberjam.Website
             }
             else
             {
-                throw new Exception($"Could not extract SQLite database file name from the connection string '{dbConnStr}'");
+                //throw new Exception($"Could not extract SQLite database file name from the connection string '{dbConnStr}'");
             }
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer();
+            // services.AddHangfireServer();
 
             // Add framework services.
             services.AddMvc();
@@ -134,7 +141,7 @@ namespace Bomberjam.Website
             }
         }
 
-        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs)
+        public void Configure(IApplicationBuilder app)
         {
             if ("true".Equals(this.Configuration["EnableAutomaticMigrations"], StringComparison.OrdinalIgnoreCase))
             {
@@ -143,7 +150,7 @@ namespace Bomberjam.Website
                 {
                     using (var scope = scopeFactory.CreateScope())
                     {
-                        scope.ServiceProvider.GetRequiredService<BomberjamContext>().Database.Migrate();
+                        //scope.ServiceProvider.GetRequiredService<BomberjamContext>().Database.Migrate();
                     }
                 }
             }
@@ -180,10 +187,10 @@ namespace Bomberjam.Website
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapHangfireDashboard();
+                //endpoints.MapHangfireDashboard();
             });
 
-            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), Cron.Minutely);
+            //recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), Cron.Minutely);
         }
     }
 }
