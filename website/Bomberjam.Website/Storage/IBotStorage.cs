@@ -7,12 +7,12 @@ namespace Bomberjam.Website.Storage
     public interface IBotStorage
     {
         Task UploadBotSourceCode(Guid botId, Stream fileStream);
-        Stream DownloadBotSourceCode(Guid botId);
+        Task<Stream> DownloadBotSourceCode(Guid botId);
 
         Task UploadCompiledBot(Guid botId, Stream fileStream);
-        Stream DownloadCompiledBot(Guid botId);
+        Task<Stream> DownloadCompiledBot(Guid botId);
 
         Task UploadGameResult(Guid botId, Stream fileStream);
-        Stream DownloadGameResult(Guid botId);
+        Task<Stream> DownloadGameResult(Guid botId);
     }
 }

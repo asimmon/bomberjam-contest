@@ -1,9 +1,7 @@
 using System;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using Bomberjam.Website.Authentication;
-using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Storage;
@@ -62,28 +60,44 @@ namespace Bomberjam.Website
                 })
                 .AddGitHub(options =>
                 {
-                    options.ClientId = Configuration["GitHub:ClientId"];
-                    options.ClientSecret = Configuration["GitHub:ClientSecret"];
+                    options.ClientId = this.Configuration["GitHub:ClientId"];
+                    options.ClientSecret = this.Configuration["GitHub:ClientSecret"];
                     options.Scope.Add("user:email");
                     options.CallbackPath = "/signin-github-callback";
                 })
-                .AddSecret(Configuration["SecretAuth:Secret"]);
+                .AddSecret(this.Configuration["SecretAuth:Secret"]);
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Bomberjam API", Version = "v1" });
             });
 
-            var fileBotStorage = new LocalFileBotStorage(Path.GetTempPath());
-            services.AddSingleton<IBotStorage>(fileBotStorage);
-            services.AddSingleton<IObjectCache, ObjectCache>();
+            IBotStorage botStorage;
+            if (this.Configuration.GetConnectionString("BomberjamStorage") is { Length: > 0 } storageConnStr)
+            {
+                botStorage = storageConnStr.StartsWith("DefaultEndpointsProtocol", StringComparison.OrdinalIgnoreCase)
+                    ? (IBotStorage)new AzureStorageBotStorage(storageConnStr)
+                    : new LocalFileBotStorage(storageConnStr);
+            }
+            else
+            {
+                botStorage = new LocalFileBotStorage(Path.GetTempPath());
+            }
 
-            var dbConnName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "BomberjamContextWin" : "BomberjamContextLin";
-            var dbConnStr = this.Configuration.GetConnectionString(dbConnName);
+            services.AddSingleton(botStorage);
+
+            var dbConnStr = this.Configuration.GetConnectionString("BomberjamContext");
 
             services.AddDbContext<BomberjamContext>(options =>
             {
-                options.UseSqlite(dbConnStr).EnableSensitiveDataLogging();
+                var dbBuilder = SqliteDataSourceRegex.IsMatch(dbConnStr)
+                    ? options.UseSqlite(dbConnStr)
+                    : options.UseSqlServer(dbConnStr);
+
+                if (this.Environment.IsDevelopment())
+                {
+                    dbBuilder.EnableSensitiveDataLogging();
+                }
             });
 
             services.AddScoped<IRepository, DatabaseRepository>();
@@ -98,11 +112,11 @@ namespace Bomberjam.Website
             }
             else
             {
-                throw new Exception($"Could not extract SQLite database file name from the connection string '{dbConnStr}'");
+                //throw new Exception($"Could not extract SQLite database file name from the connection string '{dbConnStr}'");
             }
 
             // Add the processing server as IHostedService
-            services.AddHangfireServer();
+            // services.AddHangfireServer();
 
             // Add framework services.
             services.AddMvc();
@@ -116,19 +130,31 @@ namespace Bomberjam.Website
                     zippedBotFileStream.CopyTo(zippedBotFileMs);
                     var zippedBotFileBytes = zippedBotFileMs.ToArray();
 
-                    fileBotStorage.UploadBotSourceCode(Constants.UserAskaiserId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserFalgarId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserXenureId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserMintyId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserKalmeraId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserPandarfId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    fileBotStorage.UploadBotSourceCode(Constants.UserMireId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserAskaiserId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserFalgarId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserXenureId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserMintyId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserKalmeraId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserPandarfId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
+                    botStorage.UploadBotSourceCode(Constants.UserMireId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
                 }
             }
         }
 
-        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs)
+        public void Configure(IApplicationBuilder app)
         {
+            if ("true".Equals(this.Configuration["EnableAutomaticMigrations"], StringComparison.OrdinalIgnoreCase))
+            {
+                var scopeFactory = app.ApplicationServices.GetService<IServiceScopeFactory>();
+                if (scopeFactory != null)
+                {
+                    using (var scope = scopeFactory.CreateScope())
+                    {
+                        //scope.ServiceProvider.GetRequiredService<BomberjamContext>().Database.Migrate();
+                    }
+                }
+            }
+
             app.UseResponseCompression();
 
             if (this.Environment.IsDevelopment())
@@ -161,10 +187,10 @@ namespace Bomberjam.Website
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-                endpoints.MapHangfireDashboard();
+                //endpoints.MapHangfireDashboard();
             });
 
-            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), Cron.Minutely);
+            //recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), Cron.Minutely);
         }
     }
 }

@@ -40,6 +40,7 @@ Also, privileged access is required by iptables and control groups. Running the 
 ```
 docker run --rm --privileged `
     -e API_BASE_URL="https://localhost/api/" `
-    -e API_AUTH="verysecret" `
+    -e API_AUTH_TOKEN="verysecret" `
+    -e API_VERIFY_SSL="0" `
     bomberjam-worker
 ```

@@ -19,4 +19,4 @@ iptables-save | tee /etc/iptables/rules.v4
 ip6tables-save | tee /etc/iptables/rules.v6
 
 ## Start the main script
-sudo -H --preserve-env=API_BASE_URL --preserve-env=API_AUTH -iu worker bash -c "python3 /home/worker/worker.py"
+sudo -H --preserve-env=API_BASE_URL --preserve-env=API_AUTH_TOKEN --preserve-env=API_VERIFY_SSL -iu worker bash -c "python3 /home/worker/worker.py"

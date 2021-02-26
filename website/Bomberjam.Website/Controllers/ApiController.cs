@@ -35,7 +35,9 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("bot/{botId}/download")]
         public async Task<IActionResult> DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
-            var fileStream = isCompiled ? this.BotStorage.DownloadCompiledBot(botId) : this.BotStorage.DownloadBotSourceCode(botId);
+            var fileStream = isCompiled
+                ? await this.BotStorage.DownloadCompiledBot(botId)
+                : await this.BotStorage.DownloadBotSourceCode(botId);
             var fileBytes = await StreamToByteArray(fileStream);
             return this.File(fileBytes, "application/octet-stream", $"bot-{botId:D}.zip");
         }
@@ -150,9 +152,9 @@ namespace Bomberjam.Website.Controllers
 
         [AllowAnonymous]
         [HttpGet("game/{gameId}")]
-        public IActionResult GetGame(Guid gameId)
+        public async Task<IActionResult> GetGame(Guid gameId)
         {
-            var fileStream = this.BotStorage.DownloadGameResult(gameId);
+            var fileStream = await this.BotStorage.DownloadGameResult(gameId);
             return this.File(fileStream, MediaTypeNames.Application.Json, $"game-{gameId:D}.json");
         }
 
