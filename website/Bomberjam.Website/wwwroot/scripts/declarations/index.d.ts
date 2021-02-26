@@ -66,7 +66,6 @@ interface IPlayerSummary {
   score: number | null;
   points: number | null;
   deltaPoints: number | null;
-  responsiveness: number;
 }
 
 interface IGameSummary {
