@@ -182,11 +182,9 @@ namespace Bomberjam.Website.Controllers
             gameHistory.Summary.StandardOutput = gameResult.StandardOutput ?? string.Empty;
             gameHistory.Summary.StandardError = gameResult.StandardError ?? string.Empty;
 
-            await this.ComputeNewUserPoints(gameHistory);
-            ComputeBotResponsiveness(gameHistory);
-
             using (var transaction = await this.Repository.CreateTransaction())
             {
+                await this.ComputeNewUserPoints(gameHistory);
                 var gameId = await this.Repository.AddGame(gameHistory.Summary);
 
                 var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
@@ -221,29 +219,6 @@ namespace Bomberjam.Website.Controllers
             {
                 player.Points = eloPlayers[playerId].NewElo;
                 player.DeltaPoints = eloPlayers[playerId].EloChange;
-            }
-        }
-
-        private static void ComputeBotResponsiveness(GameHistory gameHistory)
-        {
-            var botResponsivenesses = gameHistory.Summary.Players.Keys.ToDictionary(idx => idx, _ => new List<int>());
-
-            foreach (var playerIndex in gameHistory.Summary.Players.Keys)
-            {
-                foreach (var tick in gameHistory.Ticks)
-                {
-                    if (tick.State.Players.TryGetValue(playerIndex, out var player) && player.IsAlive)
-                    {
-                        botResponsivenesses[playerIndex].Add(player.IsTimedOut ? 0 : 1);
-                    }
-                }
-            }
-
-            foreach (var (playerIndex, botResponsiveness) in botResponsivenesses)
-            {
-                gameHistory.Summary.Players[playerIndex].Responsiveness = botResponsiveness.Count > 0
-                    ? 1f * botResponsiveness.Sum() / botResponsiveness.Count
-                    : 0f;
             }
         }
 

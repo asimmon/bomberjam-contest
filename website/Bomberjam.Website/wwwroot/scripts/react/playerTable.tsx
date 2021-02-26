@@ -18,7 +18,7 @@ export const PlayerTable = (props: PlayerStatisticsProps) => {
     <PlayerRow key={idx} playerIndex={idx} gameHistory={props.gameHistory!} />
   );
 
-  return <div className="mt-4">
+  return <div className="d-none">
     <div className="table-responsive rounded">
       <table className="table table-sm table-bordered table-striped">
         <thead>

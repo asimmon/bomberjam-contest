@@ -14,6 +14,5 @@ namespace Bomberjam.Website.Database
         public int Rank { get; set; }
         public string Errors { get; set; }
         public float DeltaPoints { get; set; }
-        public float Responsiveness { get; set; }
     }
 }

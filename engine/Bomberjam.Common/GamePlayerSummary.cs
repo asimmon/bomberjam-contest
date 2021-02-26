@@ -24,12 +24,9 @@ namespace Bomberjam.Common
         public Guid? WebsiteId { get; set; }
 
         [JsonPropertyName("points")]
-        public float Points { get; set; }
+        public float? Points { get; set; }
 
         [JsonPropertyName("deltaPoints")]
-        public float DeltaPoints { get; set; }
-
-        [JsonPropertyName("responsiveness")]
-        public float Responsiveness { get; set; }
+        public float? DeltaPoints { get; set; }
     }
 }

@@ -22,8 +22,7 @@ namespace Bomberjam.Website.Database
                     GameCreated = game.Created,
                     gameUser.UserId,
                     UserDeltaPoints = gameUser.DeltaPoints,
-                    UserRank = gameUser.Rank,
-                    BotResponsiveness = gameUser.Responsiveness
+                    UserRank = gameUser.Rank
                 })
                 .Join(this._dbContext.Users, tmp => tmp.UserId, user => user.Id, (tmp, user) => new
                 {
@@ -33,7 +32,6 @@ namespace Bomberjam.Website.Database
                     tmp.UserDeltaPoints,
                     tmp.UserRank,
                     user.UserName,
-                    tmp.BotResponsiveness,
                     UserGithubId = user.GithubId
                 })
                 .OrderByDescending(x => x.GameCreated)
@@ -50,8 +48,7 @@ namespace Bomberjam.Website.Database
                     GithubId = row.UserGithubId,
                     UserName = row.UserName,
                     DeltaPoints = row.UserDeltaPoints,
-                    Rank = row.UserRank,
-                    Responsiveness = row.BotResponsiveness
+                    Rank = row.UserRank
                 })))
                 .FirstOrDefault();
 
@@ -141,16 +138,15 @@ namespace Bomberjam.Website.Database
                     Game = dbGame,
                     UserId = userDbId,
                     Score = playerSummary.Score,
-                    DeltaPoints = playerSummary.DeltaPoints,
+                    DeltaPoints = playerSummary.DeltaPoints ?? 0,
                     Rank = playerSummary.Rank,
-                    Errors = playerSummary.Errors,
-                    Responsiveness = playerSummary.Responsiveness
+                    Errors = playerSummary.Errors
                 };
 
                 this._dbContext.GameUsers.Add(dbGameUser);
 
                 var dbUser = await this._dbContext.Users.SingleAsync(u => u.Id == userDbId).ConfigureAwait(false);
-                dbUser.Points = playerSummary.Points;
+                dbUser.Points = playerSummary.Points ?? 0;
             }
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
