@@ -20,3 +20,7 @@ td {
   pre { margin: 0 }
   code { white-space: pre-line }
 }
+
+.custom-file-label::after {
+  border-radius: 0;
+}

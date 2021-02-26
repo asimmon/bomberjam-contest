@@ -72,7 +72,7 @@ export const ViewerWithControls = (props: VisualizerProps) => {
       </div>
     </div>
 
-    <div className="border rounded mt-2">
+    <div className="controls rounded mt-2">
       <div className="form-row">
         <div className="col-md-auto">
           <div className="m-2">

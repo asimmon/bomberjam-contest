@@ -31,7 +31,7 @@
   }
 
   .canvas {
-    @extend .border, .rounded;
+    @extend .rounded;
     background: $jumbotron-bg;
     overflow: hidden;
   }
@@ -47,5 +47,22 @@
     input[type="range"] {
       height: 100%;
     }
+  }
+
+  .controls {
+    background: $jumbotron-bg;
+  }
+}
+
+.custom-range {
+  &::-ms-thumb {
+    background-color: red;
+  }
+  &::-webkit-slider-thumb {
+    background-color: red;
+    content: "0"
+  }
+  &::-moz-range-thumb {
+    background-color: red;
   }
 }
