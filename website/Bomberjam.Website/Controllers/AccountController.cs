@@ -15,13 +15,12 @@ namespace Bomberjam.Website.Controllers
     [Route("~/account")]
     public class AccountController : BaseBomberjamController<AccountController>
     {
-        public AccountController(IRepository repository, IBotStorage botStorage, ILogger<AccountController> logger)
-            : base(repository, logger)
-        {
-            this.BotStorage = botStorage;
-        }
+        private static readonly TimeSpan BotUploadDelay = TimeSpan.FromSeconds(10);
 
-        private IBotStorage BotStorage { get; }
+        public AccountController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AccountController> logger)
+            : base(repository, storage, logger)
+        {
+        }
 
         public async Task<IActionResult> Index()
         {
@@ -34,8 +33,7 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> Edit()
         {
             var user = await this.GetAuthenticatedUser();
-            var viewModel = new AccountEditViewModel(user);
-            return this.View("Edit", viewModel);
+            return this.View("Edit", new AccountEditViewModel(user));
         }
 
         [HttpPost("edit")]
@@ -47,6 +45,7 @@ namespace Bomberjam.Website.Controllers
 
             var user = await this.GetAuthenticatedUser();
             user.UserName = viewModel.UserName;
+            user.Email = viewModel.Email;
             await this.Repository.UpdateUser(user);
 
             return this.RedirectToAction("Index", "Account");
@@ -58,8 +57,6 @@ namespace Bomberjam.Website.Controllers
             return this.View("Submit", new AccountSubmitViewModel());
         }
 
-        private static readonly TimeSpan BotSubmitDelay = TimeSpan.FromMinutes(1);
-
         [HttpPost("submit")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Submit(AccountSubmitViewModel viewModel)
@@ -68,20 +65,33 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
 
             var user = await this.GetAuthenticatedUser();
-            var bots = await this.Repository.GetBots(user.Id);
+            var canUploadBot = await this.CanUploadBot(user.Id);
 
-            if (bots.OrderByDescending(b => b.Updated).FirstOrDefault() is { } mostRecentBot && DateTime.UtcNow - mostRecentBot.Updated < BotSubmitDelay)
+            if (!canUploadBot)
             {
-                // TODO enable delay between each bot upload
-                // this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You need to wait more before submitting a new bot");
-                // return this.View("Submit", viewModel);
+                this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You must wait longer before uploading a new bot");
+                return this.View("Submit", viewModel);
             }
 
-            var newBotId = await this.Repository.AddBot(user.Id);
-            await this.BotStorage.UploadBotSourceCode(newBotId, viewModel.BotFile.OpenReadStream());
-            await this.Repository.AddCompilationTask(newBotId);
+            using (var transaction = await this.Repository.CreateTransaction())
+            {
+                var newBotId = await this.Repository.AddBot(user.Id);
+                await this.Storage.UploadBotSourceCode(newBotId, viewModel.BotFile.OpenReadStream());
+                await this.Repository.AddCompilationTask(newBotId);
+                await transaction.CommitAsync();
+            }
 
             return this.RedirectToAction("Index", "Account");
+        }
+
+        private async Task<bool> CanUploadBot(Guid userId)
+        {
+            var bots = await this.Repository.GetBots(userId).ConfigureAwait(false);
+            var mostRecentBot = bots.OrderByDescending(b => b.Updated).FirstOrDefault();
+            if (mostRecentBot == null)
+                return true;
+
+            return (DateTime.UtcNow - mostRecentBot.Updated) > BotUploadDelay;
         }
     }
 }

@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Bomberjam.Website.Storage
 {
-    public interface IBotStorage
+    public interface IBomberjamStorage
     {
         Task UploadBotSourceCode(Guid botId, Stream fileStream);
         Task<Stream> DownloadBotSourceCode(Guid botId);

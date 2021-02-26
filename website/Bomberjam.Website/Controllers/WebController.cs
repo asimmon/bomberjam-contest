@@ -1,19 +1,18 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Bomberjam.Website.Models;
+using Bomberjam.Website.Storage;
 
 namespace Bomberjam.Website.Controllers
 {
     public class WebController : BaseBomberjamController<WebController>
     {
-        public WebController(IRepository repository, ILogger<WebController> logger)
-            : base(repository, logger)
+        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger)
+            : base(repository, storage, logger)
         {
         }
 

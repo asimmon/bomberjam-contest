@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Bomberjam.Website.Storage
 {
-    public sealed class LocalFileBotStorage : BaseBotStorage, IBotStorage
+    public sealed class LocalFileBomberjamStorage : BaseBotStorage, IBomberjamStorage
     {
         private const string BomberjamDirName = "Bomberjam";
         private const string BotsDirName = "Bots";
@@ -13,7 +13,7 @@ namespace Bomberjam.Website.Storage
         private readonly string _botsDirPath;
         private readonly string _gamesDirPath;
 
-        public LocalFileBotStorage(string basePath)
+        public LocalFileBomberjamStorage(string basePath)
         {
             this._botsDirPath = Path.Combine(basePath, BomberjamDirName, BotsDirName);
             this._gamesDirPath = Path.Combine(basePath, BomberjamDirName, GamesDirName);

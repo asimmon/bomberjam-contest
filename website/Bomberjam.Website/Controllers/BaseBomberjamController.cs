@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
+using Bomberjam.Website.Storage;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -13,13 +14,16 @@ namespace Bomberjam.Website.Controllers
     public class BaseBomberjamController<T> : Controller
         where T : Controller
     {
-        public BaseBomberjamController(IRepository repository, ILogger<T> logger)
+        public BaseBomberjamController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<T> logger)
         {
             this.Repository = repository;
+            this.Storage = storage;
             this.Logger = logger;
         }
 
-        protected IRepository Repository { get; }
+        protected IBomberjamRepository Repository { get; }
+
+        protected IBomberjamStorage Storage { get; }
 
         protected ILogger<T> Logger { get; }
 
@@ -27,7 +31,7 @@ namespace Bomberjam.Website.Controllers
         {
             if (!this.TryGetNameIdentifierClaim(out var githubId))
             {
-                throw new Exception("TODO Not authenticated");
+                throw new Exception("Could not retrieve GitHub name identifier claim from authentication result");
             }
 
             return this.Repository.GetUserByGithubId(githubId);

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 // ReSharper disable MethodHasAsyncOverload
 namespace Bomberjam.Website.Database
 {
-    public partial class DatabaseRepository : IRepository
+    public partial class DatabaseRepository : IBomberjamRepository
     {
         private readonly BomberjamContext _dbContext;
 

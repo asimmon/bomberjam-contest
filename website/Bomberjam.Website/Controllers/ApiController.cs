@@ -24,20 +24,15 @@ namespace Bomberjam.Website.Controllers
     {
         private static readonly SemaphoreSlim GetNextTaskMutex = new(1);
 
-        public ApiController(IRepository repository, IBotStorage botStorage, ILogger<ApiController> logger)
-            : base(repository, logger)
+        public ApiController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<ApiController> logger)
+            : base(repository, storage, logger)
         {
-            this.BotStorage = botStorage;
         }
-
-        private IBotStorage BotStorage { get; }
 
         [HttpGet("bot/{botId}/download")]
         public async Task<IActionResult> DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
-            var fileStream = isCompiled
-                ? await this.BotStorage.DownloadCompiledBot(botId)
-                : await this.BotStorage.DownloadBotSourceCode(botId);
+            var fileStream = isCompiled ? await this.Storage.DownloadCompiledBot(botId) : await this.Storage.DownloadBotSourceCode(botId);
             var fileBytes = await StreamToByteArray(fileStream);
             return this.File(fileBytes, "application/octet-stream", $"bot-{botId:D}.zip");
         }
@@ -55,7 +50,7 @@ namespace Bomberjam.Website.Controllers
         [HttpPost("bot/{botId}/upload")]
         public async Task<IActionResult> UploadCompiledBot(Guid botId)
         {
-            await this.BotStorage.UploadCompiledBot(botId, this.Request.Body);
+            await this.Storage.UploadCompiledBot(botId, this.Request.Body);
             return this.Ok();
         }
 
@@ -125,9 +120,13 @@ namespace Bomberjam.Website.Controllers
         {
             try
             {
-                await this.Repository.MarkTaskAsStarted(taskId);
-                var task = await this.Repository.GetTask(taskId);
-                return this.Ok(task);
+                using (var transaction = await this.Repository.CreateTransaction())
+                {
+                    await this.Repository.MarkTaskAsStarted(taskId);
+                    var task = await this.Repository.GetTask(taskId);
+                    await transaction.CommitAsync();
+                    return this.Ok(task);
+                }
             }
             catch (EntityNotFound)
             {
@@ -140,9 +139,13 @@ namespace Bomberjam.Website.Controllers
         {
             try
             {
-                await this.Repository.MarkTaskAsFinished(taskId);
-                var task = await this.Repository.GetTask(taskId);
-                return this.Ok(task);
+                using (var transaction = await this.Repository.CreateTransaction())
+                {
+                    await this.Repository.MarkTaskAsFinished(taskId);
+                    var task = await this.Repository.GetTask(taskId);
+                    await transaction.CommitAsync();
+                    return this.Ok(task);
+                }
             }
             catch (EntityNotFound)
             {
@@ -154,7 +157,7 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("game/{gameId}")]
         public async Task<IActionResult> GetGame(Guid gameId)
         {
-            var fileStream = await this.BotStorage.DownloadGameResult(gameId);
+            var fileStream = await this.Storage.DownloadGameResult(gameId);
             return this.File(fileStream, MediaTypeNames.Application.Json, $"game-{gameId:D}.json");
         }
 
@@ -182,10 +185,14 @@ namespace Bomberjam.Website.Controllers
             await this.ComputeNewUserPoints(gameHistory);
             ComputeBotResponsiveness(gameHistory);
 
-            var gameId = await this.Repository.AddGame(gameHistory.Summary);
+            using (var transaction = await this.Repository.CreateTransaction())
+            {
+                var gameId = await this.Repository.AddGame(gameHistory.Summary);
 
-            var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
-            await this.BotStorage.UploadGameResult(gameId, jsonGameHistoryStream);
+                var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
+                await this.Storage.UploadGameResult(gameId, jsonGameHistoryStream);
+                await transaction.CommitAsync();
+            }
 
             return this.Ok();
         }

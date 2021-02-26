@@ -11,24 +11,29 @@ namespace Bomberjam.Website.Jobs
 {
     public class MatchmakingJob
     {
-        private readonly IRepository _repository;
-        private readonly ILogger<MatchmakingJob> _logger;
-
-        public MatchmakingJob(IRepository repository, ILogger<MatchmakingJob> logger)
+        public MatchmakingJob(IBomberjamRepository repository, ILogger<MatchmakingJob> logger)
         {
-            this._repository = repository;
-            this._logger = logger;
+            this.Repository = repository;
+            this.Logger = logger;
         }
+
+        private IBomberjamRepository Repository { get; }
+        private ILogger<MatchmakingJob> Logger { get; }
 
         public async Task Run()
         {
-            var users = await this._repository.GetUsers();
-            var matchs = MatchMaker.Execute(users).ToList();
+            using (var transaction = await this.Repository.CreateTransaction())
+            {
+                var users = await this.Repository.GetUsers();
+                var matchs = MatchMaker.Execute(users).ToList();
 
-            foreach (var match in matchs)
-                await this._repository.AddGameTask(match.Users);
+                foreach (var match in matchs)
+                    await this.Repository.AddGameTask(match.Users);
 
-            this._logger.Log(LogLevel.Information, $"Queued {matchs.Count} matches");
+                await transaction.CommitAsync();
+
+                this.Logger.Log(LogLevel.Information, $"Queued {matchs.Count} matches");
+            }
         }
 
         private class MatchMaker

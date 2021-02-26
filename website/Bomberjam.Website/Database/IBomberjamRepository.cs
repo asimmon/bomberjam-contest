@@ -6,8 +6,10 @@ using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Database
 {
-    public interface IRepository
+    public interface IBomberjamRepository
     {
+        Task<ITransaction> CreateTransaction();
+
         Task<IEnumerable<User>> GetUsers();
         Task<User> GetUserByGithubId(int githubId);
         Task<User> GetUserById(Guid id);

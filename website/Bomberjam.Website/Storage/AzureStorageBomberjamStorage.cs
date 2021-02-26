@@ -5,14 +5,14 @@ using Azure.Storage.Blobs;
 
 namespace Bomberjam.Website.Storage
 {
-    public sealed class AzureStorageBotStorage : BaseBotStorage, IBotStorage
+    public sealed class AzureStorageBomberjamStorage : BaseBotStorage, IBomberjamStorage
     {
         private const string BotsContainerName = "bots";
-        private const string GamesContainerName = "games2";
+        private const string GamesContainerName = "games";
 
         private readonly string _connectionString;
 
-        public AzureStorageBotStorage(string connectionString)
+        public AzureStorageBomberjamStorage(string connectionString)
         {
             this._connectionString = connectionString;
             this.EnsureContainerCreated(BotsContainerName);

@@ -10,14 +10,15 @@ using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Storage;
 using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
 {
     public class AuthenticationController : BaseBomberjamController<AuthenticationController>
     {
-        public AuthenticationController(IRepository repository, ILogger<AuthenticationController> logger)
-            : base(repository, logger)
+        public AuthenticationController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AuthenticationController> logger)
+            : base(repository, storage, logger)
         {
         }
 
