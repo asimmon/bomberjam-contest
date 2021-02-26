@@ -53,16 +53,3 @@
     background: $jumbotron-bg;
   }
 }
-
-.custom-range {
-  &::-ms-thumb {
-    background-color: red;
-  }
-  &::-webkit-slider-thumb {
-    background-color: red;
-    content: "0"
-  }
-  &::-moz-range-thumb {
-    background-color: red;
-  }
-}

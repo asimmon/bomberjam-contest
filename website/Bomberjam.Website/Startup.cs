@@ -73,7 +73,10 @@ namespace Bomberjam.Website
 
             ConfigureHangfire(services, dbConnStr);
 
-            UploadTestBots(botStorage);
+            if (this.Environment.IsDevelopment())
+            {
+                UploadTestBots(botStorage);
+            }
         }
 
         private void ConfigureDatabase(IServiceCollection services, string dbConnStr) => services.AddDbContext<BomberjamContext>(options =>

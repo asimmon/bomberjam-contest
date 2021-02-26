@@ -361,6 +361,8 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 
+profile.arm.json
+
 # Local SQLite database
 bomberjam.db
 bomberjam.db-*
