@@ -21,6 +21,11 @@ namespace Bomberjam.Website.Database
             return MapQueuedTask(dbTask);
         }
 
+        public async Task<bool> HasGameTask()
+        {
+            return await this._dbContext.Tasks.AnyAsync(t => t.Type == QueuedTaskType.Game && t.Status != QueuedTaskStatus.Finished).ConfigureAwait(false);
+        }
+
         public Task AddCompilationTask(Guid botId)
         {
             var data = botId.ToString("D");

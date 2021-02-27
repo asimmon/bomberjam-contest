@@ -42,8 +42,8 @@ namespace Bomberjam.Website.Controllers
             return this.View(game);
         }
 
-        [HttpGet("~/visualizer")]
-        public IActionResult Visualizer()
+        [HttpGet("~/viewer")]
+        public IActionResult Viewer()
         {
             return this.View();
         }
@@ -51,10 +51,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/user/{userId}")]
         public async Task<IActionResult> UserDetails(Guid userId, int page = 1)
         {
-            page = Math.Max(0, page);
-
             var user = await this.Repository.GetUserById(userId);
-            var userGames = await this.Repository.GetPagedUserGames(userId, page);
+            var userGames = await this.Repository.GetPagedUserGames(userId, Math.Max(0, page));
 
             return this.View(new UserDetails(user, userGames));
         }

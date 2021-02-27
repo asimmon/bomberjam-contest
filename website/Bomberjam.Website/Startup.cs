@@ -200,7 +200,7 @@ namespace Bomberjam.Website
                 }
             });
 
-            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), "*/5 * * * *");
+            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), "* * * * *");
         }
     }
 }

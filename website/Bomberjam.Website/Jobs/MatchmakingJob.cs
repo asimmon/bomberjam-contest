@@ -22,11 +22,17 @@ namespace Bomberjam.Website.Jobs
 
         public async Task Run()
         {
+            if (await this.Repository.HasGameTask())
+            {
+                this.Logger.Log(LogLevel.Information, "Skipped matchmaking as there are still game tasks to be processed");
+                return;
+            }
+
+            var users = await this.Repository.GetUsers();
+            var matchs = MatchMaker.Execute(users).ToList();
+
             using (var transaction = await this.Repository.CreateTransaction())
             {
-                var users = await this.Repository.GetUsers();
-                var matchs = MatchMaker.Execute(users).ToList();
-
                 foreach (var match in matchs)
                     await this.Repository.AddGameTask(match.Users);
 
