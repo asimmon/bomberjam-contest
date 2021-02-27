@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Bomberjam.Common;
+using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
@@ -18,7 +19,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
 {
-    [Authorize(AuthenticationSchemes = Constants.SupportedAuthenticationSchemes)]
+    [Authorize(AuthenticationSchemes = SecretAuthenticationDefaults.AuthenticationScheme)]
     [ApiController]
     [Route("~/api")]
     public class ApiController : BaseBomberjamController<ApiController>

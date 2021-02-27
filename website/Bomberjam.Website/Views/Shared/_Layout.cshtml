@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>@ViewData["Title"] - Bomberjam</title>
-  <script src="~/dist/bundle.js" asp-append-version="true"></script>
+  <title>@ViewData["Title"] | Bomberjam</title>
+  <link rel="stylesheet" href="~/dist/bundle.css" asp-append-version="true" />
 </head>
 <body>
 <header>
@@ -59,8 +59,10 @@
 
 <footer class="footer text-muted">
   <div class="container">
-    <div class="my-4">&copy; @DateTime.Now.Year - Bomberjam</div>
+    <div class="my-4">@DateTime.Now.Year - Bomberjam</div>
   </div>
 </footer>
+
+<script src="~/dist/bundle.js" asp-append-version="true"></script>
 </body>
 </html>
