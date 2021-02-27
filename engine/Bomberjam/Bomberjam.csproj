@@ -17,6 +17,7 @@
 
   <PropertyGroup Condition=" '$(Configuration)'=='Release' And '$(OS)' == 'Windows_NT' ">
     <PublishReadyToRun>true</PublishReadyToRun>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)'=='Release' And '$(OS)' != 'Windows_NT' ">
