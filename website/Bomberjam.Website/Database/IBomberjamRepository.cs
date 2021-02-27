@@ -10,7 +10,7 @@ namespace Bomberjam.Website.Database
     {
         Task<ITransaction> CreateTransaction();
 
-        Task<IEnumerable<User>> GetUsers();
+        Task<IEnumerable<User>> GetUsersWithCompiledBot();
         Task<User> GetUserByGithubId(int githubId);
         Task<User> GetUserById(Guid id);
         Task AddUser(int githubId, string email, string username);

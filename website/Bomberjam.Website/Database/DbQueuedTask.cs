@@ -11,7 +11,5 @@ namespace Bomberjam.Website.Database
         public QueuedTaskType Type { get; set; }
         public QueuedTaskStatus Status { get; set; }
         public string Data { get; set; }
-        public Guid? UserId { get; set; }
-        public DbUser User { get; set; }
     }
 }

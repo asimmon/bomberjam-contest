@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
@@ -14,5 +15,8 @@ namespace Bomberjam.Website.Models
 
         [JsonPropertyName("standardError")]
         public string StandardError { get; set; }
+
+        [JsonPropertyName("playerBotIds")]
+        public IDictionary<string, string> PlayerBotIds { get; set; }
     }
 }

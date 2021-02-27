@@ -25,6 +25,7 @@
       <th>Language</th>
       <th>Errors</th>
       <th>Status</th>
+      <th>Games played</th>
     </tr>
     </thead>
     <tbody>
@@ -35,6 +36,7 @@
         <td>@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
         <td><pre><code>@bot.Errors</code></pre></td>
         <td>@bot.Status.ToDisplayString()</td>
+        <td>@bot.GameCount</td>
       </tr>
     }
     @if (Model.Bots.Count == 0)

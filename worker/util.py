@@ -66,6 +66,7 @@ class Game:
         self.game_stdout = ''
         self.game_stderr = ''
         self.exception = ''
+        self.players_bot_ids = {}
 
         player_data = {k: str(v) for k, v in [i.split(':') for i in serialized_player_data.split(',')]}
         for player_index, player_id in enumerate(player_data):

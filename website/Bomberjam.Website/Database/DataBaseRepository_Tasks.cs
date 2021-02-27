@@ -41,14 +41,13 @@ namespace Bomberjam.Website.Database
             return this.AddTask(QueuedTaskType.Game, data);
         }
 
-        private async Task AddTask(QueuedTaskType type, string data, Guid? relatedUserId = null)
+        private async Task AddTask(QueuedTaskType type, string data)
         {
             this._dbContext.Add(new DbQueuedTask
             {
                 Type = type,
                 Data = data,
-                Status = QueuedTaskStatus.Created,
-                UserId = relatedUserId
+                Status = QueuedTaskStatus.Created
             });
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);

@@ -10,5 +10,6 @@ namespace Bomberjam.Website.Models
         public CompilationStatus Status { get; set; }
         public string Language { get; set; }
         public string Errors { get; set; }
+        public int GameCount { get; set; }
     }
 }

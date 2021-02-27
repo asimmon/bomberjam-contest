@@ -132,6 +132,7 @@ namespace Bomberjam.Website.Database
             foreach (var (_, playerSummary) in gameSummary.Players)
             {
                 var userDbId = playerSummary.WebsiteId!.Value;
+                var botDbId = playerSummary.BotId!.Value;
 
                 var dbGameUser = new DbGameUser
                 {
@@ -140,7 +141,8 @@ namespace Bomberjam.Website.Database
                     Score = playerSummary.Score,
                     DeltaPoints = playerSummary.DeltaPoints ?? 0,
                     Rank = playerSummary.Rank,
-                    Errors = playerSummary.Errors
+                    Errors = playerSummary.Errors,
+                    BotId = botDbId
                 };
 
                 this._dbContext.GameUsers.Add(dbGameUser);

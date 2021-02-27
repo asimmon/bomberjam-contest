@@ -18,9 +18,12 @@ namespace Bomberjam.Website.Database
             this._dbContext = dbContext;
         }
 
-        public async Task<IEnumerable<User>> GetUsers()
+        public async Task<IEnumerable<User>> GetUsersWithCompiledBot()
         {
-            return await this._dbContext.Users.Select(u => MapUser(u)).ToListAsync().ConfigureAwait(false);
+            return await this._dbContext.Users
+                .Where(u => this._dbContext.Bots.Any(b => b.UserId == u.Id && b.Status == CompilationStatus.CompilationSucceeded))
+                .Select(u => MapUser(u))
+                .ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<User> GetUserByGithubId(int githubId)

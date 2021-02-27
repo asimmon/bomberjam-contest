@@ -28,7 +28,7 @@ namespace Bomberjam.Website.Jobs
                 return;
             }
 
-            var users = await this.Repository.GetUsers();
+            var users = await this.Repository.GetUsersWithCompiledBot();
             var matchs = MatchMaker.Execute(users).ToList();
 
             using (var transaction = await this.Repository.CreateTransaction())

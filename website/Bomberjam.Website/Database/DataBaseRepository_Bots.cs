@@ -13,22 +13,44 @@ namespace Bomberjam.Website.Database
     {
         public async Task<IEnumerable<Bot>> GetBots(Guid userId)
         {
-            return await this._dbContext.Bots
-                .Where(b => b.UserId == userId)
-                .OrderByDescending(b => b.Created)
-                .Select(b => MapBot(b))
-                .ToListAsync()
-                .ConfigureAwait(false);
+            var selectQuery =
+                from b in this._dbContext.Bots where b.UserId == userId
+                join gu in this._dbContext.GameUsers on b.Id equals gu.BotId into innerJoin
+                from leftJoin in innerJoin.DefaultIfEmpty()
+                group leftJoin by new { b.Id, b.Created, b.Updated, b.Status, b.Language, b.Errors }
+                into grouped
+                orderby grouped.Key.Created descending
+                select new Bot
+                {
+                    Id = grouped.Key.Id,
+                    Created = grouped.Key.Created,
+                    Updated = grouped.Key.Updated,
+                    Status = grouped.Key.Status,
+                    Language = grouped.Key.Language,
+                    Errors = grouped.Key.Errors,
+                    GameCount = grouped.Count(gu => gu != null)
+                };
+
+            return await selectQuery.ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<Bot> GetBot(Guid botId)
         {
             return await this._dbContext.Bots
                 .Where(b => b.Id == botId)
-                .Select(b => MapBot(b))
+                .Select(b => new Bot
+                {
+                    Id = b.Id,
+                    Created = b.Created,
+                    Updated = b.Updated,
+                    Status = b.Status,
+                    Language = b.Language,
+                    Errors = b.Errors
+                })
                 .FirstOrDefaultAsync()
                 .ConfigureAwait(false);
         }
+
         public async Task<Guid> AddBot(Guid userId)
         {
             var dbBot = new DbBot
@@ -63,15 +85,5 @@ namespace Bomberjam.Website.Database
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
-
-        private static Bot MapBot(DbBot b) => new Bot
-        {
-            Id = b.Id,
-            Created = b.Created,
-            Updated = b.Updated,
-            Status = b.Status,
-            Language = b.Language,
-            Errors = b.Errors
-        };
     }
 }

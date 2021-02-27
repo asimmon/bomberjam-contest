@@ -98,7 +98,8 @@ def send_game_result(game):
     r = requests.post(request_url, headers=request_headers, verify=API_VERIFY_SSL, json={
         'serializedHistory': game.game_result,
         'standardOutput': game.game_stdout,
-        'standardError': game.game_stderr
+        'standardError': game.game_stderr,
+        'playerBotIds': game.players_bot_ids
     })
     r.raise_for_status()
     logging.debug("Sent game result: %s" % r.text)

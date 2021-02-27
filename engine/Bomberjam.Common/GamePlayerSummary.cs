@@ -23,6 +23,9 @@ namespace Bomberjam.Common
         [JsonPropertyName("websiteId")]
         public Guid? WebsiteId { get; set; }
 
+        [JsonPropertyName("botId")]
+        public Guid? BotId { get; set; }
+
         [JsonPropertyName("points")]
         public float? Points { get; set; }
 

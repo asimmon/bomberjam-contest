@@ -44,14 +44,20 @@ namespace Bomberjam.Website.Database
                 entityType.SetTableName(TablePrefix + entityType.GetTableName());
             }
 
+            // Indexes
             modelBuilder.Entity<DbGameUser>().HasKey(x => new { GameID = x.GameId, UserID = x.UserId });
 
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GithubId).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.UserName).IsUnique();
+            modelBuilder.Entity<DbUser>().HasIndex(x => x.Points);
 
+            modelBuilder.Entity<DbBot>().HasIndex(x => x.Created);
             modelBuilder.Entity<DbBot>().HasIndex(x => x.Updated);
+            modelBuilder.Entity<DbBot>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbBot>().Property(x => x.Status).HasConversion<int>();
+
+            modelBuilder.Entity<DbGame>().HasIndex(x => x.Created);
 
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Type);
@@ -59,6 +65,10 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Type).HasConversion<int>();
             modelBuilder.Entity<DbQueuedTask>().Property(x => x.Status).HasConversion<int>();
 
+            // Foreign keys with specific behavior
+            modelBuilder.Entity<DbGameUser>().HasOne(gu => gu.Bot).WithMany().OnDelete(DeleteBehavior.NoAction);
+
+            // TEST DATA
             modelBuilder.Entity<DbUser>().HasData(InitialTestUsers);
 
             var initialBots = InitialTestUsers.Select(u => CreateInitialBot(u.Id)).ToList();

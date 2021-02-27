@@ -189,6 +189,15 @@ namespace Bomberjam.Website.Controllers
             gameHistory.Summary.StandardOutput = gameResult.StandardOutput ?? string.Empty;
             gameHistory.Summary.StandardError = gameResult.StandardError ?? string.Empty;
 
+            if (gameResult.PlayerBotIds != null)
+            {
+                foreach (var (playerIndex, playerBotIdStr) in gameResult.PlayerBotIds)
+                {
+                    if (Guid.TryParse(playerBotIdStr, out var playerBotId) && gameHistory.Summary.Players.TryGetValue(playerIndex, out var playerSummary))
+                        playerSummary.BotId = playerBotId;
+                }
+            }
+
             using (var transaction = await this.Repository.CreateTransaction())
             {
                 await this.ComputeNewUserPoints(gameHistory);

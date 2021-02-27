@@ -160,6 +160,7 @@ def run_game(game):
                 bot_command, bot_dir = setup_participant(player, temp_dir)
                 command.append(bot_command)
                 player.bot_dir = bot_dir
+                game.players_bot_ids[player.player_index] = player.bot_id
 
             logging.debug("Running game command %s" % command)
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
