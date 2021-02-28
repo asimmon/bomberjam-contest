@@ -25,14 +25,21 @@ namespace Bomberjam.Website.Jobs
             foreach (var task in orphanedTasks)
             {
                 count++;
-                if (task.Status == QueuedTaskStatus.Pulled)
+                if (task.Type == QueuedTaskType.Compile)
                 {
-                    await this.Repository.MarkTaskAsStarted(task.Id);
-                    await this.Repository.MarkTaskAsFinished(task.Id);
+                    await this.Repository.MarkTaskAsCreated(task.Id);
                 }
-                else if (task.Status == QueuedTaskStatus.Started)
+                else
                 {
-                    await this.Repository.MarkTaskAsFinished(task.Id);
+                    if (task.Status == QueuedTaskStatus.Pulled)
+                    {
+                        await this.Repository.MarkTaskAsStarted(task.Id);
+                        await this.Repository.MarkTaskAsFinished(task.Id);
+                    }
+                    else if (task.Status == QueuedTaskStatus.Started)
+                    {
+                        await this.Repository.MarkTaskAsFinished(task.Id);
+                    }
                 }
             }
 

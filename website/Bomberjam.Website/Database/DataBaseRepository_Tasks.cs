@@ -77,6 +77,16 @@ namespace Bomberjam.Website.Database
             Data = task.Data
         };
 
+        public async Task MarkTaskAsCreated(Guid taskId)
+        {
+            var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
+            if (queuedTask == null)
+                throw new EntityNotFound(ModelType.Task, taskId);
+
+            queuedTask.Status = QueuedTaskStatus.Created;
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
+        }
+
         public async Task MarkTaskAsStarted(Guid taskId)
         {
             var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
