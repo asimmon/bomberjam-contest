@@ -56,5 +56,11 @@ namespace Bomberjam.Website.Controllers
 
             return this.View(new UserDetails(user, userGames));
         }
+
+        [HttpGet("~/learn")]
+        public IActionResult Learn()
+        {
+            return this.View();
+        }
     }
 }

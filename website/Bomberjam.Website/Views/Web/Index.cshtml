@@ -8,5 +8,86 @@
     <small class="text-muted">is an artificial intelligence programming challenge.</small>
   </h1>
 
-  <p class="lead mt-4"></p>
+  <p class="lead mt-4">
+    Write your bot using one of four languages (C#, Java, JavaScript and Python) and fight against other players to reach the first place in the leaderboard.
+  </p>
+
+  <p class="lead mt-2 mb-0">
+    <a href="https://github.com/asimmon/bomberjam-contest/releases" class="btn btn-lg btn-primary">
+      Download the starter kit on GitHub
+    </a>
+  </p>
+</div>
+
+<div class="row mt-5">
+  <div class="col">
+    <h2>May the best bot win!</h2>
+
+    <p class="lead">
+      Players control a bot using the programming language of their choice. Four bots fight in a 2D grid. The bot with the most points at the end wins.
+      One player can get points by staying alive, destroying blocks, hitting another player and being the last player alive.
+    </p>
+
+    <ol class="lead">
+      <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
+      <li><a href="https://github.com/asimmon/bomberjam-contest/releases">Download</a> our last starter kit on GitHub</li>
+      <li><a asp-controller="Authentication" asp-action="SignIn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
+      <li>Upload your bot source code as a single zip file</li>
+      <li>We will compile your bot and tell you if something went wrong</li>
+      <li>We will periodically schedule games and update your score</li>
+    </ol>
+  </div>
+
+  <div class="col-12 col-sm-10 col-lg-5 col-md-5 offset-sm-1 offset-md-0 order-1.order-md-2">
+    <div class="embed-responsive embed-responsive-746by648">
+      <video autoplay loop muted>
+        <source src="~/assets/demo.mp4" type="video/mp4">
+        Sorry, your browser doesn't support embedded videos.
+      </video>
+    </div>
+  </div>
+</div>
+
+<h2 class="mt-5">How it works</h2>
+
+<div class="row">
+  <div class="col-md-5 col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <pre class="m-0"><code>bomberjam.zip
+├── engine/
+│ ├─ linux-x64/bomberjam
+│ ├─ osx-x64/bomberjam
+│ └─ win-x64/bomberjam.exe
+│
+└── starters/
+  ├─ CSharp/MyBot.csproj [...]
+  ├─ Java/MyBot.java [...]
+  ├─ JavaScript/MyBot.js [...]
+  └─ Python3/MyBot.py [...]</code>
+</pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-7 col-lg-8">
+    <p class="lead">
+      The <code>engine/</code> folder contains the game executable for the OS of your choice.
+      Each starter contains a <code>MyBot.*</code> entrypoint file that <strong>must not be renamed</strong>.
+    </p>
+
+    <p class="lead">
+      For each starter, you will also find a <code>run.sh</code> and <code>run.bat</code> files that allows you to simulate a game. This is how a run script looks like:
+    </p>
+
+    <pre><code style="white-space: normal">bomberjam.exe --output replay.json "dotnet MyBot.dll" "java -classpath "".;*"" MyBot" "node MyBot.js" "python MyBot.py"</code></pre>
+
+    <p class="lead">
+      Each tick, your bot will receive the current state of the game over standard input. Standard output must be used to send the action (move, plant a bomb or do nothing).
+    </p>
+
+    <p class="lead">
+      <a asp-controller="Web" asp-action="Viewer">Use the online viewer</a> to visualize the game.
+    </p>
+  </div>
 </div>
