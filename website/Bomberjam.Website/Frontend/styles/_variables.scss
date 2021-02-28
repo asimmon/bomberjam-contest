@@ -1,7 +1,15 @@
-@import '~bootswatch/dist/darkly/variables';
+$font-size-base: 1.1rem;
 
 $small-font-size: 70%;
 
 $embed-responsive-aspect-ratios: (
   (746 648),
 );
+
+.lead {
+  b, strong {
+    font-weight: bold;
+  }
+}
+
+@import '~bootswatch/dist/darkly/variables';

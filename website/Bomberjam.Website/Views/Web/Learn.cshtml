@@ -2,6 +2,232 @@
   ViewData["Title"] = "Documentation";
 }
 
-<h1>Documentation</h1>
+<h1 class="mb-4">Documentation</h1>
 
-TODO
+<div class="row">
+  <div class="col">
+    <p>
+      <strong>Bomberjam</strong> is an artificial intelligence programming challenge where people compete in coding the best bot.
+    </p>
+
+    <p>
+      The game world consists in a <strong>13 x 11</strong> tile grid with <strong>blocks</strong> that can be destroyed using <strong>bombs</strong>,
+      <strong>bonuses</strong> randomly hidden in some of these blocks, and non-destructible <strong>walls</strong>.
+      At the beginning of the game, each player (bot) will be assigned an index from 0 to 3, and placed at one of the four corners.
+    </p>
+
+    <p>Players get points by doing specific actions:</p>
+
+    <ul>
+      <li>Destroying blocks: <strong>5 points</strong>.</li>
+      <li>Hit another player with a bomb: <strong>20 points</strong>.</li>
+      <li>Being the last player standing: <strong>50 points</strong>.</li>
+    </ul>
+
+    <p>Players <strong>can also lose points</strong> by getting hit by a bomb : <strong>-10 points</strong>.</p>
+  </div>
+
+  <div class="col-12 col-sm-10 col-lg-5 col-md-5 offset-sm-1 offset-md-0 order-1.order-md-2">
+    <div class="embed-responsive embed-responsive-746by648">
+      <video autoplay loop muted>
+        <source src="~/assets/demo.mp4" type="video/mp4">
+        Sorry, your browser doesn't support embedded videos.
+      </video>
+    </div>
+  </div>
+</div>
+
+<h2 class="h4 mt-5 mb-3">Game initialization</h2>
+
+<p>
+  Your bot communicates with the game engine though <strong>standard output</strong> and <strong>standard input</strong>.
+  You cannot use standard ouput and standard input for anything else.
+  If you need to log something, write it to a file.
+</p>
+
+<p>The first thing your bot must do is sending its name, prefixed with: <code>0:</code>. So if you name your bot MySuperBot, you must send <code>0:MySuperBot</code>.</p>
+
+<p>Right after sending its name, your bot must read from standard input for its player index. It's its position in the players dictionary.</p>
+
+<h2 class="h4 mt-5 mb-3">Game loop</h2>
+
+<p>
+  Through standard input, and at each tick, your bot will receive the current state of the game serialized as JSON.
+  It will have to decide whether to go <code>left</code>, <code>right</code>, <code>up</code>, <code>down</code>, to <code>stay</code> or drop a <code>bomb</code>.
+</p>
+
+<p>
+  These actions must be sent though standard output, prefixed with the tick number, like this: <code>42:down</code>.
+</p>
+
+<h2 class="h4 mt-5 mb-3">The game state object</h2>
+
+<div class="card">
+  <div class="card-body">
+    <pre class="m-0"><code>{
+  "tick": 54,
+  "width": 13,
+  "height": 11,
+  // flattened grid tiles, see tile type descriptions below
+  "tiles": "....+++++.....#.#*#+#+#.#.+.****+++....+#.#*#+#+#.#..+++++++.+.+++#+#+#.#+#.#.+....++..+.++.#.#+#+#.#.#......++.......#.#+#+#.#.#....++++++++..",
+  // learn more about sudden death below
+  "suddenDeathCountdown": 186,   // number of ticks until the sudden death starts
+  "isSuddenDeathEnabled": false, // whether or not the sudden death is active
+  "isFinished": false,
+  "players": {
+    "0": {
+      "id": "0",
+      "name": "Askaiser",
+      "x": 2,
+      "y": 9,
+      "startingCorner": "bl",
+      "bombsLeft": 0,
+      "maxBombs": 1,
+      "bombRange": 2,
+      "isAlive": true,  // if true, the player has been killed by the sudden death and is no longer in the game
+      "respawning": 0, // if positive, the player has been blown by a bomb and is now respawning for this amount of ticks
+      "score": 40, // zero of positive number of points
+      "timedOut": false,
+      "color": 2001125
+    },
+    "1": { ... },
+    "2": { ... },
+    "3": { ... }
+  },
+  "bombs": {
+    "18": {
+      "x": 12,
+      "y": 2,
+      "playerId": "1",
+      "countdown": 5, // when countdown reach zero, the bomb explodes and is removed from this collection
+      "range": 3
+    },
+    "16": { ... },
+    "17": { ... }
+  },
+  "bonuses": {
+    "19": {
+      "x": 4,
+      "y": 1,
+      "kind": "fire" // possible values: bomb (increases maxBombs) and fire (increases bombRange)
+    },
+    "20" { ... }
+  }
+}
+</code></pre>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col">
+    <h2 class="h4 mt-5 mb-3">Tile types</h2>
+
+    <table class="table table-sm table-bordered table-striped table-nonfluid">
+      <thead>
+      <tr>
+        <th>Character</th>
+        <th>Description</th>
+        <th>Image</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td class="text-center"><code>.</code></td>
+        <td>Walkable empty tile</td>
+        <td class="text-center"><img src="~/assets/empty_tile.png" alt="Walkable empty tile"/></td>
+      </tr>
+      <tr>
+        <td class="text-center"><code>*</code></td>
+        <td>Explosion</td>
+        <td class="text-center"><img src="~/assets/explosion_tile.png" alt="Explosion"/></td>
+      </tr>
+      <tr>
+        <td class="text-center"><code>+</code></td>
+        <td>Destructible block</td>
+        <td class="text-center"><img src="~/assets/block_tile.png" alt="Destructible block"/></td>
+      </tr>
+      <tr>
+        <td class="text-center"><code>#</code></td>
+        <td>Non-destructible wall</td>
+        <td class="text-center"><img src="~/assets/pillar_tile.png" alt="Non-destructible wall"/></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="col">
+    <h2 class="h4 mt-5 mb-3">Bonuses</h2>
+
+    <p>Players get <strong>permanent bonuses</strong> by walking on them.</p>
+
+    <table class="table table-sm table-bordered table-striped table-nonfluid">
+      <thead>
+      <tr>
+        <th style="text-align:center">Type</th>
+        <th>Description</th>
+        <th>Image</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr>
+        <td style="text-align:center">
+          <strong>bomb</strong>
+        </td>
+        <td>Increases <code>player.maxBombs</code> property</td>
+        <td class="text-center">
+          <img src="~/assets/extra_bomb.png" alt="Extra bomb"/>
+        </td>
+      </tr>
+      <tr>
+        <td style="text-align:center">
+          <strong>fire</strong>
+        </td>
+        <td>Increases <code>player.bombRange</code> property</td>
+        <td class="text-center">
+          <img src="~/assets/bonus_fire.png" alt="Bomb range"/>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row mt-5">
+  <div class="col">
+    <h2 class="h4 mb-3">Sudden death</h2>
+
+    <p>
+      When <code>suddenDeathCountdown</code> reach zero, <strong>new walls are added to the grid from the outside to the inside in a circular manner</strong>.
+      Players that are on its way will die (<code>player.isAlive: false</code>) and <strong>won't respawn</strong>.
+      The only player left gets extra points.
+    </p>
+
+    <h2 class="h4 mt-5 mb-3">Respawning</h2>
+
+    <p>
+      If <code>suddenDeathCountdown</code> is not active and a player <strong>gets hit by a bomb</strong>,
+      he will be teleported to his starting corner. For a specific amount of ticks (<code>player.respawning</code>),
+      this player will <strong>be invincible but won't be able to drop bomb</strong>.
+    </p>
+  </div>
+
+  <div class="col-12 col-sm-10 col-lg-6 offset-sm-1 offset-md-0">
+    <p>
+      <img class="img-fluid" src="~/assets/sudden-death.gif" alt="Sudden death animation"/>
+    </p>
+  </div>
+</div>
+
+<h2 class="h4 mt-5 mb-3">Bomberjam engine CLI arguments</h2>
+
+<div class="card">
+<div class="card-body">
+<pre class="m-0"><code>Usage: bomberjam [OPTION]... [BOTPATH]...
+Example: bomberjam -q -r 42 -o "replay#n.json" "dotnet MyBot.dll" "java -classpath "".;*"" MyBot" "node MyBot.js" "python MyBot.py"
+
+Options:
+  -r, --repeat=VALUE         The number of games to play
+  -o, --output=VALUE         Path of saved games, use placeholder #n to insert game index
+  -t, --no-timeout           Disabe all timeouts for debugging
+  -q, --quiet                Suppress output logging
+  -h, --help                 Show help and exit</code></pre></div></div>

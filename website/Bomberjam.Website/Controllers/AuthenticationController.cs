@@ -25,6 +25,12 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/signin")]
         public async Task<IActionResult> SignIn()
         {
+            var isAuthenticated = this.User?.Identity?.IsAuthenticated ?? false;
+            if (isAuthenticated)
+            {
+                return this.RedirectToAction("Index", "Account");
+            }
+
             return this.View("SignIn", await GetExternalProvidersAsync(this.HttpContext));
         }
 

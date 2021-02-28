@@ -10,7 +10,7 @@
 <header>
   <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark box-shadow mb-3">
     <div class="container">
-      <a class="navbar-brand" asp-area="" asp-controller="Web" asp-action="Index">Bomberjam</a>
+      <a class="navbar-brand" asp-controller="Web" asp-action="Index">Bomberjam</a>
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="navbarSupportedContent"
               aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -19,21 +19,18 @@
       <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
         <ul class="navbar-nav mr-auto">
           <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Web" asp-action="Leaderboard">Leaderboard</a>
+            <a class="nav-link" asp-controller="Web" asp-action="Leaderboard">Leaderboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Web" asp-action="Viewer">Viewer</a>
+            <a class="nav-link" asp-controller="Web" asp-action="Viewer">Viewer</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" asp-area="" asp-controller="Web" asp-action="Learn">Learn</a>
+            <a class="nav-link" asp-controller="Web" asp-action="Learn">Learn</a>
           </li>
           @if (User?.Identity?.IsAuthenticated ?? false)
           {
             <li class="nav-item">
-              <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Index">Account</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" asp-area="" asp-controller="Account" asp-action="Submit">Upload</a>
+              <a class="nav-link" asp-controller="Account" asp-action="Index">Account</a>
             </li>
           }
         </ul>
@@ -41,11 +38,11 @@
           <li class="nav-item">
             @if (User?.Identity?.IsAuthenticated ?? false)
             {
-              <a class="btn btn-outline-danger" asp-area="" asp-controller="Authentication" asp-action="SignOut">Sign out</a>
+              <a class="btn btn-outline-danger" asp-controller="Authentication" asp-action="SignOut">Sign out</a>
             }
             else
             {
-              <a class="btn btn-outline-success" asp-area="" asp-controller="Authentication" asp-action="SignIn">Sign in</a>
+              <a class="btn btn-outline-success" asp-controller="Authentication" asp-action="SignIn">Sign in</a>
             }
           </li>
         </ul>
@@ -59,12 +56,6 @@
     @RenderBody()
   </main>
 </div>
-
-<footer class="footer text-muted">
-  <div class="container">
-    <div class="my-4">@DateTime.Now.Year - Bomberjam</div>
-  </div>
-</footer>
 
 <script src="~/dist/bundle.js" asp-append-version="true"></script>
 </body>

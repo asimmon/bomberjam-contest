@@ -13,9 +13,22 @@
     Click <a asp-controller="Account" asp-action="Edit">here</a> to change your username and email address,
     or click <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id">here</a> to see your game history.
   </p>
+
+  <p class="lead mt-4 mb-0">
+    <a asp-controller="Account" asp-action="Submit" class="btn btn-lg btn-success">
+      @if (Model.Bots.Count == 0)
+      {
+        <text>Upload your first bot</text>
+      }
+      else
+      {
+        <text>Upload another bot</text>
+      }
+    </a>
+  </p>
 </div>
 
-<h2>Your bot history</h2>
+<h2>Your bots</h2>
 
 <div class="table-responsive">
   <table class="table table-sm table-bordered table-striped">
@@ -23,7 +36,6 @@
     <tr>
       <th>Date</th>
       <th>Language</th>
-      <th>Errors</th>
       <th>Status</th>
       <th>Games played</th>
     </tr>
@@ -34,15 +46,20 @@
       <tr>
         <td>@bot.Created</td>
         <td>@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
-        <td><pre><code>@bot.Errors</code></pre></td>
-        <td>@bot.Status.ToDisplayString()</td>
+        <td>
+          @bot.Status.ToDisplayString()
+          @if (bot.Status == CompilationStatus.CompilationFailed && !string.IsNullOrWhiteSpace(bot.Errors))
+          {
+            <pre><code>@bot.Errors</code></pre>
+          }
+        </td>
         <td>@bot.GameCount</td>
       </tr>
     }
     @if (Model.Bots.Count == 0)
     {
       <tr>
-        <td colspan="4" class="text-center">Nothing to display</td>
+        <td colspan="4" class="text-center">There's nothing here</td>
       </tr>
     }
     </tbody>

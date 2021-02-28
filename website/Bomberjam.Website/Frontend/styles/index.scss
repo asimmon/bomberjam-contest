@@ -24,3 +24,11 @@ td {
 .custom-file-label::after {
   border-radius: 0;
 }
+
+table.table-nonfluid {
+  width: auto !important;
+}
+
+.custom-file-label {
+  color: lighten($input-color, 20%);
+}

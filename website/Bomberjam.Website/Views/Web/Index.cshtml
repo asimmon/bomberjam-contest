@@ -23,12 +23,12 @@
   <div class="col">
     <h2>May the best bot win!</h2>
 
-    <p class="lead">
+    <p>
       Players control a bot using the programming language of their choice. Four bots fight in a 2D grid. The bot with the most points at the end wins.
-      One player can get points by staying alive, destroying blocks, hitting another player and being the last player alive.
+      One player can get points by destroying blocks, hitting another player and being the last player alive.
     </p>
 
-    <ol class="lead">
+    <ol>
       <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
       <li><a href="https://github.com/asimmon/bomberjam-contest/releases">Download</a> our last starter kit on GitHub</li>
       <li><a asp-controller="Authentication" asp-action="SignIn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
@@ -71,22 +71,22 @@
   </div>
 
   <div class="col-md-7 col-lg-8">
-    <p class="lead">
+    <p>
       The <code>engine/</code> folder contains the game executable for the OS of your choice.
       Each starter contains a <code>MyBot.*</code> entrypoint file that <strong>must not be renamed</strong>.
     </p>
 
-    <p class="lead">
+    <p>
       For each starter, you will also find a <code>run.sh</code> and <code>run.bat</code> files that allows you to simulate a game. This is how a run script looks like:
     </p>
 
-    <pre><code style="white-space: normal">bomberjam.exe --output replay.json "dotnet MyBot.dll" "java -classpath "".;*"" MyBot" "node MyBot.js" "python MyBot.py"</code></pre>
+    <pre><code style="white-space: normal">cmd&gt; bomberjam.exe --output replay.json "dotnet MyBot.dll" "java -classpath "".;*"" MyBot" "node MyBot.js" "python MyBot.py"</code></pre>
 
-    <p class="lead">
+    <p>
       Each tick, your bot will receive the current state of the game over standard input. Standard output must be used to send the action (move, plant a bomb or do nothing).
     </p>
 
-    <p class="lead">
+    <p>
       <a asp-controller="Web" asp-action="Viewer">Use the online viewer</a> to visualize the game.
     </p>
   </div>
