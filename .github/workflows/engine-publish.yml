@@ -28,16 +28,23 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
-    - name: Restore
+    - name: Restore nuget packages
       working-directory: ./engine/Bomberjam
       run: dotnet restore
 
-    - name: Publish
+    - name: Publish engine
       working-directory: ./engine/Bomberjam
       run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/${{ matrix.rid }}/
 
-    - name: Upload
+    - name: Upload engine
       uses: actions/upload-artifact@v2
       with:
         name: bomberjam
         path: ./engine/Bomberjam/dist/
+
+    - name: Upload starters
+      if: matrix.os == 'ubuntu-latest'
+      uses: actions/upload-artifact@v2
+      with:
+        name: bomberjam
+        path: ./starters/

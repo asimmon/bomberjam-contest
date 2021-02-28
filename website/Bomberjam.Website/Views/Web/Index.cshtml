@@ -3,14 +3,10 @@
 }
 
 <div class="jumbotron">
-  @if (User?.Identity?.IsAuthenticated ?? false)
-  {
-    <h1>Welcome, @User.Identity.Name</h1>
-    <a class="btn btn-lg btn-danger" asp-area="" asp-controller="Authentication" asp-action="SignOut">Sign out</a>
-  }
-  else
-  {
-    <h1>Welcome, anonymous</h1>
-    <a class="btn btn-lg btn-success" asp-area="" asp-controller="Authentication" asp-action="SignIn">Sign in</a>
-  }
+  <h1>
+    Bomberjam
+    <small class="text-muted">is an artificial intelligence programming challenge.</small>
+  </h1>
+
+  <p class="lead mt-4"></p>
 </div>
