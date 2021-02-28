@@ -29,6 +29,7 @@ namespace Bomberjam.Website.Database
         Task AddGameTask(IReadOnlyCollection<User> users);
         Task MarkTaskAsStarted(Guid taskId);
         Task MarkTaskAsFinished(Guid taskId);
+        Task<IEnumerable<QueuedTask>> GetOrphanedTasks();
 
         Task<GameInfo> GetGame(Guid gameId);
         Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);

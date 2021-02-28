@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Jobs
 {
-    public class MatchmakingJob
+    public sealed class MatchmakingJob
     {
         public MatchmakingJob(IBomberjamRepository repository, ILogger<MatchmakingJob> logger)
         {
@@ -18,13 +18,14 @@ namespace Bomberjam.Website.Jobs
         }
 
         private IBomberjamRepository Repository { get; }
+
         private ILogger<MatchmakingJob> Logger { get; }
 
         public async Task Run()
         {
             if (await this.Repository.HasGameTask())
             {
-                this.Logger.Log(LogLevel.Information, "Skipped matchmaking as there are still game tasks to be processed");
+                this.Logger.Log(LogLevel.Debug, "Skipped matchmaking as there are still game tasks to be processed");
                 return;
             }
 
@@ -37,7 +38,10 @@ namespace Bomberjam.Website.Jobs
                     await this.Repository.AddGameTask(match.Users);
 
                 await transaction.CommitAsync();
+            }
 
+            if (matchs.Count > 0)
+            {
                 this.Logger.Log(LogLevel.Information, $"Queued {matchs.Count} matches");
             }
         }

@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
 namespace Bomberjam.Website
@@ -160,7 +161,7 @@ namespace Bomberjam.Website
             }
         }
 
-        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs)
+        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, ILogger<Startup> logger)
         {
             app.UseResponseCompression();
 
@@ -200,7 +201,14 @@ namespace Bomberjam.Website
                 }
             });
 
-            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), "* * * * *");
+            var matchmakingCronExpr = this.Configuration["JobCrons:Matchmaking"];
+            var orphanedTasksCronExpr = this.Configuration["JobCrons:OrphanedTasks"];
+
+            logger.Log(LogLevel.Information, "Matchmaking cron expression: " + matchmakingCronExpr);
+            logger.Log(LogLevel.Information, "Orphaned tasks cron expression: " + orphanedTasksCronExpr);
+
+            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), matchmakingCronExpr);
+            recurringJobs.AddOrUpdate<OrphanedTaskFixingJob>("orphanedTasks", job => job.Run(), orphanedTasksCronExpr);
         }
     }
 }

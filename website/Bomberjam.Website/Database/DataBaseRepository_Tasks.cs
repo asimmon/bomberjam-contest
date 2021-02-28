@@ -110,5 +110,18 @@ namespace Bomberjam.Website.Database
                 throw new InvalidOperationException($"The queued task {taskId} cannot be maked as finished because its status is: '{queuedTask.Status}'");
             }
         }
+
+        public async Task<IEnumerable<QueuedTask>> GetOrphanedTasks()
+        {
+            // Consider a task as orphaned 20 minutes after it was pulled or started
+            var now = DateTime.UtcNow;
+            return await this._dbContext.Tasks
+                .Where(t => t.Status != QueuedTaskStatus.Created && t.Status != QueuedTaskStatus.Finished)
+                .Where(t => t.Updated.AddMinutes(20) < now)
+                .OrderByDescending(t => t.Created)
+                .Select(t => MapQueuedTask(t))
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
     }
 }

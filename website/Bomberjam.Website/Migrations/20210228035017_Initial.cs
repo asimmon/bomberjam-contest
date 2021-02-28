@@ -122,13 +122,13 @@ namespace Bomberjam.Website.Migrations
                 columns: new[] { "Id", "Created", "Data", "Status", "Type", "Updated" },
                 values: new object[,]
                 {
-                    { new Guid("9b16a86e-4412-4dcd-ad66-8435edf09c3a"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(1578), "00000000-0000-0000-0000-000000000001", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(1763) },
-                    { new Guid("10e0c946-9af3-49a9-95e1-01c64ca5e7cf"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2447), "00000000-0000-0000-0000-000000000002", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2449) },
-                    { new Guid("468ecba8-90ed-4abc-a508-638bc6a7eceb"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2452), "00000000-0000-0000-0000-000000000003", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2453) },
-                    { new Guid("87397d96-a5cd-4947-aeca-ef4ca2ec51ff"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2456), "00000000-0000-0000-0000-000000000004", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2456) },
-                    { new Guid("7c8f00d6-2c18-4756-b194-c7c52a2ab59e"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2459), "00000000-0000-0000-0000-000000000005", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2460) },
-                    { new Guid("bb526ff7-5615-4277-b68a-094b875414f8"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2462), "00000000-0000-0000-0000-000000000006", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2463) },
-                    { new Guid("533114e4-61e8-4b32-8f7e-da8fd69b3197"), new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2465), "00000000-0000-0000-0000-000000000007", 0, 1, new DateTime(2021, 2, 27, 21, 47, 19, 703, DateTimeKind.Utc).AddTicks(2466) }
+                    { new Guid("0adc087c-f2e6-428a-9381-a4fa3b2c000d"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(7627), "00000000-0000-0000-0000-000000000001", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(7802) },
+                    { new Guid("63b0e61b-9062-4b72-a094-b9a795272d9d"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8484), "00000000-0000-0000-0000-000000000002", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8486) },
+                    { new Guid("bd1d2b4b-5c9b-4cfb-a420-23a9c8098b65"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8490), "00000000-0000-0000-0000-000000000003", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8491) },
+                    { new Guid("9ba9871d-cc45-4d4a-b452-ced7e72446e7"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8493), "00000000-0000-0000-0000-000000000004", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8494) },
+                    { new Guid("297c7377-c487-4f77-a125-772e3224b393"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8496), "00000000-0000-0000-0000-000000000005", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8497) },
+                    { new Guid("2eb88f49-f37f-47cc-ad6c-bf2996900d4f"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8513), "00000000-0000-0000-0000-000000000006", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8513) },
+                    { new Guid("db610158-ad68-46e0-bcdc-ac7ffe5d8e47"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8516), "00000000-0000-0000-0000-000000000007", 0, 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(8517) }
                 });
 
             migrationBuilder.InsertData(
@@ -136,13 +136,13 @@ namespace Bomberjam.Website.Migrations
                 columns: new[] { "Id", "Created", "Email", "GithubId", "Points", "Updated", "UserName" },
                 values: new object[,]
                 {
-                    { new Guid("00000000-0000-0000-0000-000000000001"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(6460), "simmon.anthony@gmail.com", 14242083, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(6630), "Askaiser" },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7353), "falgar@gmail.com", 36072624, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7355), "Falgar" },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7357), "xenure@gmail.com", 9208753, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7358), "Xenure" },
-                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7359), "minty@gmail.com", 26142591, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7360), "Minty" },
-                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7361), "kalmera@gmail.com", 5122918, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7362), "Kalmera" },
-                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7363), "pandarf@gmail.com", 1035273, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7364), "Pandarf" },
-                    { new Guid("00000000-0000-0000-0000-000000000007"), new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7365), "mire@gmail.com", 5489330, 1500f, new DateTime(2021, 2, 27, 21, 47, 19, 701, DateTimeKind.Utc).AddTicks(7366), "Mire" }
+                    { new Guid("00000000-0000-0000-0000-000000000001"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(2826), "simmon.anthony@gmail.com", 14242083, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3093), "Askaiser" },
+                    { new Guid("00000000-0000-0000-0000-000000000002"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3682), "falgar@gmail.com", 36072624, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3684), "Falgar" },
+                    { new Guid("00000000-0000-0000-0000-000000000003"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3686), "xenure@gmail.com", 9208753, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3686), "Xenure" },
+                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3688), "minty@gmail.com", 26142591, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3689), "Minty" },
+                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3690), "kalmera@gmail.com", 5122918, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3691), "Kalmera" },
+                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3693), "pandarf@gmail.com", 1035273, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3694), "Pandarf" },
+                    { new Guid("00000000-0000-0000-0000-000000000007"), new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3695), "mire@gmail.com", 5489330, 1500f, new DateTime(2021, 2, 28, 3, 50, 16, 680, DateTimeKind.Utc).AddTicks(3696), "Mire" }
                 });
 
             migrationBuilder.InsertData(
@@ -150,13 +150,13 @@ namespace Bomberjam.Website.Migrations
                 columns: new[] { "Id", "Created", "Errors", "Language", "Status", "Updated", "UserId" },
                 values: new object[,]
                 {
-                    { new Guid("00000000-0000-0000-0000-000000000001"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(7610), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(7789), new Guid("00000000-0000-0000-0000-000000000001") },
-                    { new Guid("00000000-0000-0000-0000-000000000002"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8555), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8560), new Guid("00000000-0000-0000-0000-000000000002") },
-                    { new Guid("00000000-0000-0000-0000-000000000003"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8562), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8563), new Guid("00000000-0000-0000-0000-000000000003") },
-                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8564), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8565), new Guid("00000000-0000-0000-0000-000000000004") },
-                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8566), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8567), new Guid("00000000-0000-0000-0000-000000000005") },
-                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8568), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8569), new Guid("00000000-0000-0000-0000-000000000006") },
-                    { new Guid("00000000-0000-0000-0000-000000000007"), new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8571), "", "", 1, new DateTime(2021, 2, 27, 21, 47, 19, 702, DateTimeKind.Utc).AddTicks(8571), new Guid("00000000-0000-0000-0000-000000000007") }
+                    { new Guid("00000000-0000-0000-0000-000000000001"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(3680), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(3862), new Guid("00000000-0000-0000-0000-000000000001") },
+                    { new Guid("00000000-0000-0000-0000-000000000002"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4639), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4644), new Guid("00000000-0000-0000-0000-000000000002") },
+                    { new Guid("00000000-0000-0000-0000-000000000003"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4647), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4648), new Guid("00000000-0000-0000-0000-000000000003") },
+                    { new Guid("00000000-0000-0000-0000-000000000004"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4649), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4650), new Guid("00000000-0000-0000-0000-000000000004") },
+                    { new Guid("00000000-0000-0000-0000-000000000005"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4651), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4652), new Guid("00000000-0000-0000-0000-000000000005") },
+                    { new Guid("00000000-0000-0000-0000-000000000006"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4653), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4654), new Guid("00000000-0000-0000-0000-000000000006") },
+                    { new Guid("00000000-0000-0000-0000-000000000007"), new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4655), "", "", 1, new DateTime(2021, 2, 28, 3, 50, 16, 681, DateTimeKind.Utc).AddTicks(4656), new Guid("00000000-0000-0000-0000-000000000007") }
                 });
 
             migrationBuilder.CreateIndex(
