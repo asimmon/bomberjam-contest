@@ -17,10 +17,6 @@ WORKDIR "/src/website/Bomberjam.Website"
 FROM build AS publish
 ENV PATH="${PATH}:/root/.dotnet/tools"
 RUN dotnet publish "Bomberjam.Website.csproj" -c Debug -o /app/publish
-RUN dotnet tool install --global dotnet-ef && \
-    dotnet ef database drop -f && \
-    dotnet ef database update && \
-    cp bomberjam.db /app/publish
 
 FROM base AS final
 WORKDIR /app
