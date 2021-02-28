@@ -36,15 +36,13 @@ jobs:
       working-directory: ./engine/Bomberjam
       run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/${{ matrix.rid }}/
 
+    - name: Copy starters
+      if: matrix.os == 'ubuntu-latest'
+      run: cp -r ./starters ./engine/Bomberjam/dist/
+
     - name: Upload engine
       uses: actions/upload-artifact@v2
       with:
         name: bomberjam
         path: ./engine/Bomberjam/dist/
-
-    - name: Upload starters
-      if: matrix.os == 'ubuntu-latest'
-      uses: actions/upload-artifact@v2
-      with:
-        name: bomberjam
-        path: ./starters/
+        retention-days: 1
