@@ -34,7 +34,7 @@ jobs:
 
     - name: Publish engine
       working-directory: ./engine/Bomberjam
-      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/${{ matrix.rid }}/
+      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/engine/${{ matrix.rid }}/
 
     - name: Copy starters
       if: matrix.os == 'ubuntu-latest'
