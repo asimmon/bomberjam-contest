@@ -1,5 +1,4 @@
 export const Sprites = {
-  spritesheet: '../assets/bomberjam.json',
   floor: 'floor',
   wall: 'wall',
   block: 'block',

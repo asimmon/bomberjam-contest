@@ -1,4 +1,4 @@
-import { IResourceDictionary, Texture, Spritesheet, Sprite, AnimatedSprite } from 'pixi.js';
+import { Texture, Spritesheet, Sprite, AnimatedSprite } from 'pixi.js';
 import { Sprites } from './assets';
 
 export default class TextureRegistry {
@@ -22,11 +22,9 @@ export default class TextureRegistry {
   public readonly tileSize: number = 48;
   public readonly spriteRatio: number;
 
-  constructor(resources: IResourceDictionary) {
-    this.spritePools = new AnimatedSpritePool();
-    const spritesheet = resources[Sprites.spritesheet].spritesheet;
-    if (!spritesheet) throw new Error('Could not load spritesheet ' + Sprites.spritesheet);
+  constructor(spritesheet: Spritesheet) {
     this.spritesheet = spritesheet;
+    this.spritePools = new AnimatedSpritePool();
 
     for (let id in this.spritesheet.textures) {
       if (this.spritesheet.textures.hasOwnProperty(id)) {

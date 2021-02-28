@@ -1,13 +1,26 @@
+declare module PIXI {
+  interface DisplayObject {
+    vx: number;
+    vy: number;
+  }
+}
+
+declare module "*.png" {
+  const value: any;
+  export = value;
+}
+
+declare module "*.json" {
+  const value: any;
+  export = value;
+}
+
 interface JSON {
   parse<T = any>(text: string): T;
 }
 
 interface Document {
   getElementById<T extends HTMLElement>(elementId: string): T | null;
-}
-
-interface ISetTimeout {
-  (callback: () => void, delay: number): void;
 }
 
 interface IHasPos {

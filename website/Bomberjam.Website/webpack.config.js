@@ -31,8 +31,8 @@ module.exports = (env, argv) => {
       maxEntrypointSize: 1048576
     },
     entry: [
-      path.resolve(__dirname, 'wwwroot/scripts/index.tsx'),
-      path.resolve(__dirname, 'wwwroot/styles/index.scss')
+      path.resolve(__dirname, 'Frontend/scripts/index.tsx'),
+      path.resolve(__dirname, 'Frontend/styles/index.scss')
     ],
     output: {
       filename: 'bundle.js',
@@ -56,6 +56,10 @@ module.exports = (env, argv) => {
         {
           test: /\.scss$/,
           use: [MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader']
+        },
+        {
+          test: /\.(png|jpe?g|gif)$/i,
+          use: [{ loader: 'url-loader' }]
         }
       ]
     },

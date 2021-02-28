@@ -1,7 +1,9 @@
-import { Application, Texture, utils } from 'pixi.js';
-import { Sprites } from './assets';
+import { Application, Texture, Spritesheet, utils } from 'pixi.js';
 import BomberjamRenderer from './bomberjamRenderer';
 import TextureRegistry from './textureRegistry';
+
+import bomberjamSpritesheetJson from '../../assets/bomberjam.json';
+import bomberjamSpritesheetPng from '../../assets/bomberjam.png';
 
 type StateChangedCallback = (stateIdx: number) => void;
 
@@ -98,9 +100,16 @@ export default async function replayGame(pixiContainer: HTMLElement, history: IG
 function loadTexturesAsync(pixiApp: Application): Promise<TextureRegistry> {
   return new Promise<TextureRegistry>((resolve, reject) => {
     try {
-      pixiApp.loader.add(Sprites.spritesheet).load(() => {
-        const textures = new TextureRegistry(pixiApp.loader.resources);
-        resolve(textures);
+      pixiApp.loader.add('bomberjam', bomberjamSpritesheetPng).load((loader, resources) => {
+        const spritesheetResource = resources['bomberjam'];
+        if (spritesheetResource) {
+          const spritesheet = new Spritesheet(spritesheetResource.texture, bomberjamSpritesheetJson);
+          spritesheet.parse(() => {
+            resolve(new TextureRegistry(spritesheet));
+          })
+        } else {
+          reject('Could not load the spritesheet');
+        }
       });
     } catch (err) {
       try {

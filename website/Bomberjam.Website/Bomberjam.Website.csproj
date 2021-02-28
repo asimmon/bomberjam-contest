@@ -29,6 +29,12 @@
   <ItemGroup>
     <None Remove="MyBot.zip" />
     <EmbeddedResource Include="MyBot.zip" />
+    <Content Remove="Frontend\assets\bomberjam.json" />
+    <None Include="Frontend\assets\bomberjam.json">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToPublishDirectory>Never</CopyToPublishDirectory>
+    </None>
   </ItemGroup>
 
   <Target Name="DeleteNodeModulesDirectory" BeforeTargets="BuildFrontend" Condition=" '$(OS)' != 'Windows_NT' ">
