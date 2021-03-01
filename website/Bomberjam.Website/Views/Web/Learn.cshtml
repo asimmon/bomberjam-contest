@@ -53,7 +53,7 @@
 
 <p>
   Through standard input, and at each tick, your bot will receive the current state of the game serialized as JSON.
-  It will have to decide whether to go <code>left</code>, <code>right</code>, <code>up</code>, <code>down</code>, to <code>stay</code> or drop a <code>bomb</code>.
+  It will have to decide whether to go <code>left</code>, <code>right</code>, <code>up</code>, <code>down</code>, to <code>stay</code> or drop a <code>bomb</code> within <strong>one second</strong>.
 </p>
 
 <p>
@@ -228,6 +228,6 @@ Example: bomberjam -q -r 42 -o "replay#n.json" "dotnet MyBot.dll" "java -classpa
 Options:
   -r, --repeat=VALUE         The number of games to play
   -o, --output=VALUE         Path of saved games, use placeholder #n to insert game index
-  -t, --no-timeout           Disabe all timeouts for debugging
+  -t, --no-timeout           Disabe all timeouts for debugging your bot
   -q, --quiet                Suppress output logging
   -h, --help                 Show help and exit</code></pre></div></div>

@@ -31,7 +31,7 @@
     <ol class="mt-4">
       <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
       <li><a href="https://github.com/asimmon/bomberjam-contest/releases">Download</a> our last starter kit on GitHub</li>
-      <li><a asp-controller="Authentication" asp-action="SignIn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
+      <li><a asp-controller="Web" asp-action="Learn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
       <li>Upload your bot source code as a single zip file</li>
       <li>We will compile your bot and tell you if something went wrong</li>
       <li>We will periodically schedule games and update your score</li>
@@ -83,7 +83,7 @@
     <pre><code style="white-space: normal">cmd&gt; bomberjam.exe --output replay.json "dotnet MyBot.dll" "java -classpath "".;*"" MyBot" "node MyBot.js" "python MyBot.py"</code></pre>
 
     <p>
-      Each tick, your bot will receive the current state of the game over standard input. Standard output must be used to send the action (move, plant a bomb or do nothing).
+      Each tick, your bot will receive the current state of the game over standard input. Standard output must be used to send the action (move, plant a bomb or do nothing) within <strong>one second</strong>.
     </p>
 
     <p>

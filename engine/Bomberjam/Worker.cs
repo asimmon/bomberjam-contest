@@ -38,8 +38,8 @@ namespace Bomberjam
             this._processes = new Dictionary<string, BotProcess>(4);
             this._playerIds = new List<string>();
             this._watch = new Stopwatch();
-            this._playerInitialisationDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(2);
-            this._tickDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(2);
+            this._playerInitialisationDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(10);
+            this._tickDuration = this._opts.NoTimeout ? TimeSpan.MaxValue : TimeSpan.FromSeconds(1.1);
         }
 
         private static string[] EnsureFourBotCommands(IReadOnlyCollection<string> commands)
