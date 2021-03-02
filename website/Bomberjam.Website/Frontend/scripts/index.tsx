@@ -3,11 +3,21 @@ import React from "react";
 import {render} from 'react-dom';
 import {Application} from "./react/application";
 
+const hljs = require('highlight.js/lib/core');
+
 function onDocumentReady(callback: () => void) {
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
     window.setTimeout(callback, 1);
   } else {
     document.addEventListener('DOMContentLoaded', callback);
+  }
+}
+
+function handleHighlighting(): void {
+  hljs.registerLanguage('json', require('highlight.js/lib/languages/json'));
+
+  for (const el of document.querySelectorAll<HTMLElement>('pre code.json')) {
+    hljs.highlightBlock(el);
   }
 }
 
@@ -49,4 +59,7 @@ onDocumentReady(() => {
   if (visualizerEl) {
     render(<Application gameId={visualizerEl.dataset['gameId'] ?? ''}/>, visualizerEl);
   }
+
+  // Syntax highlighting
+  handleHighlighting();
 });

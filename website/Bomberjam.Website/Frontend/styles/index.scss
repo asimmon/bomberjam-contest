@@ -1,6 +1,7 @@
 @import 'variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootswatch/dist/darkly/bootswatch';
+@import '~highlight.js/scss/zenburn';
 
 @import 'visualizer';
 
@@ -31,4 +32,8 @@ table.table-nonfluid {
 
 .custom-file-label {
   color: lighten($input-color, 20%);
+}
+
+.hljs {
+  background: transparent;
 }

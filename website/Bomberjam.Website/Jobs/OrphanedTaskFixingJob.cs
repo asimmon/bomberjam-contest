@@ -29,7 +29,7 @@ namespace Bomberjam.Website.Jobs
                 {
                     await this.Repository.MarkTaskAsCreated(task.Id);
                 }
-                else
+                else if (task.Type == QueuedTaskType.Game)
                 {
                     if (task.Status == QueuedTaskStatus.Pulled)
                     {
@@ -45,7 +45,7 @@ namespace Bomberjam.Website.Jobs
 
             if (count > 0)
             {
-                this.Logger.Log(LogLevel.Information, $"Found {count} orphaned tasks that have been marked as finished");
+                this.Logger.Log(LogLevel.Information, $"Found {count} orphaned tasks that have been fixed");
             }
         }
     }
