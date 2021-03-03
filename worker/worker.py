@@ -16,6 +16,8 @@ import backend
 import compiler
 import util
 
+API_POLLING_INTERVAL = int(util.get_env_or_default('API_POLLING_INTERVAL', '60'))
+
 TEMP_DIR = os.getcwd()
 
 BOMBERJAM_EXEC_NAME = 'bomberjam'
@@ -261,7 +263,7 @@ class WorkerApp:
     def run(self):
         while not self.is_shutdown_requested:
             if not try_handle_next_task():
-                for x in range(10):
+                for x in range(API_POLLING_INTERVAL):
                     if not self.is_shutdown_requested:
                         time.sleep(1)
 
