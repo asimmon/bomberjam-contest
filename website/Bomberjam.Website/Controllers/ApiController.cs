@@ -57,6 +57,8 @@ namespace Bomberjam.Website.Controllers
             return this.Ok();
         }
 
+        private static string[] EolSeparators = { "\r\n", "\r", "\n" };
+
         [HttpPost("bot/{botId}/compilation-result")]
         public async Task<IActionResult> SetCompilationResult([FromBody] BotCompilationResult compilationResult)
         {
@@ -67,12 +69,17 @@ namespace Bomberjam.Website.Controllers
 
             bot.Status = compilationResult.DidCompile ? CompilationStatus.CompilationSucceeded : CompilationStatus.CompilationFailed;
             bot.Language = compilationResult.Language ?? string.Empty;
-            bot.Errors = compilationResult.Errors ?? string.Empty;
+            bot.Errors = RemoveDuplicateLines(compilationResult.Errors ?? string.Empty);
 
             await this.Repository.UpdateBot(bot);
 
             return this.Ok();
         }
+
+        private static string RemoveDuplicateLines(string text) => text
+            .Split(EolSeparators, StringSplitOptions.RemoveEmptyEntries)
+            .Distinct(StringComparer.Ordinal)
+            .JoinStrings(Environment.NewLine);
 
         [HttpGet("user/{userId}/bot")]
         public async Task<IActionResult> GetUserCompiledBotId(Guid userId)
@@ -251,7 +258,5 @@ namespace Bomberjam.Website.Controllers
             memoryStream.Seek(0, SeekOrigin.Begin);
             return memoryStream;
         }
-
-        //TODO GetCompiledBotIdForUser
     }
 }
