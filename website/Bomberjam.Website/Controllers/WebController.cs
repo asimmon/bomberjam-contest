@@ -52,9 +52,11 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> UserDetails(Guid userId, int page = 1)
         {
             var user = await this.Repository.GetUserById(userId);
-            var userGames = await this.Repository.GetPagedUserGames(userId, Math.Max(0, page));
+            var userGames = await this.Repository.GetPagedUserGames(userId, Math.Max(1, page));
 
-            return this.View(new UserDetails(user, userGames));
+            return userGames.IsOutOfRange
+                ? this.RedirectToAction("UserDetails", new { userId = userId, page = 1 })
+                : this.View(new UserDetails(user, userGames));
         }
 
         [HttpGet("~/learn")]

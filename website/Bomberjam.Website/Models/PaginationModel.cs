@@ -24,5 +24,10 @@ namespace Bomberjam.Website.Models
         public int PageSize { get; }
 
         public int PageCount { get; }
+
+        public bool IsOutOfRange
+        {
+            get => this.Items.Count == 0 && this.TotalCount > 0 && this.CurrentPage > this.PageCount;
+        }
     }
 }
