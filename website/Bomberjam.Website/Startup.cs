@@ -99,14 +99,9 @@ namespace Bomberjam.Website
 
         private IBomberjamStorage ConfigureBotStorage()
         {
-            if (this.Configuration.GetConnectionString("BomberjamStorage") is { Length: > 0 } storageConnStr)
-            {
-                return storageConnStr.StartsWith("DefaultEndpointsProtocol", StringComparison.OrdinalIgnoreCase)
-                    ? new AzureStorageBomberjamStorage(storageConnStr)
-                    : new LocalFileBomberjamStorage(storageConnStr);
-            }
-
-            return new LocalFileBomberjamStorage(Path.GetTempPath());
+            return this.Configuration.GetConnectionString("BomberjamStorage") is { Length: > 0 } storageConnStr
+                ? (IBomberjamStorage)new AzureStorageBomberjamStorage(storageConnStr)
+                : new LocalFileBomberjamStorage(Path.GetTempPath());
         }
 
         private void ConfigureAuthentication(IServiceCollection services)
@@ -182,11 +177,10 @@ namespace Bomberjam.Website
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
-
-                if (this.Environment.IsDevelopment())
+                endpoints.MapHangfireDashboard(new DashboardOptions
                 {
-                    endpoints.MapHangfireDashboard();
-                }
+                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(this.Configuration) },
+                });
             });
 
             var matchmakingCronExpr = this.Configuration["JobCrons:Matchmaking"];
