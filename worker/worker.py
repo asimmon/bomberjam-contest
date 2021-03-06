@@ -236,7 +236,7 @@ def try_handle_next_task():
             handle_any_task(task)
             return True
     except Exception as ex:
-        logging.exception("Error on get task %s" % str(ex))
+        logging.error("Error on get task: %s" % str(ex))
 
     return False
 
