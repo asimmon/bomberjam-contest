@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Microsoft.AspNetCore.Mvc;
@@ -32,7 +33,7 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> Leaderboard()
         {
             var rankedUsers = await this.Repository.GetRankedUsers();
-            return this.View(rankedUsers);
+            return this.View(rankedUsers.ToList());
         }
 
         [HttpGet("~/game/{gameId}")]

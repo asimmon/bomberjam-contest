@@ -86,7 +86,7 @@ namespace Bomberjam.Website.Controllers
         {
             var bots = await this.Repository.GetBots(userId);
             var compiledBots = bots.Where(b => b.Status == CompilationStatus.CompilationSucceeded);
-            return compiledBots.OrderByDescending(b => b.Updated).FirstOrDefault() is { } latestCompiledBot
+            return compiledBots.OrderByDescending(b => b.Created).FirstOrDefault() is { } latestCompiledBot
                 ? this.Ok(latestCompiledBot.Id.ToString("D"))
                 : this.NotFound();
         }

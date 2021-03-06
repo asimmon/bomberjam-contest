@@ -85,6 +85,7 @@ namespace Bomberjam.Website.Database
         public async Task<ICollection<RankedUser>> GetRankedUsers()
         {
             return await this._dbContext.Users
+                .Where(u => this._dbContext.GameUsers.Any(gu => gu.UserId == u.Id))
                 .OrderByDescending(u => u.Points)
                 .ThenBy(u => u.Created)
                 .Select(u => MapRankedUser(u))
