@@ -15,9 +15,9 @@ environment:
     - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
       RID: win-x64
     - APPVEYOR_BUILD_WORKER_IMAGE: Ubuntu
-      RID: value3
+      RID: linux-x64
     - APPVEYOR_BUILD_WORKER_IMAGE: macOS
-      RID: value4
+      RID: osx-x64
 
 build_script:
 - ps: cd ./engine/Bomberjam
