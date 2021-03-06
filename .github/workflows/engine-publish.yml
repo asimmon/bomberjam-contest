@@ -1,0 +1,46 @@
+name: Publish engine and starter kits
+
+on:
+  push:
+    branches: [ ci ]
+  pull_request:
+    branches: [ ci ]
+
+jobs:
+  publish:
+    name: Engine and starter kits for ${{ matrix.rid }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: windows-latest
+            rid: win-x64
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: macos-latest
+            rid: osx-x64
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Setup .NET 5
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+
+    - name: Restore nuget packages
+      working-directory: ./engine/Bomberjam
+      run: dotnet restore
+
+    - name: Publish engine
+      working-directory: ./engine/Bomberjam
+      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/engine/
+
+    - name: Copy starter kits
+      run: cp -r ./starters ./engine/Bomberjam/dist/
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: bomberjam-${{ matrix.rid }}
+        path: ./engine/Bomberjam/dist/
