@@ -156,8 +156,11 @@ namespace Bomberjam.Website.Database
 
                 this._dbContext.GameUsers.Add(dbGameUser);
 
-                var dbUser = await this._dbContext.Users.SingleAsync(u => u.Id == userDbId).ConfigureAwait(false);
-                dbUser.Points = playerSummary.Points ?? 0;
+                if (playerSummary.Points.HasValue && playerSummary.Points.Value > 0)
+                {
+                    var dbUser = await this._dbContext.Users.SingleAsync(u => u.Id == userDbId).ConfigureAwait(false);
+                    dbUser.Points = playerSummary.Points.Value;
+                }
             }
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
