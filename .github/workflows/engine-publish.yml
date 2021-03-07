@@ -2,9 +2,9 @@ name: Publish engine and starter kits
 
 on:
   push:
-    branches: [ master, ci ]
+    branches: [ master ]
   pull_request:
-    branches: [ master, ci ]
+    branches: [ master ]
 
 jobs:
   publish:
@@ -42,5 +42,5 @@ jobs:
     - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: bomberjam-${{ matrix.rid }}
+        name: bomberjam-starter-kits-${{ matrix.rid }}
         path: ./engine/Bomberjam/dist/
