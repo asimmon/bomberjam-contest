@@ -16,7 +16,7 @@ namespace Bomberjam.Website.Database
         {
             var dbTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (dbTask == null)
-                throw new EntityNotFound(ModelType.Task, taskId);
+                throw new EntityNotFound(EntityType.Task, taskId);
 
             return MapQueuedTask(dbTask);
         }
@@ -32,12 +32,13 @@ namespace Bomberjam.Website.Database
             return this.AddTask(QueuedTaskType.Compile, data);
         }
 
-        public Task AddGameTask(IReadOnlyCollection<User> users)
+        public Task AddGameTask(IReadOnlyCollection<User> users, GameOrigin origin)
         {
             Debug.Assert(users != null && users.Count == 4);
 
-            // <userGuid>:<userName>,<userGuid:userName>,<userGuid:userName>,<userGuid:userName>
-            var data = string.Join(",", users.Select(u => $"{u.Id:D}:{u.UserName}"));
+            // <gameOrigin>#<userGuid>:<userName>,<userGuid:userName>,<userGuid:userName>,<userGuid:userName>
+            // 1#af05:askaiser,634b:xenure,7ccb:minty,133e:kalmera
+            var data = ((int)origin) + "#" + string.Join(",", users.Select(u => $"{u.Id:D}:{u.UserName}"));
             return this.AddTask(QueuedTaskType.Game, data);
         }
 
@@ -57,7 +58,7 @@ namespace Bomberjam.Website.Database
         {
             var dbNextTask = await this._dbContext.Tasks.Where(t => t.Status == QueuedTaskStatus.Created).OrderBy(t => t.Created).FirstOrDefaultAsync().ConfigureAwait(false);
             if (dbNextTask == null)
-                throw new EntityNotFound(ModelType.Task);
+                throw new EntityNotFound(EntityType.Task);
 
             dbNextTask.Status = QueuedTaskStatus.Pulled;
             dbNextTask.Updated = DateTime.UtcNow;
@@ -81,7 +82,7 @@ namespace Bomberjam.Website.Database
         {
             var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (queuedTask == null)
-                throw new EntityNotFound(ModelType.Task, taskId);
+                throw new EntityNotFound(EntityType.Task, taskId);
 
             queuedTask.Status = QueuedTaskStatus.Created;
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
@@ -91,7 +92,7 @@ namespace Bomberjam.Website.Database
         {
             var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (queuedTask == null)
-                throw new EntityNotFound(ModelType.Task, taskId);
+                throw new EntityNotFound(EntityType.Task, taskId);
 
             if (queuedTask.Status == QueuedTaskStatus.Pulled)
             {
@@ -108,7 +109,7 @@ namespace Bomberjam.Website.Database
         {
             var queuedTask = await this._dbContext.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync().ConfigureAwait(false);
             if (queuedTask == null)
-                throw new EntityNotFound(ModelType.Task, taskId);
+                throw new EntityNotFound(EntityType.Task, taskId);
 
             if (queuedTask.Status == QueuedTaskStatus.Started)
             {

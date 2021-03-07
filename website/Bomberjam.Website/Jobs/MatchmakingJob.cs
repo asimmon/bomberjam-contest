@@ -35,7 +35,7 @@ namespace Bomberjam.Website.Jobs
             using (var transaction = await this.Repository.CreateTransaction())
             {
                 foreach (var match in matchs)
-                    await this.Repository.AddGameTask(match.Users);
+                    await this.Repository.AddGameTask(match.Users, GameOrigin.RankedMatchmaking);
 
                 await transaction.CommitAsync();
             }

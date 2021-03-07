@@ -72,7 +72,7 @@ namespace Bomberjam.Website.Database
         {
             var dbBot = await this._dbContext.Bots.FirstOrDefaultAsync(b => b.Id == bot.Id).ConfigureAwait(false);
             if (dbBot == null)
-                throw new EntityNotFound(ModelType.Bot, bot.Id);
+                throw new EntityNotFound(EntityType.Bot, bot.Id);
 
             if (bot.Status != CompilationStatus.Unknown)
                 dbBot.Status = bot.Status;

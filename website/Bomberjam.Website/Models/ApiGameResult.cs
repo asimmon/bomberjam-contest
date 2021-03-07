@@ -18,5 +18,8 @@ namespace Bomberjam.Website.Models
 
         [JsonPropertyName("playerBotIds")]
         public IDictionary<string, string> PlayerBotIds { get; set; }
+
+        [JsonPropertyName("origin")]
+        public GameOrigin Origin { get; set; }
     }
 }

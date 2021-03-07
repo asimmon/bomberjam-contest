@@ -30,7 +30,7 @@ namespace Bomberjam.Website.Database
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.GithubId == githubId).ConfigureAwait(false);
             if (dbUser == null)
-                throw new EntityNotFound(ModelType.User, githubId);
+                throw new EntityNotFound(EntityType.User, githubId);
 
             return MapUser(dbUser);
         }
@@ -39,7 +39,7 @@ namespace Bomberjam.Website.Database
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.Id == id).ConfigureAwait(false);
             if (dbUser == null)
-                throw new EntityNotFound(ModelType.User, id);
+                throw new EntityNotFound(EntityType.User, id);
 
             return MapUser(dbUser);
         }
@@ -74,7 +74,7 @@ namespace Bomberjam.Website.Database
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(e => e.Id == changedUser.Id).ConfigureAwait(false);
             if (dbUser == null)
-                throw new EntityNotFound(ModelType.User, changedUser.Id);
+                throw new EntityNotFound(EntityType.User, changedUser.Id);
 
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
                 dbUser.UserName = changedUser.UserName;

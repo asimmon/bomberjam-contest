@@ -56,7 +56,7 @@ namespace Bomberjam.Website.Database
                 .FirstOrDefault();
 
             if (groupedGame == null)
-                throw new EntityNotFound(ModelType.Game, gameId);
+                throw new EntityNotFound(EntityType.Game, gameId);
 
             return groupedGame;
         }
@@ -120,7 +120,7 @@ namespace Bomberjam.Website.Database
             return new PaginationModel<GameInfo>(gamePage, totalGamesCount, page, Constants.GamesPageSize);
         }
 
-        public async Task<Guid> AddGame(GameSummary gameSummary)
+        public async Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin)
         {
             var dbGame = new DbGame();
 
@@ -129,6 +129,7 @@ namespace Bomberjam.Website.Database
             dbGame.GameDuration = gameSummary.GameDuration;
             dbGame.Stdout = gameSummary.StandardOutput;
             dbGame.Stderr = gameSummary.StandardError;
+            dbGame.Origin = origin;
 
             this._dbContext.Games.Add(dbGame);
 

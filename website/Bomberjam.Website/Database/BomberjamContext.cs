@@ -58,6 +58,8 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbBot>().Property(x => x.Status).HasConversion<int>();
 
             modelBuilder.Entity<DbGame>().HasIndex(x => x.Created);
+            modelBuilder.Entity<DbGame>().HasIndex(x => x.Origin);
+            modelBuilder.Entity<DbGame>().Property(x => x.Origin).HasConversion<int>();
 
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Type);

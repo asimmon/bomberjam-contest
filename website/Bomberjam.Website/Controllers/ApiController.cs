@@ -208,8 +208,12 @@ namespace Bomberjam.Website.Controllers
 
             using (var transaction = await this.Repository.CreateTransaction())
             {
-                await this.ComputeNewUserPoints(gameHistory);
-                var gameId = await this.Repository.AddGame(gameHistory.Summary);
+                if (gameResult.Origin == GameOrigin.RankedMatchmaking)
+                {
+                    gameHistory = await this.ComputeNewUserPoints(gameHistory);
+                }
+
+                var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin);
 
                 var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
                 await this.Storage.UploadGameResult(gameId, jsonGameHistoryStream);
@@ -219,7 +223,7 @@ namespace Bomberjam.Website.Controllers
             return this.Ok();
         }
 
-        private async Task ComputeNewUserPoints(GameHistory gameHistory)
+        private async Task<GameHistory> ComputeNewUserPoints(GameHistory gameHistory)
         {
             var users = new Dictionary<string, User>();
 
@@ -244,6 +248,8 @@ namespace Bomberjam.Website.Controllers
                 player.Points = eloPlayers[playerId].NewElo;
                 player.DeltaPoints = eloPlayers[playerId].EloChange;
             }
+
+            return gameHistory;
         }
 
         private static MemoryStream SerializeGameHistoryToJsonStream(GameHistory gh)

@@ -32,12 +32,19 @@ namespace Bomberjam.Website.Models
         CompilationFailed = 3
     }
 
-    public enum ModelType
+    public enum EntityType
     {
         Unknown = 0,
         User = 1,
         Bot = 2,
         Game = 3,
         Task = 4
+    }
+
+    public enum GameOrigin
+    {
+        RankedMatchmaking = 0,
+        TestingPurpose = 1,
+        OnDemand = 2,
     }
 }

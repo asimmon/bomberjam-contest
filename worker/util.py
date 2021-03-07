@@ -58,15 +58,17 @@ class Player:
 
 
 class Game:
-    # serialized_player_data format: id:name,id:name,etc
-    # Example: 1:foo,5:bar,6:qux,4:baz
-    def __init__(self, serialized_player_data):
+    # serialized_player_data format: origin#id:name,id:name,id:name,id:name
+    # Example: 2#1:foo,5:bar,6:qux,4:baz
+    def __init__(self, serialized_game_data):
         self.players = []
         self.game_result = ''
         self.game_stdout = ''
         self.game_stderr = ''
-        self.exception = ''
         self.players_bot_ids = {}
+
+        self.origin = int(serialized_game_data[0:1])
+        serialized_player_data = serialized_game_data[2:]
 
         player_data = {k: str(v) for k, v in [i.split(':') for i in serialized_player_data.split(',')]}
         for player_index, player_id in enumerate(player_data):
