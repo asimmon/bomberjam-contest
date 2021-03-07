@@ -1,4 +1,4 @@
-name: Publish engine
+name: Publish engine and starter kits
 
 on:
   push:
@@ -8,14 +8,14 @@ on:
 
 jobs:
   publish:
-    name: Publish engine for ${{ matrix.os }}
+    name: Engine and starter kits for ${{ matrix.rid }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         include:
           - os: windows-latest
             rid: win-x64
-          - os: ubuntu-latest
+          - os: ubuntu-20.04
             rid: linux-x64
           - os: macos-latest
             rid: osx-x64
@@ -34,15 +34,13 @@ jobs:
 
     - name: Publish engine
       working-directory: ./engine/Bomberjam
-      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/engine/${{ matrix.rid }}/
+      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/engine/
 
-    - name: Copy starters
-      if: matrix.os == 'ubuntu-latest'
+    - name: Copy starter kits
       run: cp -r ./starters ./engine/Bomberjam/dist/
 
-    - name: Upload engine
+    - name: Upload artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: bomberjam
+        name: bomberjam-starter-kits-${{ matrix.rid }}
         path: ./engine/Bomberjam/dist/
-        retention-days: 1

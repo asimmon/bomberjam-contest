@@ -1,6 +1,6 @@
-using System;
 using System.IO;
 using Bomberjam.Website.Authentication;
+using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Storage;
@@ -35,6 +35,7 @@ namespace Bomberjam.Website
             services.AddRouting();
             services.AddMvc();
             services.AddScoped<PushFileStreamResultExecutor>();
+            services.AddSingleton(new GitHubConfiguration(this.Configuration));
 
             services.AddResponseCompression(opts =>
             {
@@ -144,7 +145,7 @@ namespace Bomberjam.Website
             }
         }
 
-        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, ILogger<Startup> logger)
+        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, ILogger<Startup> logger, GitHubConfiguration gitHubConfiguration)
         {
             app.UseResponseCompression();
 
@@ -179,7 +180,7 @@ namespace Bomberjam.Website
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapHangfireDashboard(new DashboardOptions
                 {
-                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(this.Configuration) },
+                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(gitHubConfiguration) },
                 });
             });
 

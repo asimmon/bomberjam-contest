@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,15 +13,18 @@ namespace Bomberjam.Website.Controllers
 {
     public class WebController : BaseBomberjamController<WebController>
     {
-        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger)
+        private readonly GitHubConfiguration _github;
+
+        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger, GitHubConfiguration github)
             : base(repository, storage, logger)
         {
+            this._github = github;
         }
 
         [HttpGet("~/")]
         public IActionResult Index()
         {
-            return this.View();
+            return this.View(new WebHomeViewModel { StarterKitsArtifactsUrl = this._github.StartKitsArtifactsUrl });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
