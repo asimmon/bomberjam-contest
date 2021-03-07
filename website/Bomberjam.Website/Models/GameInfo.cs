@@ -6,16 +6,18 @@ namespace Bomberjam.Website.Models
 {
     public class GameInfo
     {
-        public GameInfo(Guid id, DateTime created, IEnumerable<GameUserInfo> users)
+        public GameInfo(Guid id, DateTime created, GameOrigin origin, IEnumerable<GameUserInfo> users)
         {
             this.Id = id;
             this.Created = created;
+            this.Origin = origin;
             this.Users = users.ToList();
         }
 
-        public Guid Id { get; set; }
-        public DateTime Created { get; set; }
-        public IReadOnlyCollection<GameUserInfo> Users { get; set; }
+        public Guid Id { get; }
+        public DateTime Created { get; }
+        public GameOrigin Origin { get; }
+        public IReadOnlyCollection<GameUserInfo> Users { get; }
     }
 
     public class GameUserInfo
