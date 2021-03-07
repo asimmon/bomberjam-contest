@@ -25,5 +25,6 @@ namespace Bomberjam.Website.Models
         public string UserName { get; set; }
         public float DeltaPoints { get; set;  }
         public int Rank { get; set;  }
+        public string Errors { get; set; }
     }
 }

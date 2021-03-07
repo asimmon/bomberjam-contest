@@ -1,4 +1,5 @@
-﻿@model GameInfo
+﻿@using Bomberjam.Website.Utils
+@model GameInfo
 @{
   ViewData["Title"] = "Game";
 }
@@ -9,3 +10,13 @@
 </h1>
 
 <div id="visualizer" data-game-id="@Model.Id" class="my-4"></div>
+
+@if ((User?.Identity?.IsAuthenticated ?? false) && User.Claims.TryGetGitHubId(out int githubId))
+{
+  var user = Model.Users.FirstOrDefault(u => u.GithubId == githubId);
+  if (user != null && !string.IsNullOrWhiteSpace(user.Errors))
+  {
+    <h3>Bot errors</h3>
+    <pre class="code-sample"><code>@user.Errors</code></pre>
+  }
+}

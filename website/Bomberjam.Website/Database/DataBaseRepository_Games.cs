@@ -22,7 +22,8 @@ namespace Bomberjam.Website.Database
                     GameCreated = game.Created,
                     gameUser.UserId,
                     UserDeltaPoints = gameUser.DeltaPoints,
-                    UserRank = gameUser.Rank
+                    UserRank = gameUser.Rank,
+                    UserErrors = gameUser.Errors
                 })
                 .Join(this._dbContext.Users, tmp => tmp.UserId, user => user.Id, (tmp, user) => new
                 {
@@ -31,6 +32,7 @@ namespace Bomberjam.Website.Database
                     tmp.UserId,
                     tmp.UserDeltaPoints,
                     tmp.UserRank,
+                    tmp.UserErrors,
                     user.UserName,
                     UserGithubId = user.GithubId
                 })
@@ -48,7 +50,8 @@ namespace Bomberjam.Website.Database
                     GithubId = row.UserGithubId,
                     UserName = row.UserName,
                     DeltaPoints = row.UserDeltaPoints,
-                    Rank = row.UserRank
+                    Rank = row.UserRank,
+                    Errors = row.UserErrors
                 })))
                 .FirstOrDefault();
 

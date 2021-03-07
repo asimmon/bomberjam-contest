@@ -43,3 +43,14 @@ img.avatar-sm {
   max-height: 20px;
   max-width: 20px;
 }
+
+.code-sample {
+  @extend .rounded;
+  background-color: $jumbotron-bg;
+  padding: 20px;
+
+  code {
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+}
