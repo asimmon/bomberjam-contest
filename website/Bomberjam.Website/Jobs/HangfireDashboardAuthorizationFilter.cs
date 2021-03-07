@@ -1,28 +1,24 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using Bomberjam.Website.Common;
 using Hangfire.Dashboard;
-using Microsoft.Extensions.Configuration;
 
 namespace Bomberjam.Website.Jobs
 {
     public class HangfireDashboardAuthorizationFilter : IDashboardAuthorizationFilter
     {
-        private readonly HashSet<string> _allowedGitHubIds;
+        private readonly GitHubConfiguration _configuration;
 
-        public HangfireDashboardAuthorizationFilter(IConfiguration configuration)
+        public HangfireDashboardAuthorizationFilter(GitHubConfiguration configuration)
         {
-            this._allowedGitHubIds = new HashSet<string>(
-                (configuration["GitHub:Administrators"] ?? string.Empty).Trim()
-                .Split(new[] { ',', ';' }, StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries), StringComparer.Ordinal);
+            this._configuration = configuration;
         }
 
         public bool Authorize(DashboardContext context)
         {
-            if (this._allowedGitHubIds.Count == 0) return false;
+            if (this._configuration.AllowedGitHubIds.Count == 0) return false;
             var nameIdentifierClaim = context.GetHttpContext().User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            return nameIdentifierClaim != null && this._allowedGitHubIds.Contains(nameIdentifierClaim.Value);
+            return nameIdentifierClaim != null && this._configuration.AllowedGitHubIds.Contains(nameIdentifierClaim.Value);
         }
     }
 }

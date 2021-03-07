@@ -1,4 +1,5 @@
-﻿@{
+﻿@model WebHomeViewModel
+@{
   ViewData["Title"] = "Home";
 }
 
@@ -13,7 +14,7 @@
   </p>
 
   <p class="lead mt-4 mb-0">
-    <a href="https://github.com/asimmon/bomberjam-contest/releases" class="btn btn-lg btn-primary">
+    <a href="@Model.StarterKitsArtifactsUrl" class="btn btn-lg btn-primary">
       Download the starter kit from GitHub <i class="fas fa-external-link-alt fa-xs"></i>
     </a>
   </p>
@@ -30,7 +31,7 @@
 
     <ol class="mt-4">
       <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
-      <li><a href="https://github.com/asimmon/bomberjam-contest/releases">Download <i class="fas fa-external-link-alt fa-xs"></i></a> the latest starter kit on GitHub</li>
+      <li><a href="@Model.StarterKitsArtifactsUrl">Download <i class="fas fa-external-link-alt fa-xs"></i></a> the latest starter kit on GitHub</li>
       <li><a asp-controller="Web" asp-action="Learn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
       <li>Upload your bot source code as a single zip file</li>
       <li>We will compile your bot and tell you if something went wrong</li>
