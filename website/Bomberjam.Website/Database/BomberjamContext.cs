@@ -58,6 +58,8 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbBot>().Property(x => x.Status).HasConversion<int>();
 
             modelBuilder.Entity<DbGame>().HasIndex(x => x.Created);
+            modelBuilder.Entity<DbGame>().HasIndex(x => x.Origin);
+            modelBuilder.Entity<DbGame>().Property(x => x.Origin).HasConversion<int>();
 
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Type);
@@ -74,7 +76,7 @@ namespace Bomberjam.Website.Database
             var initialBots = InitialTestUsers.Select(u => CreateInitialBot(u.Id)).ToList();
             modelBuilder.Entity<DbBot>().HasData(initialBots);
 
-            var initialCompileTasks = initialBots.Select(b => CreateInitialCompileTask(Guid.NewGuid(), b.Id)).ToList();
+            var initialCompileTasks = initialBots.Select(b => CreateInitialCompileTask(b.Id, b.Id)).ToList();
             modelBuilder.Entity<DbQueuedTask>().HasData(initialCompileTasks);
         }
 
@@ -129,8 +131,8 @@ namespace Bomberjam.Website.Database
         {
             Id = id,
             GithubId = githubId,
-            Created = DateTime.UtcNow,
-            Updated = DateTime.UtcNow,
+            Created = new DateTime(2021, 3, 7, 16, 2, 0, 181, DateTimeKind.Utc),
+            Updated = new DateTime(2021, 3, 7, 16, 2, 0, 181, DateTimeKind.Utc),
             UserName = username,
             Email = email,
             Points = Constants.InitialPoints
@@ -139,8 +141,8 @@ namespace Bomberjam.Website.Database
         private static DbBot CreateInitialBot(Guid userId) => new DbBot
         {
             Id = userId,
-            Created = DateTime.UtcNow,
-            Updated = DateTime.UtcNow,
+            Created = new DateTime(2021, 3, 7, 16, 2, 0, 181, DateTimeKind.Utc),
+            Updated = new DateTime(2021, 3, 7, 16, 2, 0, 181, DateTimeKind.Utc),
             UserId = userId,
             Status = CompilationStatus.NotCompiled,
             Language = string.Empty,
@@ -150,8 +152,8 @@ namespace Bomberjam.Website.Database
         private static DbQueuedTask CreateInitialCompileTask(Guid taskId, Guid botId) => new DbQueuedTask
         {
             Id = taskId,
-            Created = DateTime.UtcNow,
-            Updated = DateTime.UtcNow,
+            Created = new DateTime(2021, 3, 7, 16, 2, 0, 181, DateTimeKind.Utc),
+            Updated = new DateTime(2021, 3, 7, 16, 2, 0, 181, DateTimeKind.Utc),
             Type = QueuedTaskType.Compile,
             Data = botId.ToString("D"),
             Status = QueuedTaskStatus.Created,

@@ -24,9 +24,9 @@ namespace Bomberjam.Website.Database
 
         Task<QueuedTask> PopNextTask();
         Task<QueuedTask> GetTask(Guid taskId);
-        Task<bool> HasGameTask();
+        Task<bool> HasPendingGameTasks();
         Task AddCompilationTask(Guid botId);
-        Task AddGameTask(IReadOnlyCollection<User> users);
+        Task AddGameTask(IReadOnlyCollection<User> users, GameOrigin origin);
         Task MarkTaskAsCreated(Guid taskId);
         Task MarkTaskAsStarted(Guid taskId);
         Task MarkTaskAsFinished(Guid taskId);
@@ -34,6 +34,6 @@ namespace Bomberjam.Website.Database
 
         Task<GameInfo> GetGame(Guid gameId);
         Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);
-        Task<Guid> AddGame(GameSummary gameSummary);
+        Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin);
     }
 }

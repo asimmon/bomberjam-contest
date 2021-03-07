@@ -17,12 +17,13 @@ namespace Bomberjam.Website.Database
                 from b in this._dbContext.Bots where b.UserId == userId
                 join gu in this._dbContext.GameUsers on b.Id equals gu.BotId into innerJoin
                 from leftJoin in innerJoin.DefaultIfEmpty()
-                group leftJoin by new { b.Id, b.Created, b.Updated, b.Status, b.Language, b.Errors }
+                group leftJoin by new { b.Id, b.UserId, b.Created, b.Updated, b.Status, b.Language, b.Errors }
                 into grouped
                 orderby grouped.Key.Created descending
                 select new Bot
                 {
                     Id = grouped.Key.Id,
+                    UserId = grouped.Key.UserId,
                     Created = grouped.Key.Created,
                     Updated = grouped.Key.Updated,
                     Status = grouped.Key.Status,
@@ -41,6 +42,7 @@ namespace Bomberjam.Website.Database
                 .Select(b => new Bot
                 {
                     Id = b.Id,
+                    UserId = b.UserId,
                     Created = b.Created,
                     Updated = b.Updated,
                     Status = b.Status,
@@ -72,7 +74,7 @@ namespace Bomberjam.Website.Database
         {
             var dbBot = await this._dbContext.Bots.FirstOrDefaultAsync(b => b.Id == bot.Id).ConfigureAwait(false);
             if (dbBot == null)
-                throw new EntityNotFound(ModelType.Bot, bot.Id);
+                throw new EntityNotFound(EntityType.Bot, bot.Id);
 
             if (bot.Status != CompilationStatus.Unknown)
                 dbBot.Status = bot.Status;

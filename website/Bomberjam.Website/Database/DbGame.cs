@@ -1,4 +1,5 @@
 using System;
+using Bomberjam.Website.Models;
 
 namespace Bomberjam.Website.Database
 {
@@ -7,6 +8,7 @@ namespace Bomberjam.Website.Database
         public Guid Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
+        public GameOrigin Origin { get; set; }
         public string Errors { get; set; }
         public double? InitDuration { get; set; }
         public double? GameDuration { get; set; }

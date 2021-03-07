@@ -10,6 +10,7 @@ using Bomberjam.Common;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Bomberjam.Website.Utils;
@@ -57,7 +58,7 @@ namespace Bomberjam.Website.Controllers
             return this.Ok();
         }
 
-        private static string[] EolSeparators = { "\r\n", "\r", "\n" };
+        private static readonly string[] EolSeparators = { "\r\n", "\r", "\n" };
 
         [HttpPost("bot/{botId}/compilation-result")]
         public async Task<IActionResult> SetCompilationResult([FromBody] BotCompilationResult compilationResult)
@@ -72,6 +73,18 @@ namespace Bomberjam.Website.Controllers
             bot.Errors = RemoveDuplicateLines(compilationResult.Errors ?? string.Empty);
 
             await this.Repository.UpdateBot(bot);
+
+            // Immediately enqueue a testing game task on success
+            if (bot.Status == CompilationStatus.CompilationSucceeded)
+            {
+                // TODO optimize the users query so we don't return all users
+                var users = await this.Repository.GetUsersWithCompiledBot();
+                var match = MatchMaker.Execute(users).FirstOrDefault(m => m.Users.Any(u => u.Id == bot.UserId));
+                if (match != null)
+                {
+                    await this.Repository.AddGameTask(match.Users, GameOrigin.TestingPurpose);
+                }
+            }
 
             return this.Ok();
         }
@@ -208,8 +221,12 @@ namespace Bomberjam.Website.Controllers
 
             using (var transaction = await this.Repository.CreateTransaction())
             {
-                await this.ComputeNewUserPoints(gameHistory);
-                var gameId = await this.Repository.AddGame(gameHistory.Summary);
+                if (gameResult.Origin == GameOrigin.RankedMatchmaking)
+                {
+                    gameHistory = await this.ComputeNewUserPoints(gameHistory);
+                }
+
+                var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin);
 
                 var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
                 await this.Storage.UploadGameResult(gameId, jsonGameHistoryStream);
@@ -219,7 +236,7 @@ namespace Bomberjam.Website.Controllers
             return this.Ok();
         }
 
-        private async Task ComputeNewUserPoints(GameHistory gameHistory)
+        private async Task<GameHistory> ComputeNewUserPoints(GameHistory gameHistory)
         {
             var users = new Dictionary<string, User>();
 
@@ -244,6 +261,8 @@ namespace Bomberjam.Website.Controllers
                 player.Points = eloPlayers[playerId].NewElo;
                 player.DeltaPoints = eloPlayers[playerId].EloChange;
             }
+
+            return gameHistory;
         }
 
         private static MemoryStream SerializeGameHistoryToJsonStream(GameHistory gh)

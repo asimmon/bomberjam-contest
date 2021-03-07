@@ -20,6 +20,7 @@ namespace Bomberjam.Website.Database
                 {
                     GameId = game.Id,
                     GameCreated = game.Created,
+                    GameOrigin = game.Origin,
                     gameUser.UserId,
                     UserDeltaPoints = gameUser.DeltaPoints,
                     UserRank = gameUser.Rank,
@@ -29,6 +30,7 @@ namespace Bomberjam.Website.Database
                 {
                     tmp.GameId,
                     tmp.GameCreated,
+                    tmp.GameOrigin,
                     tmp.UserId,
                     tmp.UserDeltaPoints,
                     tmp.UserRank,
@@ -43,8 +45,8 @@ namespace Bomberjam.Website.Database
 
             // Project the results to actual C# models
             var groupedGame = gameAndParticipants
-                .GroupBy(x => new { x.GameId, x.GameCreated })
-                .Select(g => new GameInfo(g.Key.GameId, g.Key.GameCreated, g.Select(row => new GameUserInfo
+                .GroupBy(x => new { x.GameId, x.GameCreated, x.GameOrigin })
+                .Select(g => new GameInfo(g.Key.GameId, g.Key.GameCreated, g.Key.GameOrigin, g.Select(row => new GameUserInfo
                 {
                     Id = row.UserId,
                     GithubId = row.UserGithubId,
@@ -56,7 +58,7 @@ namespace Bomberjam.Website.Database
                 .FirstOrDefault();
 
             if (groupedGame == null)
-                throw new EntityNotFound(ModelType.Game, gameId);
+                throw new EntityNotFound(EntityType.Game, gameId);
 
             return groupedGame;
         }
@@ -74,7 +76,8 @@ namespace Bomberjam.Website.Database
                 .Join(this._dbContext.Games, gameUser => gameUser.GameId, game => game.Id, (gameUser, game) => new
                 {
                     GameId = game.Id,
-                    GameCreated = game.Created
+                    GameCreated = game.Created,
+                    GameOrigin = game.Origin
                 })
                 .OrderByDescending(x => x.GameCreated)
                 .Skip(skipCount)
@@ -86,6 +89,7 @@ namespace Bomberjam.Website.Database
                 {
                     tmp.GameId,
                     tmp.GameCreated,
+                    tmp.GameOrigin,
                     gameUser.UserId,
                     UserDeltaPoints = gameUser.DeltaPoints,
                     UserRank = gameUser.Rank
@@ -94,6 +98,7 @@ namespace Bomberjam.Website.Database
                 {
                     tmp.GameId,
                     tmp.GameCreated,
+                    tmp.GameOrigin,
                     tmp.UserId,
                     tmp.UserDeltaPoints,
                     tmp.UserRank,
@@ -107,8 +112,8 @@ namespace Bomberjam.Website.Database
 
             // Project the results to actual C# models
             var gamePage = groupedGameAndParticipantsQuery
-                .GroupBy(x => new { x.GameId, x.GameCreated })
-                .Select(g => new GameInfo(g.Key.GameId, g.Key.GameCreated, g.Select(row => new GameUserInfo
+                .GroupBy(x => new { x.GameId, x.GameCreated, x.GameOrigin })
+                .Select(g => new GameInfo(g.Key.GameId, g.Key.GameCreated, g.Key.GameOrigin, g.Select(row => new GameUserInfo
                 {
                     Id = row.UserId,
                     GithubId = row.UserGithubId,
@@ -120,7 +125,7 @@ namespace Bomberjam.Website.Database
             return new PaginationModel<GameInfo>(gamePage, totalGamesCount, page, Constants.GamesPageSize);
         }
 
-        public async Task<Guid> AddGame(GameSummary gameSummary)
+        public async Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin)
         {
             var dbGame = new DbGame();
 
@@ -129,6 +134,7 @@ namespace Bomberjam.Website.Database
             dbGame.GameDuration = gameSummary.GameDuration;
             dbGame.Stdout = gameSummary.StandardOutput;
             dbGame.Stderr = gameSummary.StandardError;
+            dbGame.Origin = origin;
 
             this._dbContext.Games.Add(dbGame);
 

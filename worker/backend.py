@@ -99,7 +99,8 @@ def send_game_result(game):
         'serializedHistory': game.game_result,
         'standardOutput': game.game_stdout,
         'standardError': game.game_stderr,
-        'playerBotIds': game.players_bot_ids
+        'playerBotIds': game.players_bot_ids,
+        'origin': game.origin
     })
     r.raise_for_status()
     logging.debug("Sent game result: %s" % r.text)

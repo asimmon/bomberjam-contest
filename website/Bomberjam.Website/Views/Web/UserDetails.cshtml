@@ -1,4 +1,5 @@
-﻿@model UserDetails
+﻿@using Bomberjam.Website.Utils
+@model UserDetails
 @{
   ViewData["Title"] = Model.User.UserName;
 }
@@ -46,7 +47,16 @@
               }
             </td>
             <td>@game.Users.Single(u => u.Id == Model.User.Id).Rank of 4</td>
-            <td><span format-points="@points" show-sign="true"></span></td>
+            <td>
+              @if (game.Origin == GameOrigin.RankedMatchmaking)
+              {
+                <span format-points="@points" show-sign="true"></span>
+              }
+              else
+              {
+                <em><abbr title="@game.Origin.ToDisplayString()">n/a</abbr></em>
+              }
+            </td>
             <td>
               <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
                 <i class="fas fa-video"></i>

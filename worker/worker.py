@@ -203,7 +203,7 @@ def handle_game_task(game):
         logging.debug("Running game with bots: %s" % ", ".join(["%s (%s)" % (x.player_name, x.player_id) for x in game.players]))
         game = run_game(game)
     except:
-        game.exception = traceback.format_exc()
+        game.game_stdout += '\n' + traceback.format_exc()
     finally:
         # Make sure game processes exit (9 = SIGKILL)
         subprocess.run(["pkill", "--signal", "9", "-f", "cgexec"])
