@@ -10,6 +10,7 @@ using Bomberjam.Common;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Bomberjam.Website.Utils;
@@ -57,7 +58,7 @@ namespace Bomberjam.Website.Controllers
             return this.Ok();
         }
 
-        private static string[] EolSeparators = { "\r\n", "\r", "\n" };
+        private static readonly string[] EolSeparators = { "\r\n", "\r", "\n" };
 
         [HttpPost("bot/{botId}/compilation-result")]
         public async Task<IActionResult> SetCompilationResult([FromBody] BotCompilationResult compilationResult)
@@ -72,6 +73,18 @@ namespace Bomberjam.Website.Controllers
             bot.Errors = RemoveDuplicateLines(compilationResult.Errors ?? string.Empty);
 
             await this.Repository.UpdateBot(bot);
+
+            // Immediately enqueue a testing game task on success
+            if (bot.Status == CompilationStatus.CompilationSucceeded)
+            {
+                // TODO optimize the users query so we don't return all users
+                var users = await this.Repository.GetUsersWithCompiledBot();
+                var match = MatchMaker.Execute(users).FirstOrDefault(m => m.Users.Any(u => u.Id == bot.UserId));
+                if (match != null)
+                {
+                    await this.Repository.AddGameTask(match.Users, GameOrigin.TestingPurpose);
+                }
+            }
 
             return this.Ok();
         }

@@ -21,9 +21,13 @@ namespace Bomberjam.Website.Database
             return MapQueuedTask(dbTask);
         }
 
-        public async Task<bool> HasGameTask()
+        public async Task<bool> HasPendingGameTasks()
         {
-            return await this._dbContext.Tasks.AnyAsync(t => t.Type == QueuedTaskType.Game && t.Status != QueuedTaskStatus.Finished).ConfigureAwait(false);
+            // I consider that if there are 4 pending game tasks, they probably come from the matchmaking job
+            // Otherwise, there's a chance that the worker is down so let's no queue
+            return await this._dbContext.Tasks
+                .CountAsync(t => t.Type == QueuedTaskType.Game && t.Status != QueuedTaskStatus.Finished)
+                .ConfigureAwait(false) >= 4;
         }
 
         public Task AddCompilationTask(Guid botId)

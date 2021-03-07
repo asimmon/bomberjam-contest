@@ -24,7 +24,7 @@ namespace Bomberjam.Website.Database
 
         Task<QueuedTask> PopNextTask();
         Task<QueuedTask> GetTask(Guid taskId);
-        Task<bool> HasGameTask();
+        Task<bool> HasPendingGameTasks();
         Task AddCompilationTask(Guid botId);
         Task AddGameTask(IReadOnlyCollection<User> users, GameOrigin origin);
         Task MarkTaskAsCreated(Guid taskId);

@@ -65,7 +65,7 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
 
             var user = await this.GetAuthenticatedUser();
-            var canUploadBot = await this.CanUploadBot(user.Id);
+            var canUploadBot = await this.CanSubmitBot(user.Id);
 
             if (!canUploadBot)
             {
@@ -84,7 +84,7 @@ namespace Bomberjam.Website.Controllers
             return this.RedirectToAction("Index", "Account");
         }
 
-        private async Task<bool> CanUploadBot(Guid userId)
+        private async Task<bool> CanSubmitBot(Guid userId)
         {
             var bots = await this.Repository.GetBots(userId).ConfigureAwait(false);
             var mostRecentBot = bots.OrderByDescending(b => b.Updated).FirstOrDefault();
