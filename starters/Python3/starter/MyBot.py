@@ -59,7 +59,7 @@ def play():
             state = State(input(), bot_id)
         except Exception as error:
             log(error)
-			break
+            break
 
 
 play()
