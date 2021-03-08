@@ -6,10 +6,11 @@ from models.action import Action
 class Bot:
     """
     Your Bomberjam bot.
-    NAME and compute_next_action(state) are required and used by the game loop.
-    The rest is up to you!
+    NAME should be your bot name. It cannot contain spaces.
+	compute_next_action(state) should return an Action given a state.
+    You can also add anything you need!
     """
-    NAME = "Guid"
+    NAME = "MyBot"
 
     def __init__(self, bot_id):
         self.bot_id = bot_id
