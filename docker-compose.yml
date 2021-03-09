@@ -1,27 +1,12 @@
 version: "3"
 services:
-  web:
-    image: bomberjam-website
-    restart: unless-stopped
-    ports:
-      - "8080:443"
-    environment:
-      - SecretAuth__Secret=verysecret
-      - EnableAutomaticMigrations=true
-      - ASPNETCORE_URLS=https://+;http://+
-      - ASPNETCORE_Kestrel__Certificates__Default__Password=mysuperpassword
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx
-    volumes:
-      - "./https/:/https/"
-      - "./tmp/:/tmp/"
   worker:
-    depends_on:
-      - web
-    image: bomberjam-worker
+    image: asimmon/bomberjam-worker:latest
     restart: unless-stopped
     privileged: true
     init: true
     environment:
-      - API_BASE_URL=https://web/api/
-      - API_AUTH_TOKEN=verysecret
+      - API_BASE_URL=https://host.docker.internal:5001/api/
+      - API_AUTH_TOKEN=TODO
+      - API_POLLING_INTERVAL=10
       - API_VERIFY_SSL=0

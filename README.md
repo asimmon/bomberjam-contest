@@ -1,29 +1,38 @@
 # Bomberjam
 
-[HTTPS and a valid certificate](https://docs.microsoft.com/en-us/aspnet/core/security/docker-https?view=aspnetcore-5.0) (even self-signed) is required to run the website in a Docker container.
-This certificate must be shared from the host to the container using a volume.
+Below are the required steps to run both the website and worker in a local Windows development environment. 
 
-## Website Docker configuration
+## Website configuration
 
-Building the image:
+Check `appsettings.json` for required parameters. They can be set as environment variables too:
+
+* `GitHub__ClientId`: GitHub OAuth app client ID that redirects to https://localhost:5001/signin-github-callback
+* `GitHub__ClientSecret`: GitHub OAuth app client secret that redirects to https://localhost:5001/signin-github-callback
+* `GitHub__Administrators`: Comma-separated list of GitHub ID administrators
+* `GitHub__StarterKitsArtifactsUrl`: An URL where to download the starter kits
+* `SecretAuth__Secret`: A secret token that will be used by the worker to communicate with the website API
+* `ConnectionStrings__BomberjamContext`: SQL Server database connection string
+* `ConnectionStrings__BomberjamStorage`: Azure Storage connection string, used for bots and game replays storage
+
+For local development, use **Azure Storage Emulator** and **SQL Local DB** for lightweight alternatives to Azure Storage and SQL Server.
+
+#### SQL Local DB
+
+Creating the database with initial data is a one time thing:
 
 ```
-cd <project root path>
-docker build --no-cache --tag bomberjam-website -f web.Dockerfile .
+cd <checkoutDirectory>\website\Bomberjam.Website
+SqlLocalDB.exe create bomberjam
+SqlLocalDB.exe start bomberjam
+dotnet ef database update
 ```
 
-The default localhost development certificate is included in the `.\https` directory.
-Running the website with Docker:
+Once you've done that, just start the database when you need it: `SqlLocalDB.exe start bomberjam`
 
-```
-docker run `
-    -e SecretAuth__Secret=verysecret `
-    -e ASPNETCORE_URLS="https://+;http://+" `
-    -e ASPNETCORE_Kestrel__Certificates__Default__Password=mysuperpassword `
-    -e ASPNETCORE_Kestrel__Certificates__Default__Path=/https/localhost.pfx `
-    -v <project root path>\https\:/https/ `
-    --rm -p 8080:443 bomberjam-website
-```
+
+#### Azure Storage Emulator
+
+Just start the emulator and use `UseDevelopmentStorage=true` as connection string.
 
 ## Worker Docker configuration
 
@@ -35,12 +44,6 @@ docker build --no-cache --tag asimmon/bomberjam-worker:latest -f worker.Dockerfi
 ```
 
 The worker Docker container requires specific environment variables to communicate with the Bomberjam API.
-Also, privileged access is required by iptables and control groups. Running the worker:
+Also, privileged access is required by iptables and control groups.
 
-```
-docker run --rm --privileged `
-    -e API_BASE_URL="https://localhost/api/" `
-    -e API_AUTH_TOKEN="verysecret" `
-    -e API_VERIFY_SSL="0" `
-    bomberjam-worker
-```
+Use the included `docker-compose.yml` to start a worker configured to work with a local hosted website.
