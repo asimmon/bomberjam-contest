@@ -316,7 +316,7 @@ languages = (
         "Python",
         BOT + ".py",
         BOT + ".py",
-        lambda bot_dir: "PYTHONPATH=__botpythonpackages__ bash -c python3.9 MyBot.py",
+        lambda bot_dir: 'PYTHONPATH=__botpythonpackages__ bash -c "python3.9 MyBot.py"',
         lambda bot_dir: f"PIP_TARGET={bot_dir}/__botpythonpackages__",
         ["*.pyc"],
         [
