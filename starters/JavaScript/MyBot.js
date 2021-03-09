@@ -18,7 +18,7 @@ const readlineAsync = (function () {
 const main = async () => {
   // 1) You must send an alphanumerical name up to 32 characters, prefixed by "0:"
   // No spaces or special characters are allowed
-  console.log('0:MyName' + (Math.random() * (9999 - 1000) + 1000));
+  console.log('0:MyName' + Math.round(Math.random() * (9999 - 1000) + 1000));
 
   // 2) Receive your player ID from the standard input
   const myPlayerId = await readlineAsync();
