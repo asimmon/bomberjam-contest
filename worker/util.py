@@ -18,7 +18,7 @@ def kill_processes_as(username, process_name=None):
     subprocess.call(cmd_args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
 
 
-def give_ownership(top_dir, group, dir_perms):
+def give_ownership(top_dir, dir_perms, group):
     """Give ownership of everything in a directory to a given group."""
     for dirpath, _, filenames in os.walk(top_dir):
         shutil.chown(dirpath, group=group)

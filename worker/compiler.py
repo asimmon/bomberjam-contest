@@ -6,7 +6,6 @@ import os
 import os.path
 import re
 import subprocess
-import sys
 
 import util
 
@@ -66,10 +65,14 @@ def nukeglob(pattern):
                 raise
 
 
-def _run_cmd(cmd, working_dir, timelimit):
+def tree(dir_path):
+    _run_cmd("tree -pufiag .", dir_path)
+
+
+def _run_cmd(cmd, working_dir, timelimit=10, envvars=''):
     """Run a compilation command in an isolated sandbox. Returns the value of stdout as well as any errors that occurred."""
     absolute_working_dir = os.path.abspath(working_dir)
-    cmd = 'sudo -H -iu bot_compilation bash -c "cd ' + absolute_working_dir + ' && ' + cmd + '"'
+    cmd = 'sudo -H -iu bot_compilation ' + envvars + ' bash -c "cd ' + absolute_working_dir + ' && ' + cmd + '"'
     logging.info("> %s" % cmd)
     process = subprocess.Popen(cmd, cwd=working_dir, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
 
@@ -93,6 +96,12 @@ def _run_cmd(cmd, working_dir, timelimit):
     # Clean up any processes that didn't exit cleanly
     util.kill_processes_as("bot_compilation")
 
+    if len(arr_stdout) > 0:
+        logging.info("> stdout: " + "\n".join(arr_stdout))
+
+    if len(arr_stderr) > 0:
+        logging.info("> stderr: " + "\n".join(arr_stderr))
+
     return arr_stdout, arr_stderr, process.returncode
 
 
@@ -111,13 +120,25 @@ class Compiler(object):
         raise NotImplementedError
 
 
+class NoneCompiler(Compiler):
+    """A compiler that does nothing."""
+    def __init__(self, language):
+        self.language = language
+
+    def __str__(self):
+        return "NoneCompiler: %s" % self.language
+
+    def compile(self, bot_dir, globs, errors, timelimit):
+        return True
+
+
 class ChmodCompiler(Compiler):
     """A compiler that simply sets the executable flag on a file."""
     def __init__(self, language):
         self.language = language
 
     def __str__(self):
-        return "ChmodCompiler: %s" % (self.language,)
+        return "ChmodCompiler: %s" % self.language
 
     def compile(self, bot_dir, globs, errors, timelimit):
         with CD(bot_dir):
@@ -250,42 +271,58 @@ comp_args = {
     ]
 }
 
-Language = collections.namedtuple(
-    "Language",
-    ['name', 'out_file', 'main_code_file', 'command',
-     'nukeglobs', 'compilers'])
+Language = collections.namedtuple("Language", [
+    'name',
+    'input',
+    'output',
+    'command_func',
+    'envvars_func',
+    'nukeglobs',
+    'compilers'])
 
 # The actual languages supported.
 languages = (
-    Language("C#", "./__dist__/" + BOT + ".dll", "MyBot.csproj",
-        "dotnet ./__dist__/MyBot.dll",
-        ["./__dist__/" + BOT + ".dll"],
+    Language(
+        "C#",
+        BOT + ".csproj",
+        f"./__dist__/{BOT}.dll",
+        lambda bot_dir: "dotnet ./__dist__/MyBot.dll",
+        lambda bot_dir: "",
+        [f"./__dist__/{BOT}.dll"],
         [
             ([], ExternalCompiler(comp_args["C#"][0])),
-            ([], ErrorFilterCompiler(
-                comp_args["C#"][1],
-                filter_stderr="(: error (CS|MSB)|Build FAILED)",
-                stdout_is_error=True)),
+            ([], ErrorFilterCompiler(comp_args["C#"][1], filter_stderr="(: error (CS|MSB)|Build FAILED)", stdout_is_error=True))
         ]
     ),
-    Language("Java", BOT + ".java", "MyBot.java",
-        "java -cp \".:*\" MyBot",
+    Language(
+        "Java",
+        BOT + ".java",
+        BOT + ".java",
+        lambda bot_dir: "java -cp \".:*\" MyBot",
+        lambda bot_dir: "",
         ["*.class"],
-        [(["*.java"], ErrorFilterCompiler(
-            comp_args["Java"][0],
-            filter_stderr=": error:",
-            out_files=["MyBot.class"]))]
+        [(["*.java"], ErrorFilterCompiler(comp_args["Java"][0], filter_stderr=": error:", out_files=["MyBot.class"]))]
     ),
-    Language("JavaScript", BOT + ".js", "MyBot.js",
-        "node MyBot.js",
+    Language(
+        "JavaScript",
+        BOT + ".js",
+        BOT + ".js",
+        lambda bot_dir: "node MyBot.js",
+        lambda bot_dir: "",
         [],
-        [(["*.js"], ChmodCompiler("JavaScript"))]
+        [(["*.js"], NoneCompiler("JavaScript"))]
     ),
-    Language("Python", BOT + ".py", "MyBot.py",
-        "python3.9 MyBot.py",
+    Language(
+        "Python",
+        BOT + ".py",
+        BOT + ".py",
+        lambda bot_dir: "PYTHONPATH=__botpythonpackages__ bash -c python3.9 MyBot.py",
+        lambda bot_dir: f"PIP_TARGET={bot_dir}/__botpythonpackages__",
         ["*.pyc"],
-        [(["*.py"], ChmodCompiler("Python")),
-        (["setup_exts"], ErrorFilterCompiler(comp_args["Python"][0], separate=True, filter_stderr='-Wstrict-prototypes'))]
+        [
+            (["*.py"], NoneCompiler("Python")),
+            (["setup_exts"], ErrorFilterCompiler(comp_args["Python"][0], separate=True, filter_stderr='-Wstrict-prototypes'))
+        ]
     )
 )
 
@@ -305,7 +342,7 @@ def compile_function(language, bot_dir, timelimit):
             errors.append("Compiler %s failed with: %s" % (compiler, ex))
             return False, errors
 
-    compiled_bot_file = os.path.join(bot_dir, language.out_file)
+    compiled_bot_file = os.path.join(bot_dir, language.output)
     return check_path(compiled_bot_file, errors), errors
 
 
@@ -319,13 +356,13 @@ _LANG_NOT_FOUND = """Did not find a recognized MyBot.* entry file. Please add on
 def detect_language(bot_dir):
     with CD(bot_dir):
         detected_langs = [
-            lang for lang in languages if os.path.exists(lang.main_code_file)
+            lang for lang in languages if os.path.exists(lang.input)
         ]
 
         if len(detected_langs) > 1:
-            return None, [_MANY_LANG_FOUND % '\n'.join([dl.main_code_file for dl in detected_langs])]
+            return None, [_MANY_LANG_FOUND % '\n'.join([dl.input for dl in detected_langs])]
         elif len(detected_langs) == 0:
-            return None, [_LANG_NOT_FOUND % ('\n'.join(lg.name + ': ' + lg.main_code_file for lg in languages))]
+            return None, [_LANG_NOT_FOUND % ('\n'.join(lg.name + ': ' + lg.input for lg in languages))]
         else:
             return detected_langs[0], None
 
@@ -446,8 +483,6 @@ def truncate_errors(install_stdout, install_errors, language_detection_errors,
 def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, max_error_len=10 * 1024):
     install_stdout = []
     install_errors = []
-    if os.path.exists(os.path.join(bot_dir, "install.sh")):
-        install_stdout, install_errors, _ = _run_cmd("bash ./install.sh", bot_dir, install_time_limit)
 
     logging.info("Detecting language...")
     detected_language, language_errors = detect_language(bot_dir)
@@ -457,12 +492,20 @@ def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, ma
     else:
         logging.info("Detected language: %s" % detected_language.name)
 
+    tree(bot_dir)
+
+    if os.path.exists(os.path.join(bot_dir, "install.sh")):
+        envvars = detected_language.envvars_func(bot_dir)
+        install_stdout, install_errors, _ = _run_cmd("bash ./install.sh", bot_dir, install_time_limit, envvars)
+
     logging.debug("Compiling...")
     compiled, compile_errors = compile_function(detected_language, bot_dir, compile_time_limit)
     if not compiled or compile_errors:
         return detected_language.name, truncate_errors(install_stdout, install_errors, language_errors, compile_errors, max_error_len)
 
-    run_cmd = detected_language.command
+    tree(bot_dir)
+
+    run_cmd = detected_language.command_func(bot_dir)
     run_filename = os.path.join(bot_dir, 'run.sh')
     logging.debug("Compilation done, writing run.sh file at '%s' with command '%s'" % (run_filename, run_cmd))
 

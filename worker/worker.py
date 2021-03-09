@@ -44,7 +44,7 @@ def handle_compile_task(bot_id):
             bot_path = backend.download_bot(bot_id, temp_dir, is_compiled=False)
             archive.unpack(bot_path)
 
-            # Make sure things are in the top-level directory
+            # Make sure things are in the top-level directory so people can zip their bot from inside or outside the directory
             while len([
                 name for name in os.listdir(temp_dir)
                 if os.path.isfile(os.path.join(temp_dir, name))
@@ -66,8 +66,10 @@ def handle_compile_task(bot_id):
             # Give the compilation user access
             os.chmod(temp_dir, 0o755)
 
+            compiler.tree(temp_dir)
+
             # Compilation user needs to be able to write to the directory and create files
-            util.give_ownership(temp_dir, "bot_compilation", 0o2770)
+            util.give_ownership(temp_dir, 0o2770, "bot_compilation")
 
             # Reset cwd before compilation, in case it was in a deleted temporary folder
             os.chdir(os.path.dirname(os.path.realpath(sys.argv[0])))
@@ -94,7 +96,7 @@ def handle_compile_task(bot_id):
                 backend.upload_bot(bot_id, archive_path)
             else:
                 logging.debug("Bot did not compile")
-                logging.debug("Bot errors: %s" % str(errors))
+                logging.debug("Bot errors: %s" % "\n".join(errors))
 
             backend.send_compilation_result(bot_id, did_compile, language, "\n".join(errors))
 
@@ -128,7 +130,7 @@ def setup_participant(player, temp_dir):
 
     # We want 770 so that the bot can create files still; leading 2
     # is equivalent to g+s which forces new files to be owned by the group
-    util.give_ownership(bot_dir, bot_group, 0o2770)
+    util.give_ownership(bot_dir, 0o2770, bot_group)
 
     bot_command = BOT_COMMAND.format(
         cgroup=bot_cgroup,
