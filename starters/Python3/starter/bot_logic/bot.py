@@ -7,7 +7,7 @@ class Bot:
     """
     Your Bomberjam bot.
     NAME should be your bot name. It cannot contain spaces.
-	compute_next_action(state) should return an Action given a state.
+    compute_next_action(state) should return an Action given a state.
     You can also add anything you need!
     """
     NAME = "MyBot"
