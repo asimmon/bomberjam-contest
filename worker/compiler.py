@@ -267,7 +267,7 @@ comp_args = {
         ["javac", "-cp", "'.:*'", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
     ],
     "Python": [
-        ["python3.9", "-c", PYTHON_EXT_COMPILER]
+        ["python3", "-c", PYTHON_EXT_COMPILER]
     ]
 }
 
@@ -316,8 +316,8 @@ languages = (
         "Python",
         BOT + ".py",
         BOT + ".py",
-        lambda bot_dir: 'PYTHONPATH=__botpythonpackages__ bash -c "python3.9 MyBot.py"',
-        lambda bot_dir: f"PIP_TARGET={bot_dir}/__botpythonpackages__",
+        lambda bot_dir: 'export PYTHONPATH=c46643dc1e564d06ac0b01859c7ae879 && python3 MyBot.py',
+        lambda bot_dir: f"PIP_TARGET={bot_dir}/c46643dc1e564d06ac0b01859c7ae879",
         ["*.pyc"],
         [
             (["*.py"], NoneCompiler("Python")),

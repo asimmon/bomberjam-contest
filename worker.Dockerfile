@@ -10,12 +10,12 @@ RUN echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debc
     apt-get -y upgrade && \
     DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl sudo systemd iptables-persistent cgroup-tools apt-transport-https
 
-## Python 3.9, Java 8, .NET Core 3.1, .NET Core 5.0, Node.js
+## Python 3.8 with pip, Java 8, .NET Core 3.1, .NET Core 5.0, Node.js
 RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
     curl -sL https://deb.nodesource.com/setup_12.x | bash -
 
-RUN apt-get update && apt-get install -y python3 python3.9 python3-pip openjdk-8-jdk dotnet-sdk-3.1 dotnet-sdk-5.0 nodejs
+RUN apt-get update && apt-get install -y python3 python3-pip openjdk-8-jdk dotnet-sdk-3.1 dotnet-sdk-5.0 nodejs
 
 ## 1. Create four users to isolate bots execution, all network will be disabled for them: bot_0, bot_1, bot_2 and bot_3
 ## 2. Create a user to be used compilation tasks: bot_compilation
