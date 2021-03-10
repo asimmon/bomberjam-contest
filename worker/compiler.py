@@ -65,10 +65,6 @@ def nukeglob(pattern):
                 raise
 
 
-def tree(dir_path):
-    _run_cmd("tree -pufiag .", dir_path)
-
-
 def _run_cmd(cmd, working_dir, timelimit=10, envvars=''):
     """Run a compilation command in an isolated sandbox. Returns the value of stdout as well as any errors that occurred."""
     absolute_working_dir = os.path.abspath(working_dir)
@@ -95,12 +91,6 @@ def _run_cmd(cmd, working_dir, timelimit=10, envvars=''):
 
     # Clean up any processes that didn't exit cleanly
     util.kill_processes_as("bot_compilation")
-
-    if len(arr_stdout) > 0:
-        logging.info("> stdout: " + "\n".join(arr_stdout))
-
-    if len(arr_stderr) > 0:
-        logging.info("> stderr: " + "\n".join(arr_stderr))
 
     return arr_stdout, arr_stderr, process.returncode
 
@@ -492,8 +482,6 @@ def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, ma
     else:
         logging.info("Detected language: %s" % detected_language.name)
 
-    tree(bot_dir)
-
     if os.path.exists(os.path.join(bot_dir, "install.sh")):
         envvars = detected_language.envvars_func(bot_dir)
         install_stdout, install_errors, _ = _run_cmd("bash ./install.sh", bot_dir, install_time_limit, envvars)
@@ -502,8 +490,6 @@ def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, ma
     compiled, compile_errors = compile_function(detected_language, bot_dir, compile_time_limit)
     if not compiled or compile_errors:
         return detected_language.name, truncate_errors(install_stdout, install_errors, language_errors, compile_errors, max_error_len)
-
-    tree(bot_dir)
 
     run_cmd = detected_language.command_func(bot_dir)
     run_filename = os.path.join(bot_dir, 'run.sh')

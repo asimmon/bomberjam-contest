@@ -49,8 +49,6 @@ RUN dotnet publish --nologo -c Release -r linux-x64 engine/Bomberjam/Bomberjam.c
     chown worker:worker bomberjam && \
     rm -rf engine/
 
-RUN apt-get install -y tree
-
 COPY --chown=worker:worker ["worker/*.py", "worker/requirements.txt", "./"]
 RUN pip3 install -r requirements.txt && \
     chmod 0400 *.py requirements.txt

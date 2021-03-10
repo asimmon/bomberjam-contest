@@ -66,8 +66,6 @@ def handle_compile_task(bot_id):
             # Give the compilation user access
             os.chmod(temp_dir, 0o755)
 
-            compiler.tree(temp_dir)
-
             # Compilation user needs to be able to write to the directory and create files
             util.give_ownership(temp_dir, 0o2770, "bot_compilation")
 
