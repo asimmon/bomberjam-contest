@@ -8,5 +8,5 @@ services:
     environment:
       - API_BASE_URL=https://host.docker.internal:5001/api/
       - API_AUTH_TOKEN=TODO
-      - API_POLLING_INTERVAL=10
+      - API_POLLING_INTERVAL=5
       - API_VERIFY_SSL=0
