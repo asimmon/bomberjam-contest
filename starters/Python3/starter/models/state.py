@@ -15,9 +15,9 @@ class State(JSONSerializable):
         tiles: Represents the map in a numpy array. You can access any Tile with state.tiles[x, y]
         tick: The current game tick
         is_finished: whether or not the game is finished
-        players: A dict with all players in the game. The keys are the player ids
-        bombs: A dict with all bombs in the game. The keys are the bomb ids
-        bonuses: A dict with all bonuses in the game. The keys are the bonus ids
+        players: A list with all players in the game
+        bombs: A list with all bombs in the game
+        bonuses: A list with all bonuses in the game
         width: The width of the map
         height: The height of the map
         sudden_death_countdown: When the sudden death countdown reaches 0, the sudden death starts
@@ -36,9 +36,9 @@ class State(JSONSerializable):
 
         self.tick = json_state["tick"]
         self.is_finished = json_state["isFinished"]
-        self.players = [Player(player_json) for _, player_json in json_state["players"].items()]
-        self.bombs = [Bomb(bomb_json) for _, bomb_json in json_state["bombs"].items()]
-        self.bonuses = [Bonus(bonus_json) for _, bonus_json in json_state["bonuses"].items()]
+        self.players = [Player(player_json) for player_json in json_state["players"].values()]
+        self.bombs = [Bomb(bomb_json) for bomb_json in json_state["bombs"].values()]
+        self.bonuses = [Bonus(bonus_json) for bonus_json in json_state["bonuses"].values()]
         self.width = json_state["width"]
         self.height = json_state["height"]
         self.sudden_death_countdown = json_state["suddenDeathCountdown"]

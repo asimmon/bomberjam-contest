@@ -6,7 +6,7 @@ from models.action import Action
 class Bot:
     """
     Your Bomberjam bot.
-    NAME should be your bot name. It cannot contain spaces.
+    NAME should be your bot name. It cannot contain spaces or special characters.
     compute_next_action(state) should return an Action given a state.
     You can also add anything you need!
     """
