@@ -11,6 +11,7 @@ import util
 API_BASE_URL = util.get_env_or_default('API_BASE_URL', 'https://localhost:5001/api/')
 API_AUTH_TOKEN = util.get_env_or_default('API_AUTH_TOKEN', 'yolo')
 API_VERIFY_SSL = util.get_env_or_default('API_VERIFY_SSL', '1') == '1'
+MAX_BOT_UPLOAD_SIZE = int(util.get_env_or_default('MAX_BOT_UPLOAD_SIZE', '104857600'))
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -42,7 +43,11 @@ def download_bot(bot_id, storage_dir, is_compiled=False):
 
 def upload_bot(bot_id, zip_file_path):
     """Posts a bot file to the website"""
-    logging.debug(f"Uploading compiled bot {bot_id} of size {os.path.getsize(zip_file_path)} bytes on disk...")
+    zip_size = os.path.getsize(zip_file_path)
+    if zip_size > MAX_BOT_UPLOAD_SIZE:
+        raise RuntimeError("Packaged bot archive exceeds maximum size of 100MB.")
+
+    logging.debug(f"Uploading compiled bot {bot_id} of size {zip_size} bytes on disk...")
 
     request_url = API_BASE_URL + ("bot/%s/upload" % bot_id)
     request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
