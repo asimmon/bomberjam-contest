@@ -52,6 +52,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpPost("bot/{botId}/upload")]
+        [RequestSizeLimit(Constants.CompiledBotMaxUploadSize)]
         public async Task<IActionResult> UploadCompiledBot(Guid botId)
         {
             await this.Storage.UploadCompiledBot(botId, this.Request.Body);

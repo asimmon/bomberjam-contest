@@ -19,5 +19,9 @@ namespace Bomberjam.Website
         public static readonly Guid UserKalmeraId = new Guid("00000000-0000-0000-0000-000000000005");
         public static readonly Guid UserPandarfId = new Guid("00000000-0000-0000-0000-000000000006");
         public static readonly Guid UserMireId = new Guid("00000000-0000-0000-0000-000000000007");
+
+        public const int GeneralMaxUploadSize = 5 * 1024 * 1024;
+        public const int BotSourceCodeMaxUploadSize = 25 * 1024 * 1024;
+        public const int CompiledBotMaxUploadSize = 100 * 1024 * 1024;
     }
 }

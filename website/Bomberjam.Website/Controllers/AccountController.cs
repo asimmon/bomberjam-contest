@@ -59,6 +59,8 @@ namespace Bomberjam.Website.Controllers
 
         [HttpPost("submit")]
         [ValidateAntiForgeryToken]
+        [RequestSizeLimit(Constants.BotSourceCodeMaxUploadSize)]
+        [RequestFormLimits(MultipartBodyLengthLimit = Constants.BotSourceCodeMaxUploadSize)]
         public async Task<IActionResult> Submit(AccountSubmitViewModel viewModel)
         {
             if (!this.ModelState.IsValid)

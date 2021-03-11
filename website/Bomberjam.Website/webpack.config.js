@@ -16,11 +16,7 @@ module.exports = (env, argv) => {
     webpackPlugins.push(new BrowserSyncPlugin({
       host: 'localhost',
       port: 5002,
-      proxy: 'https://localhost:5001',
-      https: {
-        key: path.resolve(__dirname, '../../https/localhost.key'),
-        cert: path.resolve(__dirname, '../../https/localhost.crt')
-      }
+      proxy: 'https://localhost:5001'
     }));
   }
 

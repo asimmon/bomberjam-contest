@@ -44,11 +44,34 @@ onDocumentReady(() => {
   document.addEventListener('change', evt => {
     const inputFile = evt.target;
     if (inputFile instanceof HTMLInputElement && inputFile.type === 'file' && inputFile.files && inputFile.files.length > 0 && inputFile.classList.contains('custom-file-input')) {
-      if (inputFile.parentElement && inputFile.parentElement.classList.contains("custom-file")) {
-        const fileInputLabel = inputFile.parentElement.querySelector<HTMLElement>(".custom-file-label");
+      if (inputFile.parentElement && inputFile.parentElement.classList.contains('custom-file')) {
+        const fileInputLabel = inputFile.parentElement.querySelector<HTMLElement>('.custom-file-label');
         if (fileInputLabel) {
           fileInputLabel.textContent = inputFile.files[0].name;
         }
+      }
+
+      if (inputFile.classList.contains('bot-source-code')) {
+        const errorMessage = 'Bot archive size cannot exceed 25MB';
+        let addErrorHandler = () => alert(errorMessage);
+        let removeErrorHandler = () => { };
+
+        if (inputFile.parentElement && inputFile.parentElement.classList.contains('custom-file')) {
+          const errorSpan = inputFile.parentElement.querySelector<HTMLElement>('.invalid-feedback');
+          if (errorSpan) {
+            addErrorHandler = () => errorSpan.textContent = errorMessage;
+            removeErrorHandler = () => errorSpan.textContent = '';
+          }
+        }
+
+        for (let file of inputFile.files) {
+          if (file.size > 25 * 1024 * 1024) {
+            addErrorHandler();
+            return;
+          }
+        }
+
+        removeErrorHandler();
       }
     }
 
