@@ -84,7 +84,7 @@ export const ViewerWithControls = (props: VisualizerProps) => {
               <button onClick={decreaseSpeed} className="btn btn-primary" disabled={!isStarted}>Slower</button>
               <button onClick={increaseSpeed} className="btn btn-primary" disabled={!isStarted}>Faster</button>
             </div>
-            <div className="btn btn-sm ml-2" style={{ pointerEvents: none }}>
+            <div className="btn btn-sm ml-2" style={{ pointerEvents: "none" }}>
               <span>{String(selectedStateIdx).padStart(3, '0')}</span>
             </div>
           </div>
