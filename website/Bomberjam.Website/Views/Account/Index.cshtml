@@ -38,6 +38,7 @@
       <th>Language</th>
       <th>Status</th>
       <th>Games played</th>
+      <th>&nbsp;</th>
     </tr>
     </thead>
     <tbody>
@@ -47,13 +48,20 @@
         <td>@bot.Created</td>
         <td>@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
         <td>
+          <div style="max-height: 150px; overflow-y: auto">
           @bot.Status.ToDisplayString()
           @if (bot.Status == CompilationStatus.CompilationFailed && !string.IsNullOrWhiteSpace(bot.Errors))
           {
             <pre><code>@bot.Errors</code></pre>
           }
+          </div>
         </td>
         <td>@bot.GameCount</td>
+        <td>
+          <a asp-controller="Account" asp-action="DownloadBot" asp-route-botId="@bot.Id">
+            <i class="fas fa-download" title="@(bot.Status == CompilationStatus.CompilationSucceeded ? "Download packaged bot" : "Download bot source code")"></i>
+          </a>
+        </td>
       </tr>
     }
     @if (Model.Bots.Count == 0)

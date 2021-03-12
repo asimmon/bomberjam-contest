@@ -35,7 +35,7 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("bot/{botId}/download")]
         public IActionResult DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
-            return this.PushFileStream(MediaTypeNames.Application.Json, $"bot-{botId:D}.zip", async responseStream =>
+            return this.PushFileStream(MediaTypeNames.Application.Zip, $"bot-{botId:D}.zip", async responseStream =>
             {
                 await using (responseStream)
                 {

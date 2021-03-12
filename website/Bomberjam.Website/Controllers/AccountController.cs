@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
+using Bomberjam.Website.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -94,6 +96,31 @@ namespace Bomberjam.Website.Controllers
                 return true;
 
             return (DateTime.UtcNow - mostRecentBot.Updated) > BotUploadDelay;
+        }
+
+        [HttpGet("bot/{botId}/download")]
+        public async Task<IActionResult> DownloadBot(Guid botId)
+        {
+            var bot = await this.Repository.GetBot(botId);
+            var user = await this.GetAuthenticatedUser();
+
+            if (bot.UserId != user.Id)
+                return this.Forbid("This bot does not belong to you");
+
+            return this.PushFileStream(MediaTypeNames.Application.Zip, $"bot-{botId:D}.zip", async responseStream =>
+            {
+                await using (responseStream)
+                {
+                    if (bot.Status == CompilationStatus.CompilationSucceeded)
+                    {
+                        await this.Storage.DownloadCompiledBotTo(botId, responseStream);
+                    }
+                    else
+                    {
+                        await this.Storage.DownloadBotSourceCodeTo(botId, responseStream);
+                    }
+                }
+            });
         }
     }
 }
