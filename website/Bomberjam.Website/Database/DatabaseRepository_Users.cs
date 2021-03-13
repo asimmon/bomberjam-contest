@@ -99,5 +99,29 @@ namespace Bomberjam.Website.Database
             UserName = u.UserName,
             Points = u.Points
         };
+
+        public async Task<IEnumerable<User>> GetAllUsers()
+        {
+            var selectQuery =
+                from u in this._dbContext.Users
+                join b in this._dbContext.Bots on u.Id equals b.UserId into innerJoin
+                from leftJoin in innerJoin.DefaultIfEmpty()
+                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Email, u.Created, u.Updated }
+                into grouped
+                orderby grouped.Key.Created descending
+                select new User
+                {
+                    Id = grouped.Key.Id,
+                    UserName = grouped.Key.UserName,
+                    GithubId = grouped.Key.GithubId,
+                    Points = grouped.Key.Points,
+                    Email = grouped.Key.Email,
+                    Created = grouped.Key.Created,
+                    Updated = grouped.Key.Updated,
+                    BotCount = grouped.Count(b => b != null)
+                };
+
+            return await selectQuery.ToListAsync().ConfigureAwait(false);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace Bomberjam.Website.Models
         public string UserName { get; set; }
         public string Email { get; set; }
         public float Points { get; set; }
+        public int BotCount { get; set; }
     }
 }

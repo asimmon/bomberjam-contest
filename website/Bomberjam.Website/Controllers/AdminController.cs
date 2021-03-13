@@ -1,7 +1,7 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Bomberjam.Website.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -29,7 +29,9 @@ namespace Bomberjam.Website.Controllers
                 return this.Forbid();
 
             var workers = await this.Repository.GetWorkers(20);
-            return this.View(workers.ToList());
+            var users = await this.Repository.GetAllUsers();
+
+            return this.View(new AdminIndexViewModel(workers, users));
         }
 
         private bool IsAdministrator()
