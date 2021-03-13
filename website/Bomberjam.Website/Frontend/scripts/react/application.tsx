@@ -31,7 +31,7 @@ export const Application = (props: ApplicationProps) => {
   return <div>
     <div className={errorMessage.length ? 'alert alert-danger mb-2' : 'd-none'}>{errorMessage}</div>
     <GameFileLoader gameId={props.gameId} onLoading={onLoading} onLoaded={loadGameHistory} onError={showLoadingError}/>
-    <ViewerWithControls gameHistory={gameHistory} loadingText={loadingText} />
+    <ViewerWithControls gameHistory={gameHistory} loadingText={loadingText} onError={showLoadingError} />
     <PlayerTable gameHistory={gameHistory} />
   </div>;
 };

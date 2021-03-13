@@ -4,6 +4,7 @@ import replayGame from "../pixi/replayGame";
 interface VisualizerProps {
   gameHistory: IGameHistory | null;
   loadingText: string;
+  onError: (error: string) => void;
 }
 
 export const ViewerWithControls = (props: VisualizerProps) => {
@@ -46,14 +47,18 @@ export const ViewerWithControls = (props: VisualizerProps) => {
 
   useEffect(() => {
     if (props.gameHistory && canvasContainer.current) {
-      const loadedGameHistory = props.gameHistory;
-      replayGame(canvasContainer.current, loadedGameHistory, onStateChanged).then(newReplayCtrl => {
-        setReplayCtrl(newReplayCtrl);
-        setMinStateIdx(0);
-        setMaxStateIdx(loadedGameHistory.ticks.length - 1);
-        setIsStarted(true);
-        setIsPlaying(true);
-      });
+      try {
+        const loadedGameHistory = props.gameHistory;
+        replayGame(canvasContainer.current, loadedGameHistory, onStateChanged).then(newReplayCtrl => {
+          setReplayCtrl(newReplayCtrl);
+          setMinStateIdx(0);
+          setMaxStateIdx(loadedGameHistory.ticks.length - 1);
+          setIsStarted(true);
+          setIsPlaying(true);
+        });
+      } catch (err) {
+        props.onError(typeof err === 'string' ? err : err.toString());
+      }
     }
   }, [props.gameHistory]);
 
@@ -85,7 +90,7 @@ export const ViewerWithControls = (props: VisualizerProps) => {
               <button onClick={increaseSpeed} className="btn btn-primary" disabled={!isStarted}>Faster</button>
             </div>
             <div className="btn btn-sm ml-2" style={{ pointerEvents: "none" }}>
-              <span>{String(selectedStateIdx).padStart(3, '0')}</span>
+              <span>{String(selectedStateIdx).padStart(3, '0')} / {String(maxStateIdx).padStart(3, '0')}</span>
             </div>
           </div>
         </div>
