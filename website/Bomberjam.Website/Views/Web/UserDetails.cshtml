@@ -69,16 +69,18 @@
 
       @if (Model.Games.PageCount > 1)
       {
-        <div class="btn-group btn-group-sm" role="group" aria-label="Third group">
-          @for (var i = 1; i <= Model.Games.PageCount; i++)
-          {
-            var pageIndex = i;
-            var buttonClassName = Model.Games.CurrentPage == pageIndex ? "btn btn-primary" : "btn btn-outline-primary";
+        <div style="overflow-x: auto">
+          <div class="btn-group btn-group-sm" role="group" aria-label="Third group">
+            @for (var i = 1; i <= Model.Games.PageCount; i++)
+            {
+              var pageIndex = i;
+              var buttonClassName = Model.Games.CurrentPage == pageIndex ? "btn btn-primary" : "btn btn-outline-primary";
 
-            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id" asp-route-page="@pageIndex" class="@buttonClassName">
-              @pageIndex
-            </a>
-          }
+              <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id" asp-route-page="@pageIndex" class="@buttonClassName">
+                @pageIndex
+              </a>
+            }
+          </div>
         </div>
       }
     </div>
