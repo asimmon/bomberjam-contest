@@ -10,6 +10,7 @@ import sys
 import tempfile
 import time
 import traceback
+import uuid
 
 import archive
 import backend
@@ -229,9 +230,9 @@ def handle_any_task(task):
         backend.mark_task_finished(task_id)
 
 
-def try_handle_next_task():
+def try_handle_next_task(worker_id):
     try:
-        task = backend.get_next_task()
+        task = backend.get_next_task(worker_id)
         if task is not None and 'id' in task and 'type' in task and 'data' in task:
             handle_any_task(task)
             return True
@@ -242,6 +243,7 @@ def try_handle_next_task():
 
 
 class WorkerApp:
+    worker_id = str(uuid.uuid4())
     is_shutdown_requested = False
     shutdown_signals = {
         signal.SIGINT: 'SIGINT',
@@ -253,7 +255,7 @@ class WorkerApp:
         signal.signal(signal.SIGTERM, self.exit_gracefully)
 
         util.setup_logging()
-        logging.info("Starting up worker at %s" % (socket.gethostname()))
+        logging.info("Starting up worker %s at %s" % (self.worker_id, socket.gethostname()))
         time.sleep(3)
 
     def exit_gracefully(self, signum):
@@ -262,7 +264,7 @@ class WorkerApp:
 
     def run(self):
         while not self.is_shutdown_requested:
-            if not try_handle_next_task():
+            if not try_handle_next_task(self.worker_id):
                 for x in range(API_POLLING_INTERVAL):
                     if not self.is_shutdown_requested:
                         time.sleep(1)

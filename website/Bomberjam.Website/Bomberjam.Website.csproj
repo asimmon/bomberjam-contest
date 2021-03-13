@@ -24,8 +24,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="MyBot.zip" />
-    <EmbeddedResource Include="MyBot.zip" />
     <Content Remove="Frontend\assets\bomberjam.json" />
     <None Include="Frontend\assets\bomberjam.json">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>

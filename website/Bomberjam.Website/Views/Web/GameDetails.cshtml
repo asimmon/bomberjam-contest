@@ -11,7 +11,7 @@
 
 <div id="visualizer" data-game-id="@Model.Id" class="my-4"></div>
 
-@if ((User?.Identity?.IsAuthenticated ?? false) && User.Claims.TryGetGitHubId(out int githubId))
+@if (this.IsAuthenticated(out int githubId))
 {
   var user = Model.Users.FirstOrDefault(u => u.GithubId == githubId);
   if (user != null && !string.IsNullOrWhiteSpace(user.Errors))

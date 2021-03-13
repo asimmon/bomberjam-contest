@@ -62,11 +62,6 @@ namespace Bomberjam.Website
             services.AddScoped<IBomberjamRepository, DatabaseRepository>();
 
             ConfigureHangfire(services, dbConnStr);
-
-            if (this.Environment.IsDevelopment())
-            {
-                UploadTestBots(botStorage);
-            }
         }
 
         private void ConfigureDatabase(IServiceCollection services, string dbConnStr) => services.AddDbContext<BomberjamContext>(options =>
@@ -95,7 +90,7 @@ namespace Bomberjam.Website
         private IBomberjamStorage ConfigureBotStorage()
         {
             return this.Configuration.GetConnectionString("BomberjamStorage") is { Length: > 0 } storageConnStr
-                ? (IBomberjamStorage)new AzureStorageBomberjamStorage(storageConnStr)
+                ? new AzureStorageBomberjamStorage(storageConnStr)
                 : new LocalFileBomberjamStorage(Path.GetTempPath());
         }
 
@@ -115,28 +110,6 @@ namespace Bomberjam.Website
                     options.CallbackPath = "/signin-github-callback";
                 })
                 .AddSecret(this.Configuration["SecretAuth:Secret"]);
-        }
-
-        private static void UploadTestBots(IBomberjamStorage bomberjamStorage)
-        {
-            var zippedBotFileStream = typeof(Startup).Assembly.GetManifestResourceStream("Bomberjam.Website.MyBot.zip");
-            if (zippedBotFileStream != null)
-            {
-                using (zippedBotFileStream)
-                using (var zippedBotFileMs = new MemoryStream())
-                {
-                    zippedBotFileStream.CopyTo(zippedBotFileMs);
-                    var zippedBotFileBytes = zippedBotFileMs.ToArray();
-
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserAskaiserId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserFalgarId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserXenureId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserMintyId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserKalmeraId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserPandarfId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                    bomberjamStorage.UploadBotSourceCode(Constants.UserMireId, new MemoryStream(zippedBotFileBytes)).GetAwaiter().GetResult();
-                }
-            }
         }
 
         public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, ILogger<Startup> logger, GitHubConfiguration gitHubConfiguration)
@@ -172,7 +145,7 @@ namespace Bomberjam.Website
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapHangfireDashboard(new DashboardOptions
                 {
-                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(gitHubConfiguration) },
+                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(gitHubConfiguration) }
                 });
             });
 

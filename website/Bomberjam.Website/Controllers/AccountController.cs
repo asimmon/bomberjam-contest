@@ -24,6 +24,7 @@ namespace Bomberjam.Website.Controllers
         {
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             var user = await this.GetAuthenticatedUser();

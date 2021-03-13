@@ -10,3 +10,5 @@ services:
       - API_AUTH_TOKEN=TODO
       - API_POLLING_INTERVAL=5
       - API_VERIFY_SSL=0
+    deploy:
+      replicas: 1

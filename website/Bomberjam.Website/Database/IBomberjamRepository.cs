@@ -35,5 +35,8 @@ namespace Bomberjam.Website.Database
         Task<GameInfo> GetGame(Guid gameId);
         Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);
         Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin);
+
+        Task<IEnumerable<Worker>> GetWorkers(int max);
+        Task<Worker> AddOrUpdateWorker(Guid id);
     }
 }

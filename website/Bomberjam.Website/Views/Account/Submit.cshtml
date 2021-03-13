@@ -7,20 +7,23 @@
 <div class="jumbotron">
   <h1>
     Upload a bot
-    <small class="text-muted">It will be compiled as soon as possible by our servers</small>
+    <small class="text-muted">It will be handled as soon as possible by our servers</small>
   </h1>
 
-  <div class="row">
-    <div class="col">
-      <form asp-controller="Account" asp-action="Submit" method="post" enctype="multipart/form-data">
-        <div class="custom-file">
-          <input asp-for="BotFile" class="custom-file-input bot-source-code"/>
-          <label asp-for="BotFile" class="custom-file-label"></label>
-          <span asp-validation-for="BotFile" class="invalid-feedback"></span>
-        </div>
+  <ul class="mt-4">
+    <li>The size of your bot source code, once zipped, <strong>cannot exceed 25MB</strong>.</li>
+    <li>Once your bot is compiled and zipped by our servers, its size <strong>cannot exceed 100MB</strong>.</li>
+    <li>Every time you submit a bot, you have to wait a little before submitting another one.</li>
+    <li>If your bot is successfully compiled, a non-ranked game will be queued.</li>
+  </ul>
 
-        <button class="btn btn-lg btn-success my-4" type="submit">Submit</button>
-      </form>
+  <form class="mt-5" asp-controller="Account" asp-action="Submit" method="post" enctype="multipart/form-data">
+    <div class="custom-file">
+      <input asp-for="BotFile" class="custom-file-input bot-source-code"/>
+      <label asp-for="BotFile" class="custom-file-label"></label>
+      <span asp-validation-for="BotFile" class="invalid-feedback"></span>
     </div>
-  </div>
+
+    <button class="btn btn-lg btn-success mt-4" type="submit">Submit</button>
+  </form>
 </div>

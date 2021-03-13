@@ -9,9 +9,9 @@ namespace Bomberjam.Website.Database
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
         public GameOrigin Origin { get; set; }
-        public string Errors { get; set; }
         public double? InitDuration { get; set; }
         public double? GameDuration { get; set; }
+        public string Errors { get; set; }
         public string Stdout { get; set; }
         public string Stderr { get; set; }
     }

@@ -37,7 +37,7 @@ namespace Bomberjam.Website.Authentication
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, Constants.ApiPrincipalEmail)
+                new Claim(ClaimTypes.Email, Constants.ApiPrincipalFakeEmail)
             };
 
             var identity = new ClaimsIdentity(claims, this.Scheme.Name);

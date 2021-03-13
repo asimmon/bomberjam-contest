@@ -122,21 +122,36 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("task/next")]
         public async Task<IActionResult> GetNextTask()
         {
+            QueuedTask task;
+
             await GetNextTaskMutex.WaitAsync();
 
             try
             {
-                var task = await this.Repository.PopNextTask();
-                return this.Ok(task);
+                task = await this.Repository.PopNextTask();
             }
             catch (EntityNotFound)
             {
-                return this.NotFound();
+                task = null;
             }
             finally
             {
                 GetNextTaskMutex.Release();
             }
+
+            if (this.Request.Headers.TryGetValue("X-Worker-ID", out var workerIdStr) && Guid.TryParse(workerIdStr, out var workerId))
+            {
+                try
+                {
+                    await this.Repository.AddOrUpdateWorker(workerId);
+                }
+                catch (Exception ex)
+                {
+                    this.Logger.LogError(ex, ex.Message);
+                }
+            }
+
+            return task == null ? this.NotFound() : this.Ok(task);
         }
 
         [HttpGet("task/{taskId}/started")]

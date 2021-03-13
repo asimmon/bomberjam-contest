@@ -113,12 +113,15 @@ def send_game_result(game):
         logging.debug("Sent game result: %s" % r.text)
 
 
-def get_next_task():
+def get_next_task(worker_id):
     """Gets either a game run or a compile task from the API"""
-    logging.debug(f"Retrieving the next task to execute...")
+    logging.debug(f"Retrieving the next task to execute for worker {worker_id}...")
 
     request_url = API_BASE_URL + 'task/next'
-    request_headers = {'Authorization': 'Secret ' + API_AUTH_TOKEN}
+    request_headers = {
+        'Authorization': 'Secret ' + API_AUTH_TOKEN,
+        'X-Worker-ID': worker_id
+    }
 
     with requests.get(request_url, headers=request_headers, verify=API_VERIFY_SSL) as r:
         if r.status_code == 404:
