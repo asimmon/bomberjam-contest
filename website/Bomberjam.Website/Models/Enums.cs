@@ -43,10 +43,10 @@ namespace Bomberjam.Website.Models
 
     public enum GameOrigin
     {
-        [Display(Name = "Compilation failed")]
+        [Display(Name = "Ranked")]
         RankedMatchmaking = 0,
 
-        [Display(Name = "Testing")]
+        [Display(Name = "Practice")]
         TestingPurpose = 1,
 
         [Display(Name = "On demand")]

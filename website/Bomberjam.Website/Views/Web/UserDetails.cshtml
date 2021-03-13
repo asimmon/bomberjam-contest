@@ -2,6 +2,7 @@
 @model UserDetails
 @{
   ViewData["Title"] = Model.User.UserName;
+  var utcNow = DateTime.UtcNow;
 }
 
 <div class="row">
@@ -24,7 +25,8 @@
           <th>Players</th>
           <th>Result</th>
           <th>Points</th>
-          <th>View</th>
+          <th>Type</th>
+          <th style="width: 1%">&nbsp;</th>
         </tr>
         </thead>
         <tbody>
@@ -32,7 +34,7 @@
         {
           var points = 0f;
           <tr>
-            <td>@game.Created.ToString("yyyy-MM-dd HH:mm:ss")</td>
+            <td><span title="@game.Created">@game.Created.RelativeTo(utcNow)</span></td>
             <td>
               @foreach (var user in game.Users)
               {
@@ -54,14 +56,21 @@
               }
               else
               {
-                <em><abbr title="@game.Origin.ToDisplayString()">n/a</abbr></em>
+                <em>n/a</em>
               }
             </td>
+            <td>@game.Origin.ToDisplayString()</td>
             <td>
               <a asp-controller="Web" asp-action="GameDetails" asp-route-gameId="@game.Id">
                 <i class="fas fa-video"></i>
               </a>
             </td>
+          </tr>
+        }
+        @if (Model.Games.Items.Count == 0)
+        {
+          <tr>
+            <td colspan="6" class="text-center">There's nothing here yet</td>
           </tr>
         }
         </tbody>
