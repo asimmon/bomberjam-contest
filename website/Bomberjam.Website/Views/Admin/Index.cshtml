@@ -12,7 +12,17 @@
   </h1>
 </div>
 
-<h2>Last ten workers</h2>
+@if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+{
+  <div class="alert alert-danger mb-2">@Model.ErrorMessage</div>
+}
+
+@if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+{
+  <div class="alert alert-success mb-2">@Model.SuccessMessage</div>
+}
+
+<h2 class="mt-4">Last ten workers</h2>
 
 <div class="table-responsive">
   <table class="table table-sm table-bordered table-striped">
@@ -56,42 +66,58 @@
 <h2 class="mt-4">Users</h2>
 
 <div class="table-responsive">
-  <table class="table table-sm table-bordered table-striped">
-    <thead>
-    <tr>
-      <th style="width: 1%">&nbsp;</th>
-      <th>User</th>
-      <th>Created</th>
-      <th>Updated</th>
-      <th>Points</th>
-      <th>Bots</th>
-    </tr>
-    </thead>
-    <tbody>
-    @{
-      for (var i = 0; i < Model.Users.Count; i++)
+  <form asp-controller="Admin" asp-action="StartGame" method="post">
+    <div class="text-right">
+      <button class="btn btn-success" type="submit">Start a non-ranked game with the selected users</button>
+    </div>
+
+    <table class="table table-sm table-bordered table-striped admin-users mt-2">
+      <thead>
+      <tr>
+        <th style="width: 1%">&nbsp;</th>
+        <th>User</th>
+        <th>Created</th>
+        <th>Updated</th>
+        <th>Points</th>
+        <th>All bots / compiled</th>
+      </tr>
+      </thead>
+      <tbody>
+      @{
+        for (var i = 0; i < Model.Users.Count; i++)
+        {
+          var user = Model.Users[i];
+          var index = i;
+
+          <tr>
+            <td>
+              @if (user.CompiledBotCount > 0)
+              {
+                <input type="checkbox" asp-for="Users[index].IsSelected"/>
+                <input type="hidden" asp-for="Users[index].Id"/>
+              }
+              else
+              {
+                <input type="checkbox" disabled/>
+              }
+            </td>
+            <td>
+              <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
+            </td>
+            <td><span title="@user.Created">@user.Created.RelativeTo(utcNow)</span></td>
+            <td><span title="@user.Updated">@user.Updated.RelativeTo(utcNow)</span></td>
+            <td><span format-points="@user.Points"></span></td>
+            <td>@user.AllBotCount / @user.CompiledBotCount</td>
+          </tr>
+        }
+      }
+      @if (Model.Users.Count == 0)
       {
-        var user = Model.Users[i];
         <tr>
-          <td>
-            <input type="checkbox" />
-          </td>
-          <td>
-            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
-          </td>
-          <td><span title="@user.Created">@user.Created.RelativeTo(utcNow)</span></td>
-          <td><span title="@user.Updated">@user.Updated.RelativeTo(utcNow)</span></td>
-          <td><span format-points="@user.Points"></span></td>
-          <td>@user.BotCount</td>
+          <td colspan="4" class="text-center">There's nothing here</td>
         </tr>
       }
-    }
-    @if (Model.Users.Count == 0)
-    {
-      <tr>
-        <td colspan="4" class="text-center">There's nothing here</td>
-      </tr>
-    }
-    </tbody>
-  </table>
+      </tbody>
+    </table>
+  </form>
 </div>

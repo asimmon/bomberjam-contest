@@ -118,7 +118,8 @@ namespace Bomberjam.Website.Database
                     Email = grouped.Key.Email,
                     Created = grouped.Key.Created,
                     Updated = grouped.Key.Updated,
-                    BotCount = grouped.Count(b => b != null)
+                    AllBotCount = grouped.Count(b => b != null),
+                    CompiledBotCount = grouped.Count(b => b != null && b.Status == CompilationStatus.CompilationSucceeded)
                 };
 
             return await selectQuery.ToListAsync().ConfigureAwait(false);
