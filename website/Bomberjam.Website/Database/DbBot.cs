@@ -8,6 +8,8 @@ namespace Bomberjam.Website.Database
     {
         public Guid Id { get; set; }
 
+        public int Iteration { get; set; }
+
         public DateTime Created { get; set; }
 
         public DateTime Updated { get; set; }

@@ -30,21 +30,31 @@
 
 <h2>Your bots</h2>
 
+@{
+  var isAdministrator = this.IsAuthenticatedAdministrator();
+  var colspan = isAdministrator ? 5 : 4;
+}
+
 <div class="table-responsive">
   <table class="table table-sm table-bordered table-striped">
     <thead>
     <tr>
+      <th>#</th>
       <th>Date</th>
       <th>Language</th>
       <th>Status</th>
       <th>Games played</th>
-      <th>&nbsp;</th>
+      @if (isAdministrator)
+      {
+        <th>&nbsp;</th>
+      }
     </tr>
     </thead>
     <tbody>
     @foreach (var bot in Model.Bots)
     {
       <tr>
+        <td>@bot.Iteration</td>
         <td>@bot.Created</td>
         <td>@(string.IsNullOrEmpty(bot.Language) ? "Unknown" : bot.Language)</td>
         <td>
@@ -57,17 +67,20 @@
           </div>
         </td>
         <td>@bot.GameCount</td>
-        <td>
-          <a asp-controller="Account" asp-action="DownloadBot" asp-route-botId="@bot.Id">
-            <i class="fas fa-download" title="@(bot.Status == CompilationStatus.CompilationSucceeded ? "Download packaged bot" : "Download bot source code")"></i>
-          </a>
-        </td>
+        @if (isAdministrator)
+        {
+          <td>
+            <a asp-controller="Account" asp-action="DownloadBot" asp-route-botId="@bot.Id">
+              <i class="fas fa-download" title="@(bot.Status == CompilationStatus.CompilationSucceeded ? "Download packaged bot" : "Download bot source code")"></i>
+            </a>
+          </td>
+        }
       </tr>
     }
     @if (Model.Bots.Count == 0)
     {
       <tr>
-        <td colspan="5" class="text-center">There's nothing here</td>
+        <td colspan="@colspan" class="text-center">There's nothing here</td>
       </tr>
     }
     </tbody>

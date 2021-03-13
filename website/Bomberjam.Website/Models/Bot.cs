@@ -5,6 +5,7 @@ namespace Bomberjam.Website.Models
     public class Bot
     {
         public Guid Id { get; set; }
+        public int Iteration { get; set; }
         public Guid UserId { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }

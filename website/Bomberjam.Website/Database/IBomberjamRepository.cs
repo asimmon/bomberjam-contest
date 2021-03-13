@@ -17,7 +17,7 @@ namespace Bomberjam.Website.Database
         Task UpdateUser(User changedUser);
         Task<ICollection<RankedUser>> GetRankedUsers();
 
-        Task<IEnumerable<Bot>> GetBots(Guid userId);
+        Task<IEnumerable<Bot>> GetBots(Guid userId, int? max = null);
         Task<Bot> GetBot(Guid botId);
         Task<Guid> AddBot(Guid userId);
         Task UpdateBot(Bot bot);

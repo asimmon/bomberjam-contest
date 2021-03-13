@@ -11,18 +11,19 @@ namespace Bomberjam.Website.Database
 {
     public partial class DatabaseRepository
     {
-        public async Task<IEnumerable<Bot>> GetBots(Guid userId)
+        public async Task<IEnumerable<Bot>> GetBots(Guid userId, int? max)
         {
             var selectQuery =
                 from b in this._dbContext.Bots where b.UserId == userId
                 join gu in this._dbContext.GameUsers on b.Id equals gu.BotId into innerJoin
                 from leftJoin in innerJoin.DefaultIfEmpty()
-                group leftJoin by new { b.Id, b.UserId, b.Created, b.Updated, b.Status, b.Language, b.Errors }
+                group leftJoin by new { b.Id, b.Iteration, b.UserId, b.Created, b.Updated, b.Status, b.Language, b.Errors }
                 into grouped
                 orderby grouped.Key.Created descending
                 select new Bot
                 {
                     Id = grouped.Key.Id,
+                    Iteration = grouped.Key.Iteration,
                     UserId = grouped.Key.UserId,
                     Created = grouped.Key.Created,
                     Updated = grouped.Key.Updated,
@@ -32,7 +33,9 @@ namespace Bomberjam.Website.Database
                     GameCount = grouped.Count(gu => gu != null)
                 };
 
-            return await selectQuery.ToListAsync().ConfigureAwait(false);
+            return max.HasValue && max.Value > 0
+                ? await selectQuery.Take(max.Value).ToListAsync().ConfigureAwait(false)
+                : await selectQuery.ToListAsync().ConfigureAwait(false);
         }
 
         public async Task<Bot> GetBot(Guid botId)
@@ -42,6 +45,7 @@ namespace Bomberjam.Website.Database
                 .Select(b => new Bot
                 {
                     Id = b.Id,
+                    Iteration = b.Iteration,
                     UserId = b.UserId,
                     Created = b.Created,
                     Updated = b.Updated,
@@ -55,9 +59,12 @@ namespace Bomberjam.Website.Database
 
         public async Task<Guid> AddBot(Guid userId)
         {
+            var latestbot = await this._dbContext.Bots.OrderByDescending(b => b.Created).FirstOrDefaultAsync();
+
             var dbBot = new DbBot
             {
                 UserId = userId,
+                Iteration = latestbot == null ? 1 : latestbot.Iteration + 1,
                 Status = CompilationStatus.NotCompiled,
                 Language = string.Empty,
                 Errors = string.Empty
