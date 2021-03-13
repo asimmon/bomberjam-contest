@@ -79,6 +79,9 @@ namespace Bomberjam.Website.Database
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
                 dbUser.UserName = changedUser.UserName;
 
+            if (!string.IsNullOrWhiteSpace(changedUser.Email))
+                dbUser.Email = changedUser.Email;
+
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
@@ -123,6 +126,16 @@ namespace Bomberjam.Website.Database
                 };
 
             return await selectQuery.ToListAsync().ConfigureAwait(false);
+        }
+
+        public Task<bool> IsUserNameAlreadyUsed(string username)
+        {
+            return this._dbContext.Users.AnyAsync(u => u.UserName == username);
+        }
+
+        public Task<bool> IsUserEmailAlreadyUsed(string email)
+        {
+            return this._dbContext.Users.AnyAsync(u => u.Email == email);
         }
     }
 }

@@ -64,12 +64,23 @@ namespace Bomberjam.Website.Controllers
                 }
                 catch (EntityNotFound)
                 {
-                    var temporaryUsername = "Player" + Constants.Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
+                    var temporaryUsername = await this.GenerateUniqueUserName();
                     await this.Repository.AddUser(githubId, email, temporaryUsername);
                 }
             }
 
             return this.RedirectToAction("Index", "Account");
+        }
+
+        private async Task<string> GenerateUniqueUserName()
+        {
+            while (true)
+            {
+                var userName = "Player" + Constants.Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
+                var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(userName).ConfigureAwait(false);
+                if (!isAlreadyUsed)
+                    return userName;
+            }
         }
 
         private bool TryGetEmailClaim(out string email)

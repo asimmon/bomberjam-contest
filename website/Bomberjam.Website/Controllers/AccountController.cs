@@ -47,6 +47,27 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Edit", viewModel);
 
             var user = await this.GetAuthenticatedUser();
+
+            if (!string.Equals(viewModel.UserName, user.UserName, StringComparison.OrdinalIgnoreCase))
+            {
+                var isUserNameAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(viewModel.UserName);
+                if (isUserNameAlreadyUsed)
+                {
+                    this.ModelState.AddModelError<AccountEditViewModel>(vm => vm.UserName, "This username is already used");
+                    return this.View("Edit", viewModel);
+                }
+            }
+
+            if (!string.Equals(viewModel.Email, user.Email, StringComparison.OrdinalIgnoreCase))
+            {
+                var isEmailAlreadyUsed = await this.Repository.IsUserEmailAlreadyUsed(viewModel.Email);
+                if (isEmailAlreadyUsed)
+                {
+                    this.ModelState.AddModelError<AccountEditViewModel>(vm => vm.Email, "This email address is already used");
+                    return this.View("Edit", viewModel);
+                }
+            }
+
             user.UserName = viewModel.UserName;
             user.Email = viewModel.Email;
             await this.Repository.UpdateUser(user);

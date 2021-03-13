@@ -18,8 +18,8 @@ namespace Bomberjam
             this._options = new OptionSet
             {
                 // Hidden options
-                { "n|names=", "Override player names", x => this.PlayerNames.AddRange(ParsePlayerNames(x)), false },
-                { "i|ids=", "Override player website IDs", x => this.PlayerWebsiteIds.AddRange(ParsePlayerWebsiteIds(x)), false },
+                { "n|names=", "Override player names", x => this.PlayerNames.AddRange(ParsePlayerNames(x)), true },
+                { "i|ids=", "Override player website IDs", x => this.PlayerWebsiteIds.AddRange(ParsePlayerWebsiteIds(x)), true },
                 // Public options
                 { "r|repeat=", "The number of games to play", (int x) => this.RepeatCount = x },
                 { "o|output=", "Path of saved games, use placeholder #n to insert game index", x => this.OutputPath = x },
