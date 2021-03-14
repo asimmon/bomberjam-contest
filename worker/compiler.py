@@ -19,6 +19,7 @@ except ImportError:
 BOT = "MyBot"
 # Which file is used to override the detected language?
 LANGUAGE_FILE = "LANGUAGE"
+CUSTOM_LANG = "Custom"
 SAFEPATH = re.compile('[a-zA-Z0-9_.$-]+$')
 
 
@@ -345,6 +346,12 @@ _LANG_NOT_FOUND = """Did not find a recognized MyBot.* entry file. Please add on
 
 def detect_language(bot_dir):
     with CD(bot_dir):
+        if os.path.exists(os.path.join(bot_dir, "run.sh")):
+            lang = util.Expando()
+            lang.name = CUSTOM_LANG
+            lang.envvars_func = lambda x: ""
+            return lang, None
+
         detected_langs = [
             lang for lang in languages if os.path.exists(lang.input)
         ]
@@ -357,46 +364,12 @@ def detect_language(bot_dir):
             return detected_langs[0], None
 
 
-def detect_language_file(bot_dir):
-    with CD(bot_dir):
-        try:
-            with open(LANGUAGE_FILE, 'r') as lang_file:
-                print("detected %s file" % LANGUAGE_FILE)
-                language_name = lang_file.readline().strip()
-
-                if not language_name:
-                    return None
-                else:
-                    return language_name
-        except IOError:
-            return None
-
-
-def get_run_cmd(submission_dir):
-    with CD(submission_dir):
-        if os.path.exists('run.sh'):
-            with open('run.sh') as f:
-                for line in f:
-                    if line[0] != '#':
-                        return line.rstrip('\r\n')
-
-
-def get_run_lang(submission_dir):
-    with CD(submission_dir):
-        if os.path.exists('run.sh'):
-            with open('run.sh') as f:
-                for line in f:
-                    if line[0] == '#':
-                        return line[1:-1]
-
-
 INSTALL_ERROR_START = "Possible errors running install.sh. stdout output as follows:"
 INSTALL_ERROR_MID = "End of install.sh stdout. stderr as follows:"
 INSTALL_ERROR_END = "End of install.sh output."
 
 
-def truncate_errors(install_stdout, install_errors, language_detection_errors,
-                    compile_errors, max_error_len=10*1024):
+def truncate_errors(install_stdout, install_errors, language_detection_errors, compile_errors, max_error_len=10*1024):
     """
     Combine lists of errors into a single list under a maximum length.
     """
@@ -485,6 +458,10 @@ def compile_anything(bot_dir, install_time_limit=300, compile_time_limit=300, ma
     if os.path.exists(os.path.join(bot_dir, "install.sh")):
         envvars = detected_language.envvars_func(bot_dir)
         install_stdout, install_errors, _ = _run_cmd("bash ./install.sh", bot_dir, install_time_limit, envvars)
+
+    if detected_language.name == CUSTOM_LANG:
+        logging.info("Compilation skipped because run.sh already exists")
+        return detected_language.name, None
 
     logging.debug("Compiling...")
     compiled, compile_errors = compile_function(detected_language, bot_dir, compile_time_limit)

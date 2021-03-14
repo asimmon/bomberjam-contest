@@ -77,3 +77,7 @@ class Game:
     def add_player(self, player_index, player_id, player_name):
         player = Player(player_index, player_id, player_name)
         self.players.append(player)
+
+
+class Expando(object):
+    pass
