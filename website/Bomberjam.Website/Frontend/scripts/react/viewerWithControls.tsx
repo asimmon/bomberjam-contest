@@ -67,6 +67,9 @@ export const ViewerWithControls = (props: VisualizerProps) => {
       replayCtrl?.destroy();
     }
   }, [props.loadingText]);
+  
+  const currentTick = props.gameHistory?.ticks[selectedStateIdx].state.tick;
+  const maxTicks = props.gameHistory?.ticks.length;
 
   return <div>
     <div className="canvas-wrapper">
@@ -90,7 +93,7 @@ export const ViewerWithControls = (props: VisualizerProps) => {
               <button onClick={increaseSpeed} className="btn btn-primary" disabled={!isStarted}>Faster</button>
             </div>
             <div className="btn btn-sm ml-2" style={{ pointerEvents: "none" }}>
-              <span>{String(selectedStateIdx).padStart(3, '0')} / {String(maxStateIdx).padStart(3, '0')}</span>
+              <span>{String(currentTick).padStart(3, '0')} / {String(maxTicks).padStart(3, '0')}</span>
             </div>
           </div>
         </div>
