@@ -68,8 +68,8 @@ export const ViewerWithControls = (props: VisualizerProps) => {
     }
   }, [props.loadingText]);
   
-  const currentTick = props.gameHistory?.ticks[selectedStateIdx].state.tick;
-  const maxTicks = props.gameHistory?.ticks.length;
+  const currentTick = props.gameHistory?.ticks[selectedStateIdx].state.tick ?? '0';
+  const maxTicks = props.gameHistory?.ticks.length ?? '0';
 
   return <div>
     <div className="canvas-wrapper">
