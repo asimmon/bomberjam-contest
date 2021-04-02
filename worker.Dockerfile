@@ -8,7 +8,7 @@ RUN echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debc
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections && \
     apt-get update && \
     apt-get -y upgrade && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl sudo systemd iptables-persistent cgroup-tools apt-transport-https
+    DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl sudo systemd iptables-persistent cgroup-tools apt-transport-https dos2unix
 
 ## Python 3.8 with pip, Java 8, .NET Core 3.1, .NET Core 5.0, Node.js
 RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \

@@ -64,6 +64,16 @@ def handle_compile_task(bot_id):
             # Delete any symlinks
             subprocess.call(["find", temp_dir, "-type", "l", "-delete"])
 
+            # Replace DOS line endings with unix line endings in sh scripts
+            try:
+                logging.debug("Replacing DOS line endings with UNIX line endings...")
+                ps_find = subprocess.Popen(['find', temp_dir, '-name', '*.sh', '-type', 'f', '-print0'], stdout=subprocess.PIPE)
+                dos2unix_output = subprocess.check_output(['xargs', '-0', 'dos2unix'], stdin=ps_find.stdout)
+                ps_find.wait()
+                logging.debug(dos2unix_output)
+            except Exception as ex:
+                logging.error("An error occured while converting dos line endings in sh files", ex)
+
             # Give the compilation user access
             os.chmod(temp_dir, 0o755)
 
