@@ -53,11 +53,11 @@ namespace MyBot
                         {
                             // TODO found a bonus
                         }
+                    }
 
-                        if (game.MyPlayer.BombsLeft > 0)
-                        {
-                            // TODO you can drop a bomb
-                        }
+                    if (game.MyPlayer.BombsLeft > 0)
+                    {
+                        // TODO you can drop a bomb
                     }
 
                     // 4) Send your action

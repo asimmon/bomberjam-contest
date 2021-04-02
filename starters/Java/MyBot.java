@@ -48,11 +48,11 @@ public class MyBot {
                         if (bonus != null) {
                             // TODO found a bonus
                         }
-
-                        if (game.getMyPlayer().getBombsLeft() > 0) {
-                            // TODO you can drop a bomb
-                        }
                     }
+                }
+
+                if (game.getMyPlayer().getBombsLeft() > 0) {
+                    // TODO you can drop a bomb
                 }
 
                 // 4) Send your action

@@ -12,11 +12,15 @@ const allActions = [
 // Standard output (console.log) can ONLY BE USED to communicate with the bomberjam process
 // Use text files if you need to log something for debugging
 const game = new bomberjam.Game();
+const logger = new bomberjam.Logger();
 
 const main = async () => {
   // 1) You must send an alphanumerical name up to 32 characters
   // Spaces or special characters are not allowed
   await game.ready('MyName' + Math.round(Math.random() * (9999 - 1000) + 1000));
+
+  if (game.myPlayerId === '1')
+    logger.setup('log-1.log');
 
   do {
     // 2) Each tick, you'll receive the current game state serialized as JSON
@@ -48,16 +52,17 @@ const main = async () => {
           if (bonus) {
             // TODO found a bonus
           }
-
-          if (game.myPlayer.bombsLeft > 0) {
-            // TODO you can drop a bomb
-          }
         }
+      }
+
+      if (game.myPlayer.bombsLeft > 0) {
+        // TODO you can drop a bomb
       }
 
       // 4) Send your action
       const action = allActions[Math.floor(Math.random() * allActions.length)];
       game.sendAction(action);
+      logger.debug('Tick ' + state.tick + ', sent action: ' + action);
     } catch (err) {
       // Handle your exceptions per tick
     }
