@@ -39,7 +39,7 @@ namespace MyBot.Bomberjam
         public TileKind GetTileAt(int x, int y)
         {
             if (this.IsOutOfBounds(x, y))
-                return TileKind.OutOfBound;
+                return TileKind.OutOfBounds;
 
             var tileChar = this.Tiles[this.CoordToTileIndex(x, y)];
             return Constants.TileCharToTileKindMappings[tileChar];

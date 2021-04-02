@@ -12,7 +12,7 @@
 
     public enum TileKind
     {
-        OutOfBound,
+        OutOfBounds,
         Empty,
         Wall,
         Block,

@@ -18,7 +18,7 @@ namespace MyBot
             // Spaces or special characters are not allowed
             game.Ready("MyName" + Rng.Next(1000, 9999));
 
-            while (true)
+            do
             {
                 // 2) Each tick, you'll receive the current game state serialized as JSON
                 // From this moment, you have a limited time to send an action back to the bomberjam process through stdout
@@ -69,6 +69,7 @@ namespace MyBot
                     // Handle your exceptions per tick
                 }
             }
+            while (game.MyPlayer.IsAlive);
         }
     }
 }
