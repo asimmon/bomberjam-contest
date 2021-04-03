@@ -1,7 +1,7 @@
 ﻿const Constants = require('./constants');
 const Game = require('./game');
 const StateUtils = require('./state-utils');
-const Logger = require('./llogger');
+const Logger = require('./logger');
 
 module.exports = {
   Constants,
