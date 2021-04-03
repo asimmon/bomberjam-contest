@@ -22,6 +22,10 @@ td {
   code { white-space: pre-line }
 }
 
+.navbar-brand {
+  padding-top: 0;
+}
+
 .custom-file-label::after {
   border-radius: 0;
 }
