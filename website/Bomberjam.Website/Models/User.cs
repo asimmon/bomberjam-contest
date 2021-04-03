@@ -10,6 +10,7 @@ namespace Bomberjam.Website.Models
         public string UserName { get; set; }
         public string Email { get; set; }
         public float Points { get; set; }
+        public int GlobalRank { get; set; }
         public int AllBotCount { get; set; }
         public int CompiledBotCount { get; set; }
     }

@@ -56,6 +56,7 @@ namespace Bomberjam.Website.Database
             Email = dbUser.Email,
             UserName = dbUser.UserName,
             Points = dbUser.Points,
+            GlobalRank = dbUser.GlobalRank
         };
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);

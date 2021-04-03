@@ -9,11 +9,12 @@
 <div class="jumbotron">
   <h1>Welcome @Model.User.UserName!</h1>
 
-  <p>
-    You have <strong><span format-points="@Model.User.Points"></span></strong> points.
-    Click <a asp-controller="Account" asp-action="Edit">here</a> to change your username and email address,
-    or click <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id">here</a> to see your game history.
-  </p>
+  <ul>
+    <li>Your rank is <strong>#@Model.User.GlobalRank</strong></li>
+    <li>You have <strong><span format-points="@Model.User.Points"></span></strong> points</li>
+    <li>Click <a asp-controller="Account" asp-action="Edit">here</a> to change your username and email address</li>
+    <li>Click <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id">here</a> to see your game history</li>
+  </ul>
 
   <p class="lead mt-4 mb-0">
     <a asp-controller="Account" asp-action="Submit" class="btn btn-lg btn-success">
