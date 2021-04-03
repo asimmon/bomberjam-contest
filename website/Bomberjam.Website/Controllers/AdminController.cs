@@ -29,7 +29,7 @@ namespace Bomberjam.Website.Controllers
             return this.View(viewModel);
         }
 
-        [HttpPost]
+        [HttpPost("start-game")]
         public async Task<IActionResult> StartGame(SelectableUser[] users)
         {
             var selectedUserIds = new HashSet<Guid>(users.Where(u => u.IsSelected).Select(u => u.Id));

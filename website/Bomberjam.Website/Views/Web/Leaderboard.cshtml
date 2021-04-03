@@ -16,11 +16,10 @@
     </thead>
     <tbody>
     @{
-      var rank = 1;
       foreach (var user in Model)
       {
         <tr>
-          <td>@(rank++)</td>
+          <td>@user.GlobalRank</td>
           <td>
             <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
           </td>

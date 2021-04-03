@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 // ReSharper disable MethodHasAsyncOverload
 namespace Bomberjam.Website.Database
@@ -12,10 +13,12 @@ namespace Bomberjam.Website.Database
     public partial class DatabaseRepository : IBomberjamRepository
     {
         private readonly BomberjamContext _dbContext;
+        private readonly ILogger<DatabaseRepository> _logger;
 
-        public DatabaseRepository(BomberjamContext dbContext)
+        public DatabaseRepository(BomberjamContext dbContext, ILogger<DatabaseRepository> logger)
         {
             this._dbContext = dbContext;
+            this._logger = logger;
         }
 
         public async Task<IEnumerable<User>> GetUsersWithCompiledBot()
@@ -100,7 +103,8 @@ namespace Bomberjam.Website.Database
         {
             Id = u.Id,
             UserName = u.UserName,
-            Points = u.Points
+            Points = u.Points,
+            GlobalRank = u.GlobalRank
         };
 
         public async Task<IEnumerable<User>> GetAllUsers()
@@ -136,6 +140,42 @@ namespace Bomberjam.Website.Database
         public Task<bool> IsUserEmailAlreadyUsed(string email)
         {
             return this._dbContext.Users.AnyAsync(u => u.Email == email);
+        }
+
+        public async Task UpdateAllUserGlobalRanks()
+        {
+            var usersBefore = await this._dbContext.Users
+                .Select(u => new
+                {
+                    u.Id,
+                    u.Created,
+                    u.Points,
+                    u.GlobalRank
+                })
+                .ToListAsync()
+                .ConfigureAwait(false);
+
+            var sortedUsers = usersBefore.OrderByDescending(u => u.Points).ThenBy(u => u.Created).ToList();
+            var updatedUserCount = 0;
+
+            for (var i = 0; i < sortedUsers.Count; i++)
+            {
+                var sortedUser = sortedUsers[i];
+                var newGlobalRank = i + 1;
+
+                if (sortedUser.GlobalRank != newGlobalRank)
+                {
+                    var dbUser = await this._dbContext.Users.FindAsync(sortedUser.Id).ConfigureAwait(false);
+                    dbUser.GlobalRank = newGlobalRank;
+                    this._logger.LogDebug($" - Updating user {sortedUser.Id} rank from {sortedUser.GlobalRank} to {newGlobalRank}");
+                    updatedUserCount++;
+                }
+            }
+
+            if (updatedUserCount > 0)
+            {
+                await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
+            }
         }
     }
 }

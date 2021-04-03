@@ -7,5 +7,6 @@ namespace Bomberjam.Website.Models
         public Guid Id { get; set; }
         public string UserName { get; set; }
         public float Points { get; set; }
+        public int GlobalRank { get; set; }
     }
 }

@@ -20,5 +20,7 @@ namespace Bomberjam.Website.Database
         public string Email { get; set; }
 
         public float Points { get; set; }
+
+        public int GlobalRank { get; set; }
     }
 }

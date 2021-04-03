@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
@@ -11,10 +12,16 @@ using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
 {
-    public class BaseBomberjamController<T> : Controller
+    public abstract class BaseBomberjamController : Controller
+    {
+        protected static readonly SemaphoreSlim GetNextTaskMutex = new(1);
+        protected static readonly SemaphoreSlim ComputeAllUserGlobalRanksMutex = new(1);
+    }
+
+    public abstract class BaseBomberjamController<T> : BaseBomberjamController
         where T : Controller
     {
-        public BaseBomberjamController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<T> logger)
+        protected BaseBomberjamController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<T> logger)
         {
             this.Repository = repository;
             this.Storage = storage;

@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Mime;
 using System.Text.Json;
-using System.Threading;
 using System.Threading.Tasks;
 using Bomberjam.Common;
 using Bomberjam.Website.Authentication;
@@ -25,8 +24,6 @@ namespace Bomberjam.Website.Controllers
     [Route("~/api")]
     public class ApiController : BaseBomberjamController<ApiController>
     {
-        private static readonly SemaphoreSlim GetNextTaskMutex = new(1);
-
         public ApiController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<ApiController> logger)
             : base(repository, storage, logger)
         {
@@ -235,18 +232,32 @@ namespace Bomberjam.Website.Controllers
                 }
             }
 
-            using (var transaction = await this.Repository.CreateTransaction())
+            await ComputeAllUserGlobalRanksMutex.WaitAsync();
+
+            try
             {
-                if (gameResult.Origin == GameOrigin.RankedMatchmaking)
+                using (var transaction = await this.Repository.CreateTransaction())
                 {
-                    gameHistory = await this.ComputeNewUserPoints(gameHistory);
+                    if (gameResult.Origin == GameOrigin.RankedMatchmaking)
+                    {
+                        gameHistory = await this.ComputeNewUserPoints(gameHistory);
+                    }
+
+                    var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin);
+
+                    if (gameResult.Origin == GameOrigin.RankedMatchmaking)
+                    {
+                        await this.Repository.UpdateAllUserGlobalRanks();
+                    }
+
+                    var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
+                    await this.Storage.UploadGameResult(gameId, jsonGameHistoryStream);
+                    await transaction.CommitAsync();
                 }
-
-                var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin);
-
-                var jsonGameHistoryStream = SerializeGameHistoryToJsonStream(gameHistory);
-                await this.Storage.UploadGameResult(gameId, jsonGameHistoryStream);
-                await transaction.CommitAsync();
+            }
+            finally
+            {
+                ComputeAllUserGlobalRanksMutex.Release();
             }
 
             return this.Ok();

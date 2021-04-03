@@ -64,8 +64,22 @@ namespace Bomberjam.Website.Controllers
                 }
                 catch (EntityNotFound)
                 {
-                    var temporaryUsername = await this.GenerateUniqueUserName();
-                    await this.Repository.AddUser(githubId, email, temporaryUsername);
+                    await ComputeAllUserGlobalRanksMutex.WaitAsync();
+
+                    try
+                    {
+                        using (var transaction = await this.Repository.CreateTransaction())
+                        {
+                            var temporaryUsername = await this.GenerateUniqueUserName();
+                            await this.Repository.AddUser(githubId, email, temporaryUsername);
+                            await this.Repository.UpdateAllUserGlobalRanks();
+                            await transaction.CommitAsync();
+                        }
+                    }
+                    finally
+                    {
+                        ComputeAllUserGlobalRanksMutex.Release();
+                    }
                 }
             }
 
