@@ -10,7 +10,7 @@
   </h1>
 
   <p class="lead mt-4">
-    Write your bot using one of four languages (C#, Java, JavaScript and Python) and fight against other players to reach the first place in the leaderboard.
+    Write your bot using one of four languages (<abbr title=".NET Core 3.1 and .NET 5">C#</abbr>, <abbr title="Java 8">Java</abbr>, <abbr title="Node.js 12">JavaScript</abbr> and <abbr title="Python 3.8">Python</abbr>) and fight against other players to reach the first place in the leaderboard.
   </p>
 
   <p class="lead mt-4 mb-0">
@@ -54,10 +54,8 @@
 <div class="row">
   <div class="col-md-5 col-lg-4">
     <pre class="m-0 code-sample"><code>bomberjam.zip
-├── engine/
-│ ├─ linux-x64/bomberjam
-│ ├─ osx-x64/bomberjam
-│ └─ win-x64/bomberjam.exe
+├── engine/bomberjam.exe (Windows)
+├── engine/bomberjam (Linux & MacOS)
 │
 └── starters/
   ├─ CSharp/MyBot.csproj [...]
@@ -69,22 +67,57 @@
 
   <div class="col-md-7 col-lg-8">
     <p>
-      The <code>engine/</code> folder contains the game executable for the OS of your choice.
+      The <code>engine/</code> folder contains the game engine for the OS of your choice.
       Each starter contains a <code>MyBot.*</code> entrypoint file that <strong>must not be renamed</strong>.
     </p>
 
     <p>
-      For each starter, you will also find a <code>run.sh</code> and <code>run.bat</code> files that allows you to simulate a game. This is how a run script looks like:
+      For each starter, you will also find a <code>run_game.bat</code> and <code>run_game.sh</code> files that allows you to simulate a game. These scripts look like this:
     </p>
 
-    <pre><code style="white-space: normal">cmd&gt; bomberjam.exe --output replay.json "dotnet MyBot.dll" "java -classpath "".;*"" MyBot" "node MyBot.js" "python MyBot.py"</code></pre>
+    <pre><code style="white-space: normal">&gt; bomberjam.exe --output replay.json "dotnet MyBot.dll" "java MyBot" "node MyBot.js" "python MyBot.py"</code></pre>
 
     <p>
-      Each tick, your bot will receive the current state of the game over standard input. Standard output must be used to send the action (move, plant a bomb or do nothing) within <strong>one second</strong>.
+      An <code>install.sh</code> script may be included to install build dependencies suchs as Node.js packages.
+    </p>
+
+    <p>
+      The game engine spawns a process for each bot and communicates with them over standard input and standard output.
+    </p>
+
+    <p>
+      Each tick (turn), your bot will receive the current state of the game over standard input. Standard output must be used to send the action (move, plant a bomb or do nothing) within <strong>one second</strong>.
     </p>
 
     <p>
       <a asp-controller="Web" asp-action="Viewer">Use the online viewer</a> to visualize the game from the generated JSON file.
     </p>
   </div>
+</div>
+
+<h2 class="mt-5">About the infrastructure</h2>
+
+<div>
+  <p>
+    We use <strong>Ubuntu 20.04 Docker containers</strong> to compile / package your bot as well as running the games. It means that your code must be compatible with Ubuntu 20.04.
+    The container comes with <strong>.NET 5</strong>, <strong>.NET Core 3.1</strong>, <strong>Node.js 12</strong>, <strong>Java 8</strong> and <strong>Python 3.8</strong> pre-installed.
+  </p>
+
+  <p>
+    When you submit a bot, we try to recognize its language using the <code>MyBot.*</code> entrypoint file. This is why this file cannot be renamed.
+    Once the language is recognized, the packaging phase begins. During this phase, you'll have access to internet.
+  </p>
+
+  <ul>
+    <li>Any <code>install.sh</code> script is executed</li>
+    <li>C# and Java code is compiled</li>
+    <li>A <code>run.sh</code> script is created, containing the command to run your bot, such as <code>python3 MyBot.py</code></li>
+    <li>Everything is zipped and stored for later use</li>
+  </ul>
+
+  <p>
+    When a game is scheduled, our servers will download and unzip the packaged bots. Internet and any network access are unavailable during the game.
+    The game engine will spawn a process for each bot, using the <code>run.sh</code> script created during the packaging phase.
+    Each bot process is contained in an isolated environment with limited CPU and memory (1GB) so <strong>one bot cannot interfere with another</strong>.
+  </p>
 </div>
