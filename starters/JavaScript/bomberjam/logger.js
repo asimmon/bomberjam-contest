@@ -33,6 +33,13 @@ class Logger {
     if (this.file)
       this.file.write(`ERROR: ${format(args)}\n`);
   }
+
+  close() {
+    if (this.file) {
+      this.file.end();
+      this.file = null;
+    }
+  }
 }
 
 module.exports = Logger;

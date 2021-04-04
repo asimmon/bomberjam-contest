@@ -1,3 +1,4 @@
+const process = require('process');
 const bomberjam = require('./bomberjam');
 
 const allActions = [
@@ -9,18 +10,20 @@ const allActions = [
   bomberjam.Constants.Bomb
 ];
 
+const game = new bomberjam.Game();
+
 // Standard output (console.log) can ONLY BE USED to communicate with the bomberjam process
 // Use text files if you need to log something for debugging
-const game = new bomberjam.Game();
 const logger = new bomberjam.Logger();
+
+// Edit run_game.(bat|sh) to include file logging for any of the four bot processes: node MyBot.js --logging
+if (process.argv.slice(2).some(x => x.toLowerCase() === '--logging'))
+  logger.setup(`log-${new Date().getTime()}.log`);
 
 const main = async () => {
   // 1) You must send an alphanumerical name up to 32 characters
   // Spaces or special characters are not allowed
   await game.ready('MyName' + Math.round(Math.random() * (9999 - 1000) + 1000));
-
-  if (game.myPlayerId === '1')
-    logger.setup('log-1.log');
 
   do {
     // 2) Each tick, you'll receive the current game state serialized as JSON
@@ -69,4 +72,7 @@ const main = async () => {
   } while (game.myPlayer.isAlive);
 };
 
-main().catch(console.err).finally(game.close);
+main().catch(console.err).finally(() => {
+  logger.close();
+  game.close();
+});

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using MyBot.Bomberjam;
 
 namespace MyBot
@@ -8,11 +9,17 @@ namespace MyBot
         private static readonly Random Rng = new Random();
         private static readonly ActionKind[] AllActions = { ActionKind.Up, ActionKind.Down, ActionKind.Left, ActionKind.Right, ActionKind.Stay, ActionKind.Bomb };
 
-        public static void Main()
+        public static void Main(string[] args)
         {
+            var game = new Game();
+
             // Standard output (Console.WriteLine) can ONLY BE USED to communicate with the bomberjam process
             // Use text files if you need to log something for debugging
-            var game = new Game();
+            var logger = new Logger();
+
+            // Edit run_game.(bat|sh) to include file logging for any of the four bot processes: dotnet %cd%\bin\Debug\<framework>\MyBot.dll --logging
+            if (args.Any(x => "--logging".Equals(x, StringComparison.OrdinalIgnoreCase)))
+                logger.Setup("log-" + DateTime.UtcNow.Ticks + ".log");
 
             // 1) You must send an alphanumerical name up to 32 characters
             // Spaces or special characters are not allowed
@@ -63,6 +70,7 @@ namespace MyBot
                     // 4) Send your action
                     var action = AllActions[Rng.Next(AllActions.Length)];
                     game.SendAction(action);
+                    logger.Debug("Tick " + game.State.Tick + ", sent action: " + action);
                 }
                 catch
                 {
@@ -70,6 +78,8 @@ namespace MyBot
                 }
             }
             while (game.MyPlayer.IsAlive);
+
+            logger.Close();
         }
     }
 }

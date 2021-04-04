@@ -1,6 +1,7 @@
 import bomberjam.*;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
@@ -12,9 +13,19 @@ public class MyBot {
     );
 
     public static void main(String[] args) throws Exception {
+        Game game = new Game();
+
         // Standard output (System.out.println) can ONLY BE USED to communicate with the bomberjam process
         // Use text files if you need to log something for debugging
-        Game game = new Game();
+        Logger logger = new Logger();
+
+        // Edit run_game.(bat|sh) to include file logging for any of the four bot processes: java -cp "".;*"" MyBot --logging
+        for (String arg : args) {
+            if ("--logging".equals(arg.toLowerCase())) {
+                logger.setup("log-" + new Date().getTime() + ".log");
+                break;
+            }
+        }
 
         // 1) You must send an alphanumerical name up to 32 characters
         // Spaces or special characters are not allowed
@@ -58,9 +69,12 @@ public class MyBot {
                 // 4) Send your action
                 ActionKind action = ALL_ACTIONS.get(RNG.nextInt(ALL_ACTIONS.size()));
                 game.sendAction(action);
+                logger.debug("Tick " + game.getState().getTick() + ", sent action: " + action);
             } catch (Exception ex) {
                 // Handle your exceptions per tick
             }
         } while (game.getMyPlayer().getIsAlive());
+
+        logger.close();
     }
 }

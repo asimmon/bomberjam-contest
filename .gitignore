@@ -19,5 +19,4 @@ _ReSharper*/
 *.DotSettings.user
 
 MyBot.zip
-!website/Bomberjam.Website/MyBot.zip
-/tmp
+bomberjam.exe
