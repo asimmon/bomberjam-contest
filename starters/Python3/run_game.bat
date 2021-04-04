@@ -1,1 +1,1 @@
-bomberjam.exe --output replay.json "python MyBot.py" "python MyBot.py" "python MyBot.py" "python MyBot.py"
+..\..\engine\bomberjam.exe --output replay.json "python MyBot.py" "python MyBot.py" "python MyBot.py" "python MyBot.py"
