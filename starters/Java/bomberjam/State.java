@@ -119,7 +119,7 @@ public class State {
         if (this.isOutOfBounds(x, y))
             return TileKind.OUT_OF_BOUNDS;
 
-        var tileChar = this.tiles.charAt(this.coordToTileIndex(x, y));
+        char tileChar = this.tiles.charAt(this.coordToTileIndex(x, y));
         return Constants.TILE_CHAR_TO_TILE_KIND_MAPPINGS.get(tileChar);
     }
 

@@ -80,7 +80,7 @@ public class Game {
         this.ensureIsReady();
         this.ensureInitialState();
 
-        var actionStr = Constants.ACTION_KIND_TO_ACTION_STRING_MAPPINGS.get(action);
+        String actionStr = Constants.ACTION_KIND_TO_ACTION_STRING_MAPPINGS.get(action);
 
         System.out.println(this.state.getTick() + ":" + actionStr);
         System.out.flush();

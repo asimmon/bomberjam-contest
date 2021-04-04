@@ -38,9 +38,9 @@ public class MyBot {
 
                 try {
                     // 3) Analyze the current state and decide what to do
-                    for (var x = 0; x < game.getState().getWidth(); x++) {
-                        for (var y = 0; y < game.getState().getHeight(); y++) {
-                            var tile = game.getState().getTileAt(x, y);
+                    for (int x = 0; x < game.getState().getWidth(); x++) {
+                        for (int y = 0; y < game.getState().getHeight(); y++) {
+                            TileKind tile = game.getState().getTileAt(x, y);
                             if (tile == TileKind.BLOCK) {
                                 // TODO found a block to destroy
                             }
