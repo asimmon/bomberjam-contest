@@ -1,8 +1,9 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace MyBot.Bomberjam
 {
-    public class Logger
+    public class Logger : IDisposable
     {
         private StreamWriter _file;
 
@@ -53,6 +54,11 @@ namespace MyBot.Bomberjam
                 this._file.Close();
                 this._file = null;
             }
+        }
+
+        public void Dispose()
+        {
+            this.Close();
         }
     }
 }

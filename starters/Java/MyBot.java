@@ -17,64 +17,64 @@ public class MyBot {
 
         // Standard output (System.out.println) can ONLY BE USED to communicate with the bomberjam process
         // Use text files if you need to log something for debugging
-        Logger logger = new Logger();
-
-        // Edit run_game.(bat|sh) to include file logging for any of the four bot processes: java -cp "".;*"" MyBot --logging
-        for (String arg : args) {
-            if ("--logging".equals(arg.toLowerCase())) {
-                logger.setup("log-" + new Date().getTime() + ".log");
-                break;
+        try (Logger logger = new Logger()) {
+            // Edit run_game.(bat|sh) to include file logging for any of the four bot processes: java -cp "".;*"" MyBot --logging
+            for (String arg : args) {
+                if ("--logging".equals(arg.toLowerCase())) {
+                    logger.setup("log-" + new Date().getTime() + ".log");
+                    break;
+                }
             }
-        }
 
-        // 1) You must send an alphanumerical name up to 32 characters
-        // Spaces or special characters are not allowed
-        game.setReady("MyName" + (RNG.nextInt(9999 - 1000) + 1000));
+            // 1) You must send an alphanumerical name up to 32 characters
+            // Spaces or special characters are not allowed
+            game.setReady("MyName" + (RNG.nextInt(9999 - 1000) + 1000));
+            logger.info("My player ID is " + game.getMyPlayerId());
 
-        do {
-            // 2) Each tick, you'll receive the current game state serialized as JSON
-            // From this moment, you have a limited time to send an action back to the bomberjam process through stdout
-            game.receiveCurrentState();
+            do {
+                // 2) Each tick, you'll receive the current game state serialized as JSON
+                // From this moment, you have a limited time to send an action back to the bomberjam process through stdout
+                game.receiveCurrentState();
 
-            try {
-                // 3) Analyze the current state and decide what to do
-                for (var x = 0; x < game.getState().getWidth(); x++) {
-                    for (var y = 0; y < game.getState().getHeight(); y++) {
-                        var tile = game.getState().getTileAt(x, y);
-                        if (tile == TileKind.BLOCK) {
-                            // TODO found a block to destroy
-                        }
+                try {
+                    // 3) Analyze the current state and decide what to do
+                    for (var x = 0; x < game.getState().getWidth(); x++) {
+                        for (var y = 0; y < game.getState().getHeight(); y++) {
+                            var tile = game.getState().getTileAt(x, y);
+                            if (tile == TileKind.BLOCK) {
+                                // TODO found a block to destroy
+                            }
 
-                        Player otherPlayer = game.getState().findAlivePlayerAt(x, y);
-                        if (otherPlayer != null && !otherPlayer.getId().equals(game.getMyPlayerId())) {
-                            // TODO found an alive opponent
-                        }
+                            Player otherPlayer = game.getState().findAlivePlayerAt(x, y);
+                            if (otherPlayer != null && !otherPlayer.getId().equals(game.getMyPlayerId())) {
+                                // TODO found an alive opponent
+                            }
 
-                        Bomb bomb = game.getState().findActiveBombAt(x, y);
-                        if (bomb != null) {
-                            // TODO found an active bomb
-                        }
+                            Bomb bomb = game.getState().findActiveBombAt(x, y);
+                            if (bomb != null) {
+                                // TODO found an active bomb
+                            }
 
-                        Bonus bonus = game.getState().findDroppedBonusAt(x, y);
-                        if (bonus != null) {
-                            // TODO found a bonus
+                            Bonus bonus = game.getState().findDroppedBonusAt(x, y);
+                            if (bonus != null) {
+                                // TODO found a bonus
+                            }
                         }
                     }
+
+                    if (game.getMyPlayer().getBombsLeft() > 0) {
+                        // TODO you can drop a bomb
+                    }
+
+                    // 4) Send your action
+                    ActionKind action = ALL_ACTIONS.get(RNG.nextInt(ALL_ACTIONS.size()));
+                    game.sendAction(action);
+                    logger.debug("Tick " + game.getState().getTick() + ", sent action: " + action);
+                } catch (Exception ex) {
+                    // Handle your exceptions per tick
+                    logger.error("Tick " + game.getState().getTick() + ", exception: " + ex.toString());
                 }
-
-                if (game.getMyPlayer().getBombsLeft() > 0) {
-                    // TODO you can drop a bomb
-                }
-
-                // 4) Send your action
-                ActionKind action = ALL_ACTIONS.get(RNG.nextInt(ALL_ACTIONS.size()));
-                game.sendAction(action);
-                logger.debug("Tick " + game.getState().getTick() + ", sent action: " + action);
-            } catch (Exception ex) {
-                // Handle your exceptions per tick
-            }
-        } while (game.getMyPlayer().getIsAlive());
-
-        logger.close();
+            } while (game.getMyPlayer().getIsAlive());
+        }
     }
 }

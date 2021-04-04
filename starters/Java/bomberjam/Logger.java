@@ -1,10 +1,11 @@
 package bomberjam;
 
+import java.io.Closeable;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-public class Logger {
+public class Logger implements Closeable {
     private PrintWriter file;
 
     public Logger() {
