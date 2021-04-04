@@ -69,7 +69,7 @@ public class MyBot {
                     // 4) Send your action
                     ActionKind action = ALL_ACTIONS.get(RNG.nextInt(ALL_ACTIONS.size()));
                     game.sendAction(action);
-                    logger.debug("Tick " + game.getState().getTick() + ", sent action: " + action);
+                    logger.info("Tick " + game.getState().getTick() + ", sent action: " + action);
                 } catch (Exception ex) {
                     // Handle your exceptions per tick
                     logger.error("Tick " + game.getState().getTick() + ", exception: " + ex.toString());

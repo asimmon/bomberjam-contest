@@ -24,6 +24,7 @@ const main = async () => {
   // 1) You must send an alphanumerical name up to 32 characters
   // Spaces or special characters are not allowed
   await game.ready('MyName' + Math.round(Math.random() * (9999 - 1000) + 1000));
+  logger.info('My player ID is ' + game.myPlayerId);
 
   do {
     // 2) Each tick, you'll receive the current game state serialized as JSON
@@ -65,9 +66,10 @@ const main = async () => {
       // 4) Send your action
       const action = allActions[Math.floor(Math.random() * allActions.length)];
       game.sendAction(action);
-      logger.debug('Tick ' + state.tick + ', sent action: ' + action);
+      logger.info('Tick ' + state.tick + ', sent action: ' + action);
     } catch (err) {
       // Handle your exceptions per tick
+      logger.error('Tick ' + game.state.tick + ', exception: ' + err.toString());
     }
   } while (game.myPlayer.isAlive);
 };
