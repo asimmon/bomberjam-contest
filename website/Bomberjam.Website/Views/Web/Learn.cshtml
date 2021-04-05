@@ -225,3 +225,29 @@ Options:
   -t, --no-timeout           Disabe all timeouts for debugging your bot
   -q, --quiet                Suppress output logging
   -h, --help                 Show help and exit</code></pre>
+
+<h2 class="h4 mt-5 mb-3">Troubleshoot your bot</h2>
+
+<h3 class="h5">Using the C# starter</h3>
+
+Modify your bot so it can accept an argument such as <code>--debug</code>.
+At the beginning of the program, add a pause if this argument is present. This pause will allow you to attach the debugger to the process:
+
+<pre class="m-0 my-2 code-sample"><code>public static void Main(string[] args)
+{
+    var isDebugging = args.Any(x => "--debug".Equals(x, StringComparison.OrdinalIgnoreCase));
+    if (isDebugging)
+        Thread.Sleep(TimeSpan.FromSeconds(10));
+
+    // [...]
+}</code></pre>
+
+Next, modify the script that runs the bomberjam engine, usually <code>run_game.bat</code> or <code>run_game.sh</code>, and add two things:
+
+<ul>
+  <li>The new bot argument for one of the four bots: <code>dotnet [...]/MyBot.dll --debug</code></li>
+  <li>The <code>--no-timeout</code> to the <code>bomberjam.exe</code> engine so it will wait indefinitely for your bot to send its name and all the actions</li>
+</ul>
+
+Finally, open the IDE of your choice, add a breakpoint, start the game and attach the .NET debugger to the process that have the new bot argument <code>--debug</code>.
+Your breakpoint will be hit after the pause and you'll now have the freedom to inspect anything without timeout.
