@@ -17,7 +17,7 @@ class Game {
     this._isReady = false;
     this._myPlayerId = null;
 
-    /** @type {Player} */
+    /** @type {State} */
     this._state = null;
   }
 
@@ -79,12 +79,12 @@ class Game {
 
   _ensureIsReady() {
     if (!this._isReady)
-      throw new Error('You need to call Game.Ready(...) with your name first');
+      throw new Error('You need to call Game.ready(...) with your name first');
   }
 
   _ensureInitialState() {
     if (!this._state)
-      throw new Error('You need to call Game.ReceiveCurrentState() to retrieve the initial state of the game');
+      throw new Error('You need to call Game.receiveCurrentState() to retrieve the initial state of the game');
   }
 
   close() {
