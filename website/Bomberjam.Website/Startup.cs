@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Razor.TagHelpers;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -62,6 +63,10 @@ namespace Bomberjam.Website
             services.AddScoped<IBomberjamRepository, DatabaseRepository>();
 
             ConfigureHangfire(services, dbConnStr);
+
+            // Google Analytics
+            services.Configure<GoogleAnalyticsOptions>(options => Configuration.GetSection("GoogleAnalytics").Bind(options));
+            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
         }
 
         private void ConfigureDatabase(IServiceCollection services, string dbConnStr) => services.AddDbContext<BomberjamContext>(options =>
