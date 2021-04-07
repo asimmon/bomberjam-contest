@@ -12,5 +12,9 @@ namespace Bomberjam.Website.Models
         [AllowedExtensions(".zip", ErrorMessage = "You must select a .zip file")]
         [NotEmptyFormFileAttribute(ErrorMessage = "The .zip file cannot be empty")]
         public IFormFile BotFile { set; get; }
+
+        public int MaxBotUploadIn24h { get; set; }
+
+        public int BotSubmitWaitDelayMinutes { get; set; }
     }
 }

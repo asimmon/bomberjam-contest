@@ -149,7 +149,7 @@ namespace Bomberjam.Website.Database
             const string updateAllUserRank =
 @"WITH [tmp] AS
 (
-  SELECT [Id], [GlobalRank], ROW_NUMBER() OVER (ORDER BY [Points] DESC) AS [NewGlobalRank]
+  SELECT [Id], [GlobalRank], ROW_NUMBER() OVER (ORDER BY [Points] DESC, [Created] ASC) AS [NewGlobalRank]
   FROM [dbo].[App_Users]
 )
 UPDATE [tmp]

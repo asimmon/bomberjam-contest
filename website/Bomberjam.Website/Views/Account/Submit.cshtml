@@ -16,6 +16,7 @@
     <li>Every time you submit a bot, you have to wait a little before submitting another one.</li>
     <li>If your bot is successfully compiled, a non-ranked game will be queued.</li>
     <li>The compilation/packaging process will be stopped if it takes too long.</li>
+    <li>Only @Model.MaxBotUploadIn24h bots can be uploaded in a 24h sliding period and you must wait @Model.BotSubmitWaitDelayMinutes minutes between each upload.</li>
   </ul>
 
   <form class="mt-5" asp-controller="Account" asp-action="Submit" method="post" enctype="multipart/form-data">

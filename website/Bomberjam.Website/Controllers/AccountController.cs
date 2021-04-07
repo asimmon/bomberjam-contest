@@ -17,7 +17,8 @@ namespace Bomberjam.Website.Controllers
     [Route("~/account")]
     public class AccountController : BaseBomberjamController<AccountController>
     {
-        private static readonly TimeSpan BotUploadDelay = TimeSpan.FromSeconds(10);
+        private const int MaxBotUploadIn24h = 8;
+        private static readonly TimeSpan BotSubmitWaitDelay = TimeSpan.FromMinutes(15);
 
         public AccountController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AccountController> logger)
             : base(repository, storage, logger)
@@ -78,7 +79,11 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("submit")]
         public IActionResult Submit()
         {
-            return this.View("Submit", new AccountSubmitViewModel());
+            return this.View("Submit", new AccountSubmitViewModel
+            {
+                BotSubmitWaitDelayMinutes = (int)Math.Ceiling(BotSubmitWaitDelay.TotalMinutes),
+                MaxBotUploadIn24h = MaxBotUploadIn24h
+            });
         }
 
         [HttpPost("submit")]
@@ -90,12 +95,15 @@ namespace Bomberjam.Website.Controllers
             if (!this.ModelState.IsValid)
                 return this.View("Submit", viewModel);
 
-            var user = await this.GetAuthenticatedUser();
-            var canUploadBot = await this.CanSubmitBot(user.Id);
+            viewModel.BotSubmitWaitDelayMinutes = (int)Math.Ceiling(BotSubmitWaitDelay.TotalMinutes);
+            viewModel.MaxBotUploadIn24h = MaxBotUploadIn24h;
 
-            if (!canUploadBot)
+            var user = await this.GetAuthenticatedUser();
+            var canUploadBotResult = await this.CanSubmitBot(user.Id);
+
+            if (!canUploadBotResult.CanSubmitBot)
             {
-                this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, "You must wait longer before uploading a new bot");
+                this.ModelState.AddModelError<AccountSubmitViewModel>(vm => vm.BotFile, canUploadBotResult.ErrorMessage);
                 return this.View("Submit", viewModel);
             }
 
@@ -110,14 +118,57 @@ namespace Bomberjam.Website.Controllers
             return this.RedirectToAction("Index", "Account");
         }
 
-        private async Task<bool> CanSubmitBot(Guid userId)
+        private async Task<CanSubmitBotResult> CanSubmitBot(Guid userId)
         {
             var bots = await this.Repository.GetBots(userId).ConfigureAwait(false);
-            var mostRecentBot = bots.OrderByDescending(b => b.Updated).FirstOrDefault();
-            if (mostRecentBot == null)
-                return true;
+            var sortedBots = bots.OrderByDescending(b => b.Created).ToList();
 
-            return (DateTime.UtcNow - mostRecentBot.Updated) > BotUploadDelay;
+            var mostRecentBot = sortedBots.FirstOrDefault();
+            if (mostRecentBot == null)
+                return CanSubmitBotResult.Authorized();
+
+            var now = DateTime.UtcNow;
+            var timeElapsedSinceLastBotUpdate = now - mostRecentBot.Created;
+            if (timeElapsedSinceLastBotUpdate <= BotSubmitWaitDelay)
+            {
+                var remainingWaitTime = BotSubmitWaitDelay - timeElapsedSinceLastBotUpdate;
+
+                string remainingWaitTimeStr;
+                if (remainingWaitTime.TotalMinutes >= 1d)
+                {
+                    var remainingMinutes = (int)Math.Ceiling(remainingWaitTime.TotalMinutes);
+                    remainingWaitTimeStr = remainingMinutes + " " + (remainingMinutes == 1 ? "minute" : "minutes");
+                }
+                else
+                {
+                    var remainingSeconds = (int)Math.Ceiling(remainingWaitTime.TotalSeconds);
+                    remainingWaitTimeStr = remainingSeconds + " " + (remainingSeconds == 1 ? "second" : "seconds");
+                }
+
+                return CanSubmitBotResult.Unauthorized($"You must wait {remainingWaitTimeStr} before uploading a new bot");
+            }
+
+            var yesterday = now.AddDays(-1);
+            var botSubmittedInPast24hCount = sortedBots.Count(b => b.Created >= yesterday);
+
+            return botSubmittedInPast24hCount >= MaxBotUploadIn24h
+                ? CanSubmitBotResult.Unauthorized($"You can only upload a maximum of {MaxBotUploadIn24h} bots in a 24 hours sliding window")
+                : CanSubmitBotResult.Authorized();
+        }
+
+        private sealed class CanSubmitBotResult
+        {
+            private CanSubmitBotResult(bool canSubmitBot, string errorMessage)
+            {
+                this.CanSubmitBot = canSubmitBot;
+                this.ErrorMessage = errorMessage;
+            }
+
+            public bool CanSubmitBot { get; }
+            public string ErrorMessage { get; }
+
+            public static CanSubmitBotResult Authorized() => new CanSubmitBotResult(true, string.Empty);
+            public static CanSubmitBotResult Unauthorized(string errorMessage) => new CanSubmitBotResult(false, errorMessage);
         }
 
         [HttpGet("bot/{botId}/download")]
