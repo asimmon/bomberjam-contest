@@ -145,38 +145,18 @@ namespace Bomberjam.Website.Database
 
         public async Task UpdateAllUserGlobalRanks()
         {
-            var usersBefore = await this._dbContext.Users
-                .Select(u => new
-                {
-                    u.Id,
-                    u.Created,
-                    u.Points,
-                    u.GlobalRank
-                })
-                .ToListAsync()
-                .ConfigureAwait(false);
+            // There's no batch update in EF Core so this will be faster and more efficient
+            const string updateAllUserRank =
+@"WITH [tmp] AS
+(
+  SELECT [Id], [GlobalRank], ROW_NUMBER() OVER (ORDER BY [Points] DESC) AS [NewGlobalRank]
+  FROM [dbo].[App_Users]
+)
+UPDATE [tmp]
+SET [GlobalRank] = [NewGlobalRank]";
 
-            var sortedUsers = usersBefore.OrderByDescending(u => u.Points).ThenBy(u => u.Created).ToList();
-            var updatedUserCount = 0;
-
-            for (var i = 0; i < sortedUsers.Count; i++)
-            {
-                var sortedUser = sortedUsers[i];
-                var newGlobalRank = i + 1;
-
-                if (sortedUser.GlobalRank != newGlobalRank)
-                {
-                    var dbUser = await this._dbContext.Users.FindAsync(sortedUser.Id).ConfigureAwait(false);
-                    dbUser.GlobalRank = newGlobalRank;
-                    this._logger.LogDebug($" - Updating user {sortedUser.Id} rank from {sortedUser.GlobalRank} to {newGlobalRank}");
-                    updatedUserCount++;
-                }
-            }
-
-            if (updatedUserCount > 0)
-            {
-                await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
-            }
+            var modifiedUserCount = await this._dbContext.Database.ExecuteSqlRawAsync(updateAllUserRank);
+            this._logger.LogInformation($"Updated the global rank of {modifiedUserCount} users");
         }
     }
 }
