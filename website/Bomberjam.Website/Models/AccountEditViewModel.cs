@@ -18,6 +18,7 @@ namespace Bomberjam.Website.Models
         }
 
         [Required]
+        [MinLength(2)]
         [StringLength(32)]
         [Display(Name = "Username")]
         [RegularExpression("[a-zA-Z0-9]+", ErrorMessage = "Username can only contain alphanumericals (a-z, A-Z, 0-9)")]

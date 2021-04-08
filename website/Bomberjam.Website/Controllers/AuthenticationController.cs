@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Storage;
@@ -56,7 +57,7 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/signin-github")]
         public async Task<IActionResult> SignInGithub()
         {
-            if (this.TryGetNameIdentifierClaim(out var githubId) && this.TryGetEmailClaim(out var email))
+            if (this.TryGetNameIdentifierClaim(out var githubId) && this.TryGetClaim(ClaimTypes.Email, out var email))
             {
                 try
                 {
@@ -70,8 +71,8 @@ namespace Bomberjam.Website.Controllers
                     {
                         using (var transaction = await this.Repository.CreateTransaction())
                         {
-                            var temporaryUsername = await this.GenerateUniqueUserName();
-                            await this.Repository.AddUser(githubId, email, temporaryUsername);
+                            var userName = await this.GetUniqueUserName();
+                            await this.Repository.AddUser(githubId, email, userName);
                             await this.Repository.UpdateAllUserGlobalRanks();
                             await transaction.CommitAsync();
                         }
@@ -86,27 +87,36 @@ namespace Bomberjam.Website.Controllers
             return this.RedirectToAction("Index", "Account");
         }
 
-        private async Task<string> GenerateUniqueUserName()
+        private static readonly Regex UserNameRegex = new Regex("^[a-zA-Z0-9]{2,32}$", RegexOptions.Compiled);
+
+        private async Task<string> GetUniqueUserName()
         {
+            if (this.TryGetClaim(ClaimTypes.Name, out var githubUserName) && UserNameRegex.IsMatch(githubUserName))
+            {
+                var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(githubUserName).ConfigureAwait(false);
+                if (!isAlreadyUsed)
+                    return githubUserName;
+            }
+
             while (true)
             {
-                var userName = "Player" + Constants.Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
-                var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(userName).ConfigureAwait(false);
+                var randomUserName = "Player" + Constants.Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
+                var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(randomUserName).ConfigureAwait(false);
                 if (!isAlreadyUsed)
-                    return userName;
+                    return randomUserName;
             }
         }
 
-        private bool TryGetEmailClaim(out string email)
+        private bool TryGetClaim(string claimType, out string claimValue)
         {
-            var emailClaim = this.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email);
-            if (emailClaim != null)
+            var claim = this.HttpContext.User.Claims.FirstOrDefault(c => c.Type == claimType);
+            if (claim != null)
             {
-                email = emailClaim.Value;
+                claimValue = claim.Value;
                 return true;
             }
 
-            email = null;
+            claimValue = null;
             return false;
         }
 
