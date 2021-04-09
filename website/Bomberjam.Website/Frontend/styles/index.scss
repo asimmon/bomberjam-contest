@@ -5,6 +5,28 @@
 
 @import 'visualizer';
 
+#page-wrapper {
+  position: relative;
+  min-height: 100vh;
+}
+
+$footer-padding-top: 3.5rem;
+$footer-padding-bottom: 1rem;
+$footer-content-height: 2.5rem;
+
+#header-and-body-wrapper {
+  padding-bottom: $footer-content-height + $footer-padding-top + $footer-padding-bottom;
+}
+
+#page-footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  padding-top: $footer-padding-top;
+  padding-bottom: $footer-padding-bottom;
+  height: $footer-content-height + $footer-padding-top + $footer-padding-bottom;
+}
+
 .box-shadow {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
