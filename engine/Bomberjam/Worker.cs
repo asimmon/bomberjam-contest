@@ -185,7 +185,7 @@ namespace Bomberjam
                 }
             }
 
-            foreach (var (playerId, playerName) in playerNames)
+            foreach (var (playerId, playerName) in playerNames.OrderBy(kvp => kvp.Key, StringComparer.Ordinal))
             {
                 string suffixedUniquePlayerName;
                 if (playerNameUses.TryGetValue(playerName, out var uses))
