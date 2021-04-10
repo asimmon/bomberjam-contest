@@ -21,7 +21,8 @@ namespace Bomberjam.Tests
         {
             var configuration = new GameConfiguration
             {
-                ShufflePlayerPositions = false
+                ShufflePlayerPositions = false,
+                ShuffleBlocks = false
             };
 
             this._simulator = new Simulator(AsciiMap, configuration);

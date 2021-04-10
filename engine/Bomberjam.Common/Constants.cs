@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System;
+using System.Text.Json;
 
 namespace Bomberjam.Common
 {
@@ -22,12 +23,14 @@ namespace Bomberjam.Common
         public const string BottomLeft = "bl";
         public const string BottomRight = "br";
 
-        public static readonly JsonWriterOptions DefaultJsonWriterOptions = new()
+        public static readonly Random GlobalRng = new Random();
+
+        public static readonly JsonWriterOptions DefaultJsonWriterOptions = new JsonWriterOptions
         {
             Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
-        public static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new()
+        public static readonly JsonSerializerOptions DefaultJsonSerializerOptions = new JsonSerializerOptions
         {
             Encoder = DefaultJsonWriterOptions.Encoder
         };

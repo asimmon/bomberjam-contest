@@ -23,6 +23,7 @@ namespace Bomberjam
                 // Public options
                 { "r|repeat=", "The number of games to play", (int x) => this.RepeatCount = x },
                 { "o|output=", "Path of saved games, use placeholder #n to insert game index", x => this.OutputPath = x },
+                { "s|seed=", "The random generator seed", (int x) => this.Seed = x },
                 { "t|no-timeout", "Disabe all timeouts for debugging", x => this.NoTimeout = x != null },
                 { "c|config=", "Configuration file path", x => this.ConfigurationPath = x },
                 { "q|quiet", "Suppress output logging", x => this.IsQuiet = x != null },
@@ -36,6 +37,7 @@ namespace Bomberjam
         public int RepeatCount { get; private set; } = 1;
         public bool IsQuiet { get; private set; }
         public bool NoTimeout { get; private set; }
+        public int? Seed { get; private set; }
         public string? OutputPath { get; private set; }
         public string? ConfigurationPath { get; private set; }
 

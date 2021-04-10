@@ -45,6 +45,7 @@ namespace Bomberjam
         private readonly IDictionary<string, GameBomb> _bombs;
         private readonly IDictionary<string, GameBonus> _bonuses;
         private readonly GameConfiguration _configuration;
+        private readonly Random _rng;
 
         private bool _endGameCleanupExecuted;
         private int _objectCounter;
@@ -67,6 +68,7 @@ namespace Bomberjam
             this._bonuses = new Dictionary<string, GameBonus>();
             this._configuration = new GameConfiguration(configuration);
             this._suddenDeathCountDown = this._configuration.SuddenDeathCountdown!.Value;
+            this._rng = this._configuration.Seed.HasValue ? new Random(this._configuration.Seed.Value) : Constants.GlobalRng;
             this.History = new GameHistory(this._configuration);
 
             this.LoadAsciiMap(map);
@@ -90,11 +92,69 @@ namespace Bomberjam
 
             this._width = asciiMap[0].Length;
             this._height = asciiMap.Count;
+
+            if (this._configuration.ShuffleBlocks!.Value)
+            {
+                this.ShuffleBlocks();
+            }
+        }
+
+        private void ShuffleBlocks()
+        {
+            var excludedBlockIndices = new HashSet<int>
+            {
+                // top left
+                this.CoordToTileIndex(0, 0),
+                this.CoordToTileIndex(1, 0),
+                this.CoordToTileIndex(0, 1),
+                // top right
+                this.CoordToTileIndex(this._width - 1, 0),
+                this.CoordToTileIndex(this._width - 2, 0),
+                this.CoordToTileIndex(this._width - 1, 1),
+                // bottom left
+                this.CoordToTileIndex(0, this._height - 1),
+                this.CoordToTileIndex(0, this._height - 2),
+                this.CoordToTileIndex(1, this._height - 1),
+                // bottom right
+                this.CoordToTileIndex(this._width - 1, this._height - 1),
+                this.CoordToTileIndex(this._width - 2, this._height - 1),
+                this.CoordToTileIndex(this._width - 1, this._height - 2)
+            };
+
+            var potentialBlockIndices = new List<int>();
+            var blockCount = 0;
+
+            for (var idx = 0; idx < this._tiles.Count; idx++)
+            {
+                if (excludedBlockIndices.Contains(idx))
+                    continue;
+
+                var tile = this._tiles[idx];
+                if (tile == TileKind.Wall)
+                    continue;
+
+                if (tile == TileKind.Block)
+                {
+                    this._tiles[idx] = TileKind.Empty;
+                    blockCount++;
+                }
+
+                potentialBlockIndices.Add(idx);
+            }
+
+            potentialBlockIndices.ShuffleInPlace(this._rng);
+
+            var blockIndices = potentialBlockIndices.Take(blockCount).ToList();
+
+            foreach (var idx in blockIndices)
+            {
+                this._tiles[idx] = TileKind.Block;
+            }
         }
 
         private void PlanStartingPositions()
         {
-            var shuffledColors = DefaultPlayerColors.Shuffle().Take(4).ToList();
+            var shuffledColors = DefaultPlayerColors.Shuffle(this._rng).Take(4).ToList();
 
             this._startingPositions.Clear();
             this._startingPositions.Add(new StartingPosition(0, 0, Corner.TopLeft, shuffledColors[0]));
@@ -104,7 +164,7 @@ namespace Bomberjam
 
             if (this._configuration.ShufflePlayerPositions!.Value)
             {
-                this._startingPositions.ShuffleInPlace();
+                this._startingPositions.ShuffleInPlace(this._rng);
             }
         }
 
@@ -134,14 +194,14 @@ namespace Bomberjam
 
             for (var i = 0; i < bombBonusCount; i++)
             {
-                var idx = potentialBonusPositions.PickRandom();
+                var idx = potentialBonusPositions.PickRandom(this._rng);
                 this._plannedBonuses[idx] = BonusKind.Bomb;
                 potentialBonusPositions.Remove(idx);
             }
 
             for (var i = 0; i < fireBonusCount; i++)
             {
-                var idx = potentialBonusPositions.PickRandom();
+                var idx = potentialBonusPositions.PickRandom(this._rng);
                 this._plannedBonuses[idx] = BonusKind.Fire;
                 potentialBonusPositions.Remove(idx);
             }
