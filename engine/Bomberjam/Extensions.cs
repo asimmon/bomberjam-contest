@@ -6,27 +6,25 @@ namespace Bomberjam
 {
     internal static class Extensions
     {
-        private static readonly Random Rng = new Random();
-
-        internal static T PickRandom<T>(this IReadOnlyList<T> immutableItems)
+        internal static T PickRandom<T>(this IReadOnlyList<T> immutableItems, Random rng)
         {
-            return immutableItems[Rng.Next(immutableItems.Count)];
+            return immutableItems[rng.Next(immutableItems.Count)];
         }
 
-        internal static IEnumerable<T> Shuffle<T>(this IEnumerable<T> immutableItems)
+        internal static IEnumerable<T> Shuffle<T>(this IEnumerable<T> immutableItems, Random rng)
         {
             var mutableItems = immutableItems.ToList();
-            ShuffleInPlace(mutableItems);
+            ShuffleInPlace(mutableItems, rng);
             return mutableItems;
         }
 
-        internal static void ShuffleInPlace<T>(this IList<T> mutableItems)
+        internal static void ShuffleInPlace<T>(this IList<T> mutableItems, Random rng)
         {
             var n = mutableItems.Count;
 
             while (n > 1) {
                 n--;
-                var k = Rng.Next(n + 1);
+                var k = rng.Next(n + 1);
                 var value = mutableItems[k];
                 mutableItems[k] = mutableItems[n];
                 mutableItems[n] = value;

@@ -9,6 +9,9 @@ namespace Bomberjam.Common
         private static readonly Func<int, bool> AnyInteger = _ => true;
         private static readonly Func<bool, bool> AnyBoolean = _ => true;
 
+        [JsonPropertyName("seed")]
+        public int? Seed { get; set; }
+
         [JsonPropertyName("defaultBombRange")]
         public int? DefaultBombRange { get; set; } = 2;
 
@@ -29,6 +32,9 @@ namespace Bomberjam.Common
 
         [JsonPropertyName("shufflePlayerPositions")]
         public bool? ShufflePlayerPositions { get; set; } = true;
+
+        [JsonPropertyName("shuffleBlocks")]
+        public bool? ShuffleBlocks { get; set; } = true;
 
         [JsonPropertyName("pointsPerAliveTick")]
         public int? PointsPerAliveTick { get; set; } = 0;
@@ -59,6 +65,7 @@ namespace Bomberjam.Common
 
         private void Merge(GameConfiguration other)
         {
+            OverrideProperty(x => this.Seed = x, other.Seed, AnyInteger);
             OverrideProperty(x => this.DefaultBombRange = x, other.DefaultBombRange, GreaterThanZero);
             OverrideProperty(x => this.DefaultBombCountDown = x, other.DefaultBombCountDown, GreaterThanZero);
             OverrideProperty(x => this.DefaultBombBonusCount = x, other.DefaultBombBonusCount, GreaterThanZero);
@@ -66,6 +73,7 @@ namespace Bomberjam.Common
             OverrideProperty(x => this.SuddenDeathCountdown = x, other.SuddenDeathCountdown, GreaterThanZero);
             OverrideProperty(x => this.RespawnTime = x, other.RespawnTime, GreaterThanZero);
             OverrideProperty(x => this.ShufflePlayerPositions = x, other.ShufflePlayerPositions, AnyBoolean);
+            OverrideProperty(x => this.ShuffleBlocks = x, other.ShuffleBlocks, AnyBoolean);
             OverrideProperty(x => this.PointsPerAliveTick = x, other.PointsPerAliveTick, AnyInteger);
             OverrideProperty(x => this.PointsBlockDestroyed = x, other.PointsBlockDestroyed, AnyInteger);
             OverrideProperty(x => this.PointsKilledPlayer = x, other.PointsKilledPlayer, AnyInteger);

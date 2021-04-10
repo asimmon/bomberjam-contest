@@ -24,7 +24,8 @@ namespace Bomberjam.Tests
             this._configuration = new GameConfiguration
             {
                 DefaultBombRange = 255,
-                ShufflePlayerPositions = false
+                ShufflePlayerPositions = false,
+                ShuffleBlocks = false
             };
 
             this._simulator = new Simulator(AsciiMap, this._configuration);

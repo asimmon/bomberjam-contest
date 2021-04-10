@@ -27,6 +27,7 @@ namespace Bomberjam
             this.Quiet = args.IsQuiet;
             this.NoTimeout = args.NoTimeout;
             this.TotalIterations = args.RepeatCount;
+            this.Seed = args.Seed;
             this.Output = output;
             this.Configuration = configuration;
             this.CurrentIteration = currentIteration;
@@ -39,6 +40,7 @@ namespace Bomberjam
         public bool NoTimeout { get; }
         public int CurrentIteration { get; }
         public int TotalIterations { get; }
+        public int? Seed { get; }
         public FileInfo? Output { get; }
         public GameConfiguration? Configuration { get; }
 

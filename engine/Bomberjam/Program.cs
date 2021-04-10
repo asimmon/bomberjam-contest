@@ -18,6 +18,7 @@ namespace Bomberjam
             }
 
             var configuration = GetRequestedConfiguration(parsedArgs.ConfigurationPath);
+            configuration.Seed = parsedArgs.Seed;
 
             for (var iter = 1; iter <= parsedArgs.RepeatCount; iter++)
             {

@@ -13,13 +13,12 @@ namespace Bomberjam
 {
     internal sealed class Worker : IDisposable
     {
-        private static readonly Random Rng = new();
-
         private static readonly ISet<string> ValidPlayerActions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             Constants.Up, Constants.Down, Constants.Left, Constants.Right, Constants.Stay, Constants.Bomb
         };
 
+        private readonly Random _rng;
         private readonly WorkerOptions _opts;
         private readonly string[] _botCommands;
         private readonly Simulator _simulator;
@@ -33,6 +32,7 @@ namespace Bomberjam
         {
             this._opts = opts;
 
+            this._rng = opts.Seed.HasValue ? new Random(opts.Seed.Value) : Constants.GlobalRng;
             this._botCommands = EnsureFourBotCommands(opts.Commands);
             this._simulator = new Simulator(opts.Configuration);
             this._processes = new Dictionary<string, BotProcess>(4);
@@ -114,7 +114,7 @@ namespace Bomberjam
                 var botCommand = this._botCommands[playerId];
 
                 // Delaying the execution of each process helps randomness to differ from one process to another
-                Thread.Sleep(Rng.Next(100, 200));
+                Thread.Sleep(this._rng.Next(100, 200));
                 var process = new BotProcess(botCommand);
                 this._processes[playerId.ToString(CultureInfo.InvariantCulture)] = process;
                 process.Start();
@@ -250,7 +250,7 @@ namespace Bomberjam
 
             using (var threadGroup = new ThreadGroup())
             {
-                this._playerIds.ShuffleInPlace();
+                this._playerIds.ShuffleInPlace(this._rng);
 
                 foreach (var (playerId, process) in this._processes)
                 {
