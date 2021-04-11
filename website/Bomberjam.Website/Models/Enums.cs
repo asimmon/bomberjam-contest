@@ -38,7 +38,9 @@ namespace Bomberjam.Website.Models
         User = 1,
         Bot = 2,
         Game = 3,
-        Task = 4
+        Task = 4,
+        Worker = 5,
+        Season = 6
     }
 
     public enum GameOrigin

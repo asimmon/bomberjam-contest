@@ -6,6 +6,8 @@ namespace Bomberjam.Website.Database
     public class DbGame : ITimestampable
     {
         public Guid Id { get; set; }
+        public int SeasonId { get; set; }
+        public DbSeason Season { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
         public GameOrigin Origin { get; set; }

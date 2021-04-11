@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -7,6 +8,7 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
+        private const int FirstSeasonId = 0;
         private const string TablePrefix = "App_";
 
         public BomberjamContext(DbContextOptions<BomberjamContext> options)
@@ -22,6 +24,8 @@ namespace Bomberjam.Website.Database
         public DbSet<DbGameUser> GameUsers { get; set; }
         public DbSet<DbQueuedTask> Tasks { get; set; }
         public DbSet<DbWorker> Workers { get; set; }
+        public DbSet<DbSeason> Seasons { get; set; }
+        public DbSet<DbSeasonSummary> SeasonSummaries { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -32,7 +36,6 @@ namespace Bomberjam.Website.Database
                 entityType.SetTableName(TablePrefix + entityType.GetTableName());
             }
 
-            // Indexes
             modelBuilder.Entity<DbGameUser>().HasKey(x => new { GameID = x.GameId, UserID = x.UserId });
 
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GithubId).IsUnique();
@@ -48,6 +51,7 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbGame>().HasIndex(x => x.Created);
             modelBuilder.Entity<DbGame>().HasIndex(x => x.Origin);
             modelBuilder.Entity<DbGame>().Property(x => x.Origin).HasConversion<int>();
+            modelBuilder.Entity<DbGame>().Property(x => x.SeasonId).HasDefaultValue(FirstSeasonId);
 
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Status);
             modelBuilder.Entity<DbQueuedTask>().HasIndex(x => x.Type);
@@ -57,8 +61,19 @@ namespace Bomberjam.Website.Database
 
             modelBuilder.Entity<DbWorker>().HasIndex(x => x.Created);
 
+            modelBuilder.Entity<DbSeasonSummary>().HasKey(x => new { UserId = x.UserId, SeasonId = x.SeasonId });
+
             // Foreign keys with specific behavior
             modelBuilder.Entity<DbGameUser>().HasOne(gu => gu.Bot).WithMany().OnDelete(DeleteBehavior.NoAction);
+
+            // Initial season
+            modelBuilder.Entity<DbSeason>().HasData(new DbSeason
+            {
+                Id = FirstSeasonId,
+                Created = DateTime.Parse("2021-03-01T00:00:00.0000000Z"),
+                Updated = DateTime.Parse("2021-03-01T00:00:00.0000000Z"),
+                Title = "S" + FirstSeasonId.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0')
+            });
         }
 
         private static void ChangeTrackerOnTracked(object sender, EntityTrackedEventArgs e)

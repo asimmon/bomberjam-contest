@@ -54,10 +54,28 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/user/{userId}")]
-        public async Task<IActionResult> UserDetails(Guid userId, int page = 1)
+        public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
         {
+            Season season;
+
+            if (seasonId.HasValue)
+            {
+                try
+                {
+                    season = await this.Repository.GetSeason(seasonId.Value);
+                }
+                catch (EntityNotFound)
+                {
+                    return this.RedirectToAction("UserDetails", new { userId = userId, page = 1 });
+                }
+            }
+            else
+            {
+                season = await this.Repository.GetCurrentSeason();
+            }
+
             var user = await this.Repository.GetUserById(userId);
-            var userGames = await this.Repository.GetPagedUserGames(userId, Math.Max(1, page));
+            var userGames = await this.Repository.GetPagedUserGames(userId, season.Id, Math.Max(1, page));
 
             return userGames.IsOutOfRange
                 ? this.RedirectToAction("UserDetails", new { userId = userId, page = 1 })

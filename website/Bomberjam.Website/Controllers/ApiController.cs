@@ -243,7 +243,8 @@ namespace Bomberjam.Website.Controllers
                         gameHistory = await this.ComputeNewUserPoints(gameHistory);
                     }
 
-                    var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin);
+                    var currentSeason = await this.Repository.GetCurrentSeason();
+                    var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin, currentSeason.Id);
 
                     if (gameResult.Origin == GameOrigin.RankedMatchmaking)
                     {

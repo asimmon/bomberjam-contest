@@ -37,10 +37,13 @@ namespace Bomberjam.Website.Database
         Task<IEnumerable<QueuedTask>> GetOrphanedTasks();
 
         Task<GameInfo> GetGame(Guid gameId);
-        Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);
-        Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin);
+        Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int seasonId, int page);
+        Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin, int seasonId);
 
         Task<IEnumerable<Worker>> GetWorkers(int max);
         Task<Worker> AddOrUpdateWorker(Guid id);
+
+        Task<Season> GetCurrentSeason();
+        Task<Season> GetSeason(int id);
     }
 }
