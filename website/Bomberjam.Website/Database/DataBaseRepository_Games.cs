@@ -68,7 +68,14 @@ namespace Bomberjam.Website.Database
             var pageIndex = page - 1;
             var skipCount = pageIndex * Constants.GamesPageSize;
 
-            var totalGamesCount = await this._dbContext.GameUsers.CountAsync(x => x.UserId == userId).ConfigureAwait(false);
+            var totalGamesCount = await this._dbContext.GameUsers
+                .Join(this._dbContext.Games, gameUser => gameUser.GameId, game => game.Id, (gameUser, game) => new
+                {
+                    UserId = gameUser.UserId,
+                    SeasonId = game.SeasonId
+                })
+                .CountAsync(x => x.UserId == userId && x.SeasonId == seasonId)
+                .ConfigureAwait(false);
 
             // First, find the n-queried games of this user, sorted by date
             var innerGamePageQuery = this._dbContext.GameUsers

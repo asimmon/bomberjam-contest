@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
-    [Migration("20210411151736_AddSeasons")]
+    [Migration("20210411223655_AddSeasons")]
     partial class AddSeasons
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -182,11 +182,12 @@ namespace Bomberjam.Website.Migrations
             modelBuilder.Entity("Bomberjam.Website.Database.DbSeason", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .UseIdentityColumn();
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("Created")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Finished")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")

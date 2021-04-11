@@ -18,11 +18,11 @@ namespace Bomberjam.Website.Migrations
                 name: "App_Seasons",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Created = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Updated = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Finished = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UserCount = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -36,8 +36,8 @@ namespace Bomberjam.Website.Migrations
                 {
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     SeasonId = table.Column<int>(type: "int", nullable: false),
-                    RankedGameCount = table.Column<int>(type: "int", nullable: false),
-                    GlobalRank = table.Column<int>(type: "int", nullable: false)
+                    GlobalRank = table.Column<int>(type: "int", nullable: false),
+                    RankedGameCount = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,8 +58,8 @@ namespace Bomberjam.Website.Migrations
 
             migrationBuilder.InsertData(
                 table: "App_Seasons",
-                columns: new[] { "Id", "Created", "Name", "Updated", "UserCount" },
-                values: new object[] { 1, new DateTime(2021, 2, 28, 19, 0, 0, 0, DateTimeKind.Local), "S01", new DateTime(2021, 2, 28, 19, 0, 0, 0, DateTimeKind.Local), null });
+                columns: new[] { "Id", "Created", "Finished", "Name", "Updated", "UserCount" },
+                values: new object[] { 1, new DateTime(2021, 2, 28, 19, 0, 0, 0, DateTimeKind.Local), null, "S01", new DateTime(2021, 2, 28, 19, 0, 0, 0, DateTimeKind.Local), null });
 
             migrationBuilder.CreateIndex(
                 name: "IX_App_Games_SeasonId",

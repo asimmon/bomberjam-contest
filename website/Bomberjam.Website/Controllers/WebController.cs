@@ -58,35 +58,49 @@ namespace Bomberjam.Website.Controllers
         public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
         {
             var user = await this.Repository.GetUserById(userId);
+            var currentSeason = await this.Repository.GetCurrentSeason();
 
-            Season season;
+            Season selectedSeason;
 
             if (seasonId.HasValue)
             {
                 try
                 {
-                    season = seasonId.Value > 0 ? await this.Repository.GetSeason(seasonId.Value) : null;
+                    if (seasonId.Value > 0)
+                    {
+                        selectedSeason = seasonId == currentSeason.Id ? currentSeason : await this.Repository.GetSeason(seasonId.Value);
+                    }
+                    else
+                    {
+                        selectedSeason = null;
+                    }
                 }
                 catch (EntityNotFound)
                 {
-                    season = null;
+                    selectedSeason = null;
                 }
 
-                if (season == null)
+                if (selectedSeason == null)
                 {
                     return this.RedirectToAction("UserDetails", new { userId = userId, page = 1 });
                 }
             }
             else
             {
-                season = await this.Repository.GetCurrentSeason();
+                selectedSeason = currentSeason;
             }
 
-            var userGames = await this.Repository.GetPagedUserGames(userId, season.Id, Math.Max(1, page));
+            var userGames = await this.Repository.GetPagedUserGames(userId, selectedSeason.Id, Math.Max(1, page));
+            var seasonSummaries = await this.Repository.GetSeasonSummaries(userId);
 
-            return userGames.IsOutOfRange
-                ? this.RedirectToAction("UserDetails", new { userId = userId, page = 1 })
-                : this.View(new UserDetails(user, userGames));
+            if (userGames.IsOutOfRange)
+            {
+                return selectedSeason.Id == currentSeason.Id
+                    ? this.RedirectToAction("UserDetails", new { userId = userId, page = 1 })
+                    : this.RedirectToAction("UserDetails", new { userId = userId, page = 1, season = selectedSeason.Id });
+            }
+
+            return this.View(new UserDetails(user, userGames, selectedSeason, currentSeason, seasonSummaries));
         }
 
         [HttpGet("~/learn")]

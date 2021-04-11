@@ -1,14 +1,14 @@
 using System;
 
-namespace Bomberjam.Website.Database
+namespace Bomberjam.Website.Models
 {
-    public class DbSeasonSummary
+    public class SeasonSummary
     {
         public Guid UserId { get; set; }
-        public DbUser User { get; set; }
         public int SeasonId { get; set; }
-        public DbSeason Season { get; set; }
+        public string SeasonName { get; set; }
         public int GlobalRank { get; set; }
+        public int UserCount { get; set; }
         public int RankedGameCount { get; set; }
     }
 }

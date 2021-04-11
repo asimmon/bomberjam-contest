@@ -29,6 +29,18 @@ namespace Bomberjam.Website.Controllers
             return this.View(viewModel);
         }
 
+        [HttpGet("start-new-season")]
+        public async Task<IActionResult> StartNewSeason()
+        {
+            using (var transaction = await this.Repository.CreateTransaction())
+            {
+                await this.Repository.StartNewSeason();
+                await transaction.CommitAsync();
+            }
+
+            return this.RedirectToAction("Index", "Admin");
+        }
+
         [HttpPost("start-game")]
         public async Task<IActionResult> StartGame(SelectableUser[] users)
         {
