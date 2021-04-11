@@ -8,7 +8,7 @@ namespace Bomberjam.Website.Database
 {
     public sealed class BomberjamContext : DbContext
     {
-        private const int FirstSeasonId = 0;
+        private const int FirstSeasonId = 1;
         private const string TablePrefix = "App_";
 
         public BomberjamContext(DbContextOptions<BomberjamContext> options)
@@ -72,7 +72,7 @@ namespace Bomberjam.Website.Database
                 Id = FirstSeasonId,
                 Created = DateTime.Parse("2021-03-01T00:00:00.0000000Z"),
                 Updated = DateTime.Parse("2021-03-01T00:00:00.0000000Z"),
-                Title = "S" + FirstSeasonId.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0')
+                Name = "S" + FirstSeasonId.ToString(CultureInfo.InvariantCulture).PadLeft(2, '0')
             });
         }
 

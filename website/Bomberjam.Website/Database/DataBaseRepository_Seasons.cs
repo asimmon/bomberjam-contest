@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Common;
@@ -27,12 +28,21 @@ namespace Bomberjam.Website.Database
             return MapSeason(dbSeason);
         }
 
+        public async Task<IEnumerable<Season>> GetSeasons()
+        {
+            return await this._dbContext.Seasons
+                .OrderBy(s => s.Id)
+                .Select(s => MapSeason(s))
+                .ToListAsync()
+                .ConfigureAwait(false);
+        }
+
         private static Season MapSeason(DbSeason dbSeason) => new Season
         {
             Id = dbSeason.Id,
             Created = dbSeason.Created,
             Updated = dbSeason.Updated,
-            Title = dbSeason.Title,
+            Name = dbSeason.Name,
             UserCount = dbSeason.UserCount
         };
     }

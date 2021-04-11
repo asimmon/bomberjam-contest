@@ -36,8 +36,9 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/leaderboard")]
         public async Task<IActionResult> Leaderboard()
         {
+            var currentSeason = await this.Repository.GetCurrentSeason();
             var rankedUsers = await this.Repository.GetRankedUsers();
-            return this.View(rankedUsers.ToList());
+            return this.View(new WebLeaderboardViewModel(currentSeason, rankedUsers));
         }
 
         [HttpGet("~/game/{gameId}")]
@@ -56,15 +57,22 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/user/{userId}")]
         public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
         {
+            var user = await this.Repository.GetUserById(userId);
+
             Season season;
 
             if (seasonId.HasValue)
             {
                 try
                 {
-                    season = await this.Repository.GetSeason(seasonId.Value);
+                    season = seasonId.Value > 0 ? await this.Repository.GetSeason(seasonId.Value) : null;
                 }
                 catch (EntityNotFound)
+                {
+                    season = null;
+                }
+
+                if (season == null)
                 {
                     return this.RedirectToAction("UserDetails", new { userId = userId, page = 1 });
                 }
@@ -74,7 +82,6 @@ namespace Bomberjam.Website.Controllers
                 season = await this.Repository.GetCurrentSeason();
             }
 
-            var user = await this.Repository.GetUserById(userId);
             var userGames = await this.Repository.GetPagedUserGames(userId, season.Id, Math.Max(1, page));
 
             return userGames.IsOutOfRange

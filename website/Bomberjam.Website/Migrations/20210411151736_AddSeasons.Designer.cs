@@ -4,14 +4,16 @@ using Bomberjam.Website.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
-    partial class BomberjamContextModelSnapshot : ModelSnapshot
+    [Migration("20210411151736_AddSeasons")]
+    partial class AddSeasons
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

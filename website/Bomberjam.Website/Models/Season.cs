@@ -7,7 +7,7 @@ namespace Bomberjam.Website.Models
         public int Id { get; set; }
         public DateTime Created { get; set; }
         public DateTime Updated { get; set; }
-        public string Title { get; set; }
+        public string Name { get; set; }
         public int? UserCount { get; set; }
     }
 }

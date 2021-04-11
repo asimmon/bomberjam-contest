@@ -45,5 +45,6 @@ namespace Bomberjam.Website.Database
 
         Task<Season> GetCurrentSeason();
         Task<Season> GetSeason(int id);
+        Task<IEnumerable<Season>> GetSeasons();
     }
 }

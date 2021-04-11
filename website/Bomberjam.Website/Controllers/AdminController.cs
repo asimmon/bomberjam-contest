@@ -67,8 +67,9 @@ namespace Bomberjam.Website.Controllers
         {
             var workers = await this.Repository.GetWorkers(10).ConfigureAwait(false);
             var users = await this.Repository.GetAllUsers().ConfigureAwait(false);
+            var seasons = await this.Repository.GetSeasons().ConfigureAwait(false);
 
-            return new AdminIndexViewModel(workers, users, errorMessage, successMessage);
+            return new AdminIndexViewModel(workers, seasons, users, errorMessage, successMessage);
         }
 
         private Task<AdminIndexViewModel> GetAdminIndexViewModel()

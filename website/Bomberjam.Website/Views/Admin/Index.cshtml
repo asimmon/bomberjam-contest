@@ -63,6 +63,38 @@
   </table>
 </div>
 
+<h2 class="mt-4">Seasons</h2>
+
+<div class="table-responsive">
+  <table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Created</th>
+      <th>Updated</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var season in Model.Seasons)
+    {
+      <tr>
+        <td>@season.Id</td>
+        <td>@season.Name</td>
+        <td><span title="@season.Created">@season.Created.RelativeTo(utcNow)</span></td>
+        <td><span title="@season.Updated">@season.Updated.RelativeTo(utcNow)</span></td>
+      </tr>
+    }
+    @if (Model.Seasons.Count == 0)
+    {
+      <tr>
+        <td colspan="4" class="text-center">There's nothing here</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+</div>
+
 <h2 class="mt-4">Users</h2>
 
 <div class="table-responsive">
