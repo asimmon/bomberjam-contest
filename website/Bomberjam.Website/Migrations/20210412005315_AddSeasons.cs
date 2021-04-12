@@ -62,6 +62,11 @@ namespace Bomberjam.Website.Migrations
                 values: new object[] { 1, new DateTime(2021, 2, 28, 19, 0, 0, 0, DateTimeKind.Local), null, "S01", new DateTime(2021, 2, 28, 19, 0, 0, 0, DateTimeKind.Local), null });
 
             migrationBuilder.CreateIndex(
+                name: "IX_App_Users_GlobalRank",
+                table: "App_Users",
+                column: "GlobalRank");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_App_Games_SeasonId",
                 table: "App_Games",
                 column: "SeasonId");
@@ -91,6 +96,10 @@ namespace Bomberjam.Website.Migrations
 
             migrationBuilder.DropTable(
                 name: "App_Seasons");
+
+            migrationBuilder.DropIndex(
+                name: "IX_App_Users_GlobalRank",
+                table: "App_Users");
 
             migrationBuilder.DropIndex(
                 name: "IX_App_Games_SeasonId",

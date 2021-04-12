@@ -105,7 +105,9 @@ namespace Bomberjam.Website.Database
                 user.Points = Constants.InitialPoints;
             }
 
-            await this.UpdateAllUserGlobalRanks().ConfigureAwait(false);
+            await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            await this.UpdateAllUserGlobalRanks(newSeasonId).ConfigureAwait(false);
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }

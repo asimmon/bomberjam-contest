@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Common;
@@ -92,8 +93,7 @@ namespace Bomberjam.Website.Database
         public async Task<ICollection<RankedUser>> GetRankedUsers()
         {
             return await this._dbContext.Users
-                .Where(u => this._dbContext.GameUsers.Any(gu => gu.UserId == u.Id))
-                .OrderByDescending(u => u.Points)
+                .OrderBy(u => u.GlobalRank)
                 .ThenBy(u => u.Created)
                 .Select(u => MapRankedUser(u))
                 .ToListAsync()
@@ -145,16 +145,39 @@ namespace Bomberjam.Website.Database
 
         public async Task UpdateAllUserGlobalRanks()
         {
+            var currentSeason = await this.GetCurrentSeason().ConfigureAwait(false);
+            await this.UpdateAllUserGlobalRanks(currentSeason.Id).ConfigureAwait(false);
+        }
+
+        public async Task UpdateAllUserGlobalRanks(int seasonId)
+        {
             // There's no batch update in EF Core so this will be faster and more efficient
-            const string updateAllUserRank =
-@"WITH [tmp] AS
+            const string updateAllUserRankFormat =
+@"WITH [TmpGameUsers] AS
 (
-  SELECT [Id], [GlobalRank], ROW_NUMBER() OVER (ORDER BY [Points] DESC, [Created] ASC) AS [NewGlobalRank]
-  FROM [dbo].[App_Users]
+    SELECT gu.[UserId], gu.[GameId]
+    FROM [dbo].[App_GameUsers] gu
+    INNER JOIN [dbo].[App_Games] g ON g.[Id] = gu.[GameId]
+    WHERE g.[SeasonId] = {0}
+),
+[TmpUsers] AS
+(
+    SELECT
+        [Id], [GlobalRank], [Points], [Created], CASE
+            WHEN EXISTS (SELECT 1 FROM [TmpGameUsers] gu WHERE gu.[UserId] = u.Id) THEN 1
+            ELSE 0
+        END as [HasGames]
+    FROM [dbo].[App_Users] u
+),
+[RankedUsers] AS
+(
+    SELECT [Id], [GlobalRank], [HasGames], ROW_NUMBER() OVER (ORDER BY [HasGames] DESC, [Points] DESC, [Created] ASC) AS [NewGlobalRank]
+    FROM [TmpUsers]
 )
-UPDATE [tmp]
+UPDATE [RankedUsers]
 SET [GlobalRank] = [NewGlobalRank]";
 
+            var updateAllUserRank = string.Format(updateAllUserRankFormat, seasonId.ToString(CultureInfo.InvariantCulture));
             var modifiedUserCount = await this._dbContext.Database.ExecuteSqlRawAsync(updateAllUserRank);
             this._logger.LogInformation($"Updated the global rank of {modifiedUserCount} users");
         }

@@ -19,6 +19,7 @@ namespace Bomberjam.Website.Database
         Task<IEnumerable<User>> GetAllUsers();
         Task<bool> IsUserNameAlreadyUsed(string username);
         Task<bool> IsUserEmailAlreadyUsed(string email);
+        Task UpdateAllUserGlobalRanks(int seasonId);
         Task UpdateAllUserGlobalRanks();
 
         Task<IEnumerable<Bot>> GetBots(Guid userId, int? max = null);

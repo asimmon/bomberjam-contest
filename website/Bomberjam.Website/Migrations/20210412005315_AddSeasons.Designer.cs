@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
-    [Migration("20210411223655_AddSeasons")]
+    [Migration("20210412005315_AddSeasons")]
     partial class AddSeasons
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -271,6 +271,8 @@ namespace Bomberjam.Website.Migrations
 
                     b.HasIndex("GithubId")
                         .IsUnique();
+
+                    b.HasIndex("GlobalRank");
 
                     b.HasIndex("Points");
 

@@ -270,6 +270,8 @@ namespace Bomberjam.Website.Migrations
                     b.HasIndex("GithubId")
                         .IsUnique();
 
+                    b.HasIndex("GlobalRank");
+
                     b.HasIndex("Points");
 
                     b.HasIndex("UserName")
