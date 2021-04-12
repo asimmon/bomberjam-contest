@@ -71,8 +71,8 @@
     <tr>
       <th>ID</th>
       <th>Title</th>
-      <th>Created</th>
-      <th>Updated</th>
+      <th>Started</th>
+      <th>Finished</th>
     </tr>
     </thead>
     <tbody>
@@ -82,7 +82,16 @@
         <td>@season.Id</td>
         <td>@season.Name</td>
         <td><span title="@season.Created">@season.Created.RelativeTo(utcNow)</span></td>
-        <td><span title="@season.Updated">@season.Updated.RelativeTo(utcNow)</span></td>
+        <td>
+          @if (season.Finished.HasValue)
+          {
+            <span title="@season.Finished.Value">@season.Finished.Value.RelativeTo(utcNow)</span>
+          }
+          else
+          {
+            <text>ongoing</text>
+          }
+        </td>
       </tr>
     }
     @if (Model.Seasons.Count == 0)

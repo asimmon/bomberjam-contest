@@ -60,14 +60,14 @@ namespace Bomberjam.Website.Database
                 throw new InvalidOperationException("There must be a current season to end");
 
             var seasonSummariesQuery =
-                from g in this._dbContext.Games
-                where g.SeasonId == oldSeason.Id
-                where g.Origin == GameOrigin.RankedMatchmaking
-                join gu in this._dbContext.GameUsers on g.Id equals gu.GameId into join1
-                from gu in join1
-                join u in this._dbContext.Users on gu.UserId equals u.Id into join2
-                from u in join2.DefaultIfEmpty()
-                group u by new { UserId = u.Id, GlobalRank = u.GlobalRank }
+                from u in this._dbContext.Users
+                join gu1 in this._dbContext.GameUsers on u.Id equals gu1.UserId into join1
+                from gu2 in join1.DefaultIfEmpty()
+                join g1 in this._dbContext.Games on
+                    new { GameId = gu2.GameId, SeasonId = oldSeason.Id, Origin = GameOrigin.RankedMatchmaking } equals
+                    new { GameId = g1.Id, SeasonId = g1.SeasonId, Origin = g1.Origin } into join2
+                from g2 in join2.DefaultIfEmpty()
+                group g2 by new { UserId = u.Id, GlobalRank = u.GlobalRank }
                 into grouped
                 select new
                 {
