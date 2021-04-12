@@ -36,8 +36,9 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/leaderboard")]
         public async Task<IActionResult> Leaderboard()
         {
+            var currentSeason = await this.Repository.GetCurrentSeason();
             var rankedUsers = await this.Repository.GetRankedUsers();
-            return this.View(rankedUsers.ToList());
+            return this.View(new WebLeaderboardViewModel(currentSeason, rankedUsers));
         }
 
         [HttpGet("~/game/{gameId}")]
@@ -54,14 +55,52 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/user/{userId}")]
-        public async Task<IActionResult> UserDetails(Guid userId, int page = 1)
+        public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
         {
             var user = await this.Repository.GetUserById(userId);
-            var userGames = await this.Repository.GetPagedUserGames(userId, Math.Max(1, page));
+            var currentSeason = await this.Repository.GetCurrentSeason();
 
-            return userGames.IsOutOfRange
-                ? this.RedirectToAction("UserDetails", new { userId = userId, page = 1 })
-                : this.View(new UserDetails(user, userGames));
+            Season selectedSeason;
+
+            if (seasonId.HasValue)
+            {
+                try
+                {
+                    if (seasonId.Value > 0)
+                    {
+                        selectedSeason = seasonId == currentSeason.Id ? currentSeason : await this.Repository.GetSeason(seasonId.Value);
+                    }
+                    else
+                    {
+                        selectedSeason = null;
+                    }
+                }
+                catch (EntityNotFound)
+                {
+                    selectedSeason = null;
+                }
+
+                if (selectedSeason == null)
+                {
+                    return this.RedirectToAction("UserDetails", new { userId = userId, page = 1 });
+                }
+            }
+            else
+            {
+                selectedSeason = currentSeason;
+            }
+
+            var userGames = await this.Repository.GetPagedUserGames(userId, selectedSeason.Id, Math.Max(1, page));
+            var seasonSummaries = await this.Repository.GetSeasonSummaries(userId);
+
+            if (userGames.IsOutOfRange)
+            {
+                return selectedSeason.Id == currentSeason.Id
+                    ? this.RedirectToAction("UserDetails", new { userId = userId, page = 1 })
+                    : this.RedirectToAction("UserDetails", new { userId = userId, page = 1, season = selectedSeason.Id });
+            }
+
+            return this.View(new UserDetails(user, userGames, selectedSeason, currentSeason, seasonSummaries));
         }
 
         [HttpGet("~/learn")]

@@ -63,14 +63,55 @@
   </table>
 </div>
 
+<h2 class="mt-4">Seasons</h2>
+
+<div class="table-responsive">
+  <table class="table table-sm table-bordered table-striped">
+    <thead>
+    <tr>
+      <th>ID</th>
+      <th>Title</th>
+      <th>Started</th>
+      <th>Finished</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var season in Model.Seasons)
+    {
+      <tr>
+        <td>@season.Id</td>
+        <td>@season.Name</td>
+        <td><span title="@season.Created">@season.Created.RelativeTo(utcNow)</span></td>
+        <td>
+          @if (season.Finished.HasValue)
+          {
+            <span title="@season.Finished.Value">@season.Finished.Value.RelativeTo(utcNow)</span>
+          }
+          else
+          {
+            <text>ongoing</text>
+          }
+        </td>
+      </tr>
+    }
+    @if (Model.Seasons.Count == 0)
+    {
+      <tr>
+        <td colspan="4" class="text-center">There's nothing here</td>
+      </tr>
+    }
+    </tbody>
+  </table>
+
+  <div class="text-right">
+    <a class="btn btn-primary btn-confirm" asp-controller="Admin" asp-action="StartNewSeason">Start a new season</a>
+  </div>
+</div>
+
 <h2 class="mt-4">Users</h2>
 
 <div class="table-responsive">
   <form asp-controller="Admin" asp-action="StartGame" method="post">
-    <div class="text-right">
-      <button class="btn btn-success" type="submit">Start a non-ranked game with the selected users</button>
-    </div>
-
     <table class="table table-sm table-bordered table-striped admin-users mt-2">
       <thead>
       <tr>
@@ -119,5 +160,9 @@
       }
       </tbody>
     </table>
+
+    <div class="text-right">
+      <button class="btn btn-primary btn-confirm" type="submit">Start a non-ranked game with the selected users</button>
+    </div>
   </form>
 </div>

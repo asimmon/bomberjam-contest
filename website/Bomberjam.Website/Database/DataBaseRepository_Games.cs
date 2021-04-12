@@ -63,12 +63,19 @@ namespace Bomberjam.Website.Database
             return groupedGame;
         }
 
-        public async Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page)
+        public async Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int seasonId, int page)
         {
             var pageIndex = page - 1;
             var skipCount = pageIndex * Constants.GamesPageSize;
 
-            var totalGamesCount = await this._dbContext.GameUsers.CountAsync(x => x.UserId == userId).ConfigureAwait(false);
+            var totalGamesCount = await this._dbContext.GameUsers
+                .Join(this._dbContext.Games, gameUser => gameUser.GameId, game => game.Id, (gameUser, game) => new
+                {
+                    UserId = gameUser.UserId,
+                    SeasonId = game.SeasonId
+                })
+                .CountAsync(x => x.UserId == userId && x.SeasonId == seasonId)
+                .ConfigureAwait(false);
 
             // First, find the n-queried games of this user, sorted by date
             var innerGamePageQuery = this._dbContext.GameUsers
@@ -77,8 +84,10 @@ namespace Bomberjam.Website.Database
                 {
                     GameId = game.Id,
                     GameCreated = game.Created,
-                    GameOrigin = game.Origin
+                    GameOrigin = game.Origin,
+                    GameSeasonId = game.SeasonId
                 })
+                .Where(x => x.GameSeasonId == seasonId)
                 .OrderByDescending(x => x.GameCreated)
                 .Skip(skipCount)
                 .Take(Constants.GamesPageSize);
@@ -125,7 +134,7 @@ namespace Bomberjam.Website.Database
             return new PaginationModel<GameInfo>(gamePage, totalGamesCount, page, Constants.GamesPageSize);
         }
 
-        public async Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin)
+        public async Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin, int seasonId)
         {
             var dbGame = new DbGame();
 
@@ -135,6 +144,7 @@ namespace Bomberjam.Website.Database
             dbGame.Stdout = gameSummary.StandardOutput;
             dbGame.Stderr = gameSummary.StandardError;
             dbGame.Origin = origin;
+            dbGame.SeasonId = seasonId;
 
             this._dbContext.Games.Add(dbGame);
 

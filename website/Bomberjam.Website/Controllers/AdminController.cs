@@ -29,6 +29,18 @@ namespace Bomberjam.Website.Controllers
             return this.View(viewModel);
         }
 
+        [HttpGet("start-new-season")]
+        public async Task<IActionResult> StartNewSeason()
+        {
+            using (var transaction = await this.Repository.CreateTransaction())
+            {
+                await this.Repository.StartNewSeason();
+                await transaction.CommitAsync();
+            }
+
+            return this.RedirectToAction("Index", "Admin");
+        }
+
         [HttpPost("start-game")]
         public async Task<IActionResult> StartGame(SelectableUser[] users)
         {
@@ -67,8 +79,9 @@ namespace Bomberjam.Website.Controllers
         {
             var workers = await this.Repository.GetWorkers(10).ConfigureAwait(false);
             var users = await this.Repository.GetAllUsers().ConfigureAwait(false);
+            var seasons = await this.Repository.GetSeasons().ConfigureAwait(false);
 
-            return new AdminIndexViewModel(workers, users, errorMessage, successMessage);
+            return new AdminIndexViewModel(workers, seasons, users, errorMessage, successMessage);
         }
 
         private Task<AdminIndexViewModel> GetAdminIndexViewModel()

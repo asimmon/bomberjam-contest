@@ -85,4 +85,14 @@ onDocumentReady(() => {
 
   // Syntax highlighting
   handleHighlighting();
+
+  // Adding confirmation alerts on buttons
+  document.addEventListener('click', evt => {
+    const el = evt.target as HTMLElement;
+    if (el && (el.tagName === 'A' || el.tagName === 'BUTTON') && el.classList.contains('btn-confirm')) {
+      if (!window.confirm('Are you sure?')) {
+        evt.preventDefault();
+      }
+    }
+  });
 });

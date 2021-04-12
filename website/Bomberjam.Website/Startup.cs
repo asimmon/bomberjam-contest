@@ -94,9 +94,16 @@ namespace Bomberjam.Website
 
         private IBomberjamStorage ConfigureBotStorage()
         {
-            return this.Configuration.GetConnectionString("BomberjamStorage") is { Length: > 0 } storageConnStr
-                ? new AzureStorageBomberjamStorage(storageConnStr)
-                : new LocalFileBomberjamStorage(Path.GetTempPath());
+            /*
+            var storages = new IBomberjamStorage[]
+            {
+                new LocalFileBomberjamStorage(Path.GetTempPath()),
+                new AzureStorageBomberjamStorage(this.Configuration.GetConnectionString("BomberjamStorage"))
+            };
+
+            return new CompositeBomberjamStorage(storages);
+            //*/
+            return new AzureStorageBomberjamStorage(this.Configuration.GetConnectionString("BomberjamStorage"));
         }
 
         private void ConfigureAuthentication(IServiceCollection services)

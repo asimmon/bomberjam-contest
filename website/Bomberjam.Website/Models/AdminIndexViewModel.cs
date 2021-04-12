@@ -5,15 +5,18 @@ namespace Bomberjam.Website.Models
 {
     public class AdminIndexViewModel
     {
-        public AdminIndexViewModel(IEnumerable<Worker> workers, IEnumerable<User> users, string errorMessage, string successMessage)
+        public AdminIndexViewModel(IEnumerable<Worker> workers, IEnumerable<Season> seasons, IEnumerable<User> users, string errorMessage, string successMessage)
         {
             this.Workers = workers.ToList();
+            this.Seasons = seasons.ToList();
             this.Users = users.ToList();
             this.ErrorMessage = errorMessage;
             this.SuccessMessage = successMessage;
         }
 
         public IReadOnlyList<Worker> Workers { get; }
+
+        public IReadOnlyList<Season> Seasons { get; }
 
         public IReadOnlyList<User> Users { get; }
 

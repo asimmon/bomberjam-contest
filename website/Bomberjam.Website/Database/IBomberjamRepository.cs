@@ -19,6 +19,7 @@ namespace Bomberjam.Website.Database
         Task<IEnumerable<User>> GetAllUsers();
         Task<bool> IsUserNameAlreadyUsed(string username);
         Task<bool> IsUserEmailAlreadyUsed(string email);
+        Task UpdateAllUserGlobalRanks(int seasonId);
         Task UpdateAllUserGlobalRanks();
 
         Task<IEnumerable<Bot>> GetBots(Guid userId, int? max = null);
@@ -37,10 +38,16 @@ namespace Bomberjam.Website.Database
         Task<IEnumerable<QueuedTask>> GetOrphanedTasks();
 
         Task<GameInfo> GetGame(Guid gameId);
-        Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int page);
-        Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin);
+        Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int seasonId, int page);
+        Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin, int seasonId);
 
         Task<IEnumerable<Worker>> GetWorkers(int max);
         Task<Worker> AddOrUpdateWorker(Guid id);
+
+        Task<Season> GetCurrentSeason();
+        Task<Season> GetSeason(int id);
+        Task<IEnumerable<Season>> GetSeasons();
+        Task StartNewSeason();
+        Task<IEnumerable<SeasonSummary>> GetSeasonSummaries(Guid userId);
     }
 }

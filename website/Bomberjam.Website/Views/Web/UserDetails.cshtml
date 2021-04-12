@@ -6,17 +6,50 @@
 }
 
 <div class="row">
-  <div class="col-md-3">
+  <div class="col-md-4">
     <img src="https://avatars.githubusercontent.com/u/@Model.User.GithubId" class="img-fluid rounded" alt="@Model.User.UserName"/>
     <h1 style="word-break: break-all">@Model.User.UserName</h1>
     <p>
-      Rank <strong>#@Model.User.GlobalRank</strong><br/>
-      <span format-points="@Model.User.Points"></span> points
+      Rank <a asp-controller="Web" asp-action="Leaderboard"><strong>#@Model.User.GlobalRank</strong></a> with <span format-points="@Model.User.Points"></span> points
     </p>
+
+    <h2 class="h3 mt-4">Seasons</h2>
+
+    <div class="table-responsive">
+      <table class="table table-sm table-bordered table-striped">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Final rank</th>
+          <th>Ranked games</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+          <td>
+            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id">@Model.CurrentSeason.Name</a>
+          </td>
+          <td colspan="2" class="text-center"><em>(ongoing)</em></td>
+        </tr>
+        @foreach (var season in Model.SeasonSummaries)
+        {
+          <tr>
+            <td>
+              <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id" asp-route-season="@season.SeasonId">
+                @season.SeasonName
+              </a>
+            </td>
+            <td>@season.GlobalRank of @season.UserCount</td>
+            <td>@season.RankedGameCount</td>
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
   </div>
 
-  <div class="col-md-9">
-    <h3>@Model.Games.TotalCount games</h3>
+  <div class="col-md-8">
+    <h3>@Model.Games.TotalCount games in season @Model.SelectedSeason.Name</h3>
 
     <div class="table-responsive">
       <table class="table table-sm table-bordered table-striped">
@@ -86,7 +119,7 @@
               var pageIndex = i;
               var buttonClassName = Model.Games.CurrentPage == pageIndex ? "btn btn-primary" : "btn btn-outline-primary";
 
-              <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id" asp-route-page="@pageIndex" class="@buttonClassName">
+              <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id" asp-route-page="@pageIndex" asp-route-season="@Model.SelectedSeason.Id" class="@buttonClassName">
                 @pageIndex
               </a>
             }
