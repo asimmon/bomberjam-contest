@@ -11,6 +11,8 @@ namespace Bomberjam.Website.Database
     {
         private const string GetCurrentSeasonKeyFormat = "GetCurrentSeason";
         private const string GetSeasonsKeyFormat = "GetSeasons";
+        private const string GetRankedUsersKeyFormat = "GetRankedUsers";
+        private const string GetGameKeyFormat = "GetGame_{0}";
 
         private readonly IBomberjamRepository _underlyingRepository;
         private readonly IObjectCache _objectCache;
@@ -43,6 +45,7 @@ namespace Bomberjam.Website.Database
 
         public Task AddUser(int githubId, string email, string username)
         {
+            this._objectCache.Remove(GetRankedUsersKeyFormat);
             return this._underlyingRepository.AddUser(githubId, email, username);
         }
 
@@ -53,7 +56,10 @@ namespace Bomberjam.Website.Database
 
         public Task<ICollection<RankedUser>> GetRankedUsers()
         {
-            return this._underlyingRepository.GetRankedUsers();
+            return this._objectCache.GetOrSetAsync(GetRankedUsersKeyFormat, () =>
+            {
+                return this._underlyingRepository.GetRankedUsers();
+            });
         }
 
         public Task<IEnumerable<User>> GetAllUsers()
@@ -73,11 +79,13 @@ namespace Bomberjam.Website.Database
 
         public Task UpdateAllUserGlobalRanks(int seasonId)
         {
+            this._objectCache.Remove(GetRankedUsersKeyFormat);
             return this._underlyingRepository.UpdateAllUserGlobalRanks(seasonId);
         }
 
         public Task UpdateAllUserGlobalRanks()
         {
+            this._objectCache.Remove(GetRankedUsersKeyFormat);
             return this._underlyingRepository.UpdateAllUserGlobalRanks();
         }
 
@@ -148,7 +156,10 @@ namespace Bomberjam.Website.Database
 
         public Task<GameInfo> GetGame(Guid gameId)
         {
-            return this._underlyingRepository.GetGame(gameId);
+            return this._objectCache.GetOrSetAsync(string.Format(GetGameKeyFormat, gameId), () =>
+            {
+                return this._underlyingRepository.GetGame(gameId);
+            });
         }
 
         public Task<PaginationModel<GameInfo>> GetPagedUserGames(Guid userId, int seasonId, int page)
@@ -158,6 +169,7 @@ namespace Bomberjam.Website.Database
 
         public Task<Guid> AddGame(GameSummary gameSummary, GameOrigin origin, int seasonId)
         {
+            this._objectCache.Remove(GetRankedUsersKeyFormat);
             return this._underlyingRepository.AddGame(gameSummary, origin, seasonId);
         }
 
