@@ -103,7 +103,7 @@ namespace Bomberjam.Website
             /*
             var storages = new IBomberjamStorage[]
             {
-                new LocalFileBomberjamStorage(Path.GetTempPath()),
+                new LocalFileBomberjamStorage(System.IO.Path.GetTempPath()),
                 new AzureStorageBomberjamStorage(this.Configuration.GetConnectionString("BomberjamStorage"))
             };
 

@@ -18,7 +18,7 @@ namespace Bomberjam.Website.Controllers
     public class AccountController : BaseBomberjamController<AccountController>
     {
         private const int MaxBotUploadIn24h = 8;
-        private static readonly TimeSpan BotSubmitWaitDelay = TimeSpan.FromMinutes(15);
+        private static readonly TimeSpan BotSubmitWaitDelay = TimeSpan.FromMinutes(5);
 
         public AccountController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AccountController> logger)
             : base(repository, storage, logger)
