@@ -179,9 +179,9 @@ def run_game(game):
             process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
             try:
-                timeout_seconds = 10 * 60
+                game_timeout_seconds = 10 * 60
                 logging.debug("Reading process stdout and stderr")
-                out_bytes, err_bytes = process.communicate(timeout=timeout_seconds)
+                out_bytes, err_bytes = process.communicate(timeout=game_timeout_seconds)
                 game.game_stdout = out_bytes.decode('utf-8')
                 game.game_stderr = err_bytes.decode('utf-8')
             finally:
@@ -202,10 +202,17 @@ def run_game(game):
             # manually because the bot might have made files it owns
             for player_index, player in enumerate(game.players):
                 bot_user = "bot_%s" % player_index
-                util.rm_as_user(bot_user, temp_dir)
 
-                # The processes won't necessarily be automatically cleaned up, so let's do it ourselves
-                util.kill_processes_as(bot_user)
+                try:
+                    # The processes won't necessarily be automatically cleaned up, so let's do it ourselves
+                    util.kill_processes_as(bot_user)
+                except:
+                    pass
+
+                try:
+                    util.rm_as_user(bot_user, temp_dir)
+                except:
+                    pass
 
 
 def handle_game_task(game):

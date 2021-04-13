@@ -12,7 +12,7 @@ def get_env_or_default(key, default):
 
 def kill_processes_as(username, process_name=None):
     """Kill all processes of a given name belonging to a given user."""
-    cmd_args = ["sudo", "-H", "-u", username, "-s", "killall", "-9", "-u", username]
+    cmd_args = ["sudo", "-H", "-u", username, "-s", "pkill", "-9", "-u", username]
     if process_name is not None:
         cmd_args.append(process_name)
     subprocess.call(cmd_args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
