@@ -116,6 +116,7 @@
       <thead>
       <tr>
         <th style="width: 1%">&nbsp;</th>
+        <th style="width: 1%">&nbsp;</th>
         <th>User</th>
         <th>Created</th>
         <th>Updated</th>
@@ -142,6 +143,7 @@
                 <input type="checkbox" asp-for="@Model.Users[index].IsSelected" disabled/>
               }
             </td>
+            <td><img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="avatar-sm" alt=""/></td>
             <td>
               <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
             </td>
