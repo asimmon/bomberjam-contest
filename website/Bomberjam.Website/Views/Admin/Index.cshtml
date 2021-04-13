@@ -132,14 +132,14 @@
 
           <tr>
             <td>
+              <input type="hidden" asp-for="@Model.Users[index].Id"/>
               @if (user.CompiledBotCount > 0)
               {
-                <input type="checkbox" asp-for="Users[index].IsSelected"/>
-                <input type="hidden" asp-for="Users[index].Id"/>
+                <input type="checkbox" asp-for="@Model.Users[index].IsSelected"/>
               }
               else
               {
-                <input type="checkbox" disabled/>
+                <input type="checkbox" asp-for="@Model.Users[index].IsSelected" disabled/>
               }
             </td>
             <td>

@@ -114,7 +114,7 @@ namespace Bomberjam.Website.Database
                 from u in this._dbContext.Users
                 join b in this._dbContext.Bots on u.Id equals b.UserId into innerJoin
                 from leftJoin in innerJoin.DefaultIfEmpty()
-                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Email, u.Created, u.Updated }
+                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Email, u.Created, u.Updated, u.GlobalRank }
                 into grouped
                 orderby grouped.Key.Created descending
                 select new User
@@ -123,6 +123,7 @@ namespace Bomberjam.Website.Database
                     UserName = grouped.Key.UserName,
                     GithubId = grouped.Key.GithubId,
                     Points = grouped.Key.Points,
+                    GlobalRank = grouped.Key.GlobalRank,
                     Email = grouped.Key.Email,
                     Created = grouped.Key.Created,
                     Updated = grouped.Key.Updated,

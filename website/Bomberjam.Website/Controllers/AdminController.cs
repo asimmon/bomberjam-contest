@@ -42,6 +42,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpPost("start-game")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> StartGame(SelectableUser[] users)
         {
             var selectedUserIds = new HashSet<Guid>(users.Where(u => u.IsSelected).Select(u => u.Id));
@@ -81,7 +82,7 @@ namespace Bomberjam.Website.Controllers
             var users = await this.Repository.GetAllUsers().ConfigureAwait(false);
             var seasons = await this.Repository.GetSeasons().ConfigureAwait(false);
 
-            return new AdminIndexViewModel(workers, seasons, users, errorMessage, successMessage);
+            return new AdminIndexViewModel(workers, seasons, users.OrderBy(u => u.GlobalRank), errorMessage, successMessage);
         }
 
         private Task<AdminIndexViewModel> GetAdminIndexViewModel()

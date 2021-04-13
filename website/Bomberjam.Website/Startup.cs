@@ -1,4 +1,3 @@
-using System.IO;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
@@ -60,7 +59,14 @@ namespace Bomberjam.Website
 
             this.ConfigureDatabase(services, dbConnStr);
 
-            services.AddScoped<IBomberjamRepository, DatabaseRepository>();
+            services.AddSingleton<IObjectCache, ObjectCache>();
+            services.AddScoped<DatabaseRepository>();
+            services.AddScoped<IBomberjamRepository, CachedDatabaseRepository>(container =>
+            {
+                var repository = container.GetService<DatabaseRepository>();
+                var objectCache = container.GetService<IObjectCache>();
+                return new CachedDatabaseRepository(repository, objectCache);
+            });
 
             ConfigureHangfire(services, dbConnStr);
 
