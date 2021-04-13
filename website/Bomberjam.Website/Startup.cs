@@ -124,7 +124,6 @@ namespace Bomberjam.Website
                 {
                     options.ClientId = this.Configuration["GitHub:ClientId"];
                     options.ClientSecret = this.Configuration["GitHub:ClientSecret"];
-                    options.Scope.Add("user:email");
                     options.CallbackPath = "/signin-github-callback";
                 })
                 .AddSecret(this.Configuration["SecretAuth:Secret"]);

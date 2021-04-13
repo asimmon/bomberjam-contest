@@ -36,6 +36,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpPost("~/signin")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> SignIn([FromForm] string provider)
         {
             if (string.IsNullOrWhiteSpace(provider))
@@ -57,7 +58,7 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/signin-github")]
         public async Task<IActionResult> SignInGithub()
         {
-            if (this.TryGetNameIdentifierClaim(out var githubId) && this.TryGetClaim(ClaimTypes.Email, out var email))
+            if (this.TryGetNameIdentifierClaim(out var githubId))
             {
                 try
                 {
@@ -72,7 +73,7 @@ namespace Bomberjam.Website.Controllers
                         using (var transaction = await this.Repository.CreateTransaction())
                         {
                             var userName = await this.GetUniqueUserName();
-                            await this.Repository.AddUser(githubId, email, userName);
+                            await this.Repository.AddUser(githubId, userName);
                             await this.Repository.UpdateAllUserGlobalRanks();
                             await transaction.CommitAsync();
                         }

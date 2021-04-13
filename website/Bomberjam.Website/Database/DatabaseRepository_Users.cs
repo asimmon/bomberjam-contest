@@ -54,7 +54,6 @@ namespace Bomberjam.Website.Database
             Created = dbUser.Created,
             Updated = dbUser.Updated,
             GithubId = dbUser.GithubId,
-            Email = dbUser.Email,
             UserName = dbUser.UserName,
             Points = dbUser.Points,
             GlobalRank = dbUser.GlobalRank
@@ -62,12 +61,11 @@ namespace Bomberjam.Website.Database
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
 
-        public async Task AddUser(int githubId, string email, string username)
+        public async Task AddUser(int githubId, string username)
         {
             this._dbContext.Users.Add(new DbUser
             {
                 GithubId = githubId,
-                Email = email,
                 UserName = username ?? string.Empty,
                 Points = Constants.InitialPoints
             });
@@ -83,9 +81,6 @@ namespace Bomberjam.Website.Database
 
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
                 dbUser.UserName = changedUser.UserName;
-
-            if (!string.IsNullOrWhiteSpace(changedUser.Email))
-                dbUser.Email = changedUser.Email;
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -114,7 +109,7 @@ namespace Bomberjam.Website.Database
                 from u in this._dbContext.Users
                 join b in this._dbContext.Bots on u.Id equals b.UserId into innerJoin
                 from leftJoin in innerJoin.DefaultIfEmpty()
-                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Email, u.Created, u.Updated, u.GlobalRank }
+                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Created, u.Updated, u.GlobalRank }
                 into grouped
                 orderby grouped.Key.Created descending
                 select new User
@@ -124,7 +119,6 @@ namespace Bomberjam.Website.Database
                     GithubId = grouped.Key.GithubId,
                     Points = grouped.Key.Points,
                     GlobalRank = grouped.Key.GlobalRank,
-                    Email = grouped.Key.Email,
                     Created = grouped.Key.Created,
                     Updated = grouped.Key.Updated,
                     AllBotCount = grouped.Count(b => b != null),
@@ -137,11 +131,6 @@ namespace Bomberjam.Website.Database
         public Task<bool> IsUserNameAlreadyUsed(string username)
         {
             return this._dbContext.Users.AnyAsync(u => u.UserName == username);
-        }
-
-        public Task<bool> IsUserEmailAlreadyUsed(string email)
-        {
-            return this._dbContext.Users.AnyAsync(u => u.Email == email);
         }
 
         public async Task UpdateAllUserGlobalRanks()

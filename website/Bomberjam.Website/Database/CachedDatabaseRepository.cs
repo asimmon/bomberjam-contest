@@ -43,10 +43,10 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.GetUserById(id);
         }
 
-        public Task AddUser(int githubId, string email, string username)
+        public Task AddUser(int githubId, string username)
         {
             this._objectCache.Remove(GetRankedUsersKeyFormat);
-            return this._underlyingRepository.AddUser(githubId, email, username);
+            return this._underlyingRepository.AddUser(githubId, username);
         }
 
         public Task UpdateUser(User changedUser)
@@ -70,11 +70,6 @@ namespace Bomberjam.Website.Database
         public Task<bool> IsUserNameAlreadyUsed(string username)
         {
             return this._underlyingRepository.IsUserNameAlreadyUsed(username);
-        }
-
-        public Task<bool> IsUserEmailAlreadyUsed(string email)
-        {
-            return this._underlyingRepository.IsUserEmailAlreadyUsed(email);
         }
 
         public Task UpdateAllUserGlobalRanks(int seasonId)

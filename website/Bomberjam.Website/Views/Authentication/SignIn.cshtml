@@ -9,12 +9,18 @@
   <h1>Create or sign in to your account with GitHub</h1>
 
   @foreach (var scheme in Model.OrderBy(p => p.DisplayName))
-    {
-        <form asp-controller="Authentication" asp-action="SignIn" method="post">
-            <input type="hidden" name="Provider" value="@scheme.Name" />
-            <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl" />
+  {
+    <form asp-controller="Authentication" asp-action="SignIn" method="post">
+      <input type="hidden" name="Provider" value="@scheme.Name"/>
+      <input type="hidden" name="ReturnUrl" value="@ViewBag.ReturnUrl"/>
 
-            <button class="btn btn-lg btn-success m-1" type="submit">Sign in using @scheme.DisplayName</button>
-        </form>
-    }
+      <p class="lead mt-4">
+        We don't use or store your email address.
+      </p>
+
+      <p class="lead mt-4 mb-0">
+        <button class="btn btn-lg btn-success m-1" type="submit">Sign in with @scheme.DisplayName</button>
+      </p>
+    </form>
+  }
 </div>

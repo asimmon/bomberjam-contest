@@ -8,7 +8,6 @@ namespace Bomberjam.Website.Models
         public DateTime Updated { get; set; }
         public int GithubId { get; set; }
         public string UserName { get; set; }
-        public string Email { get; set; }
         public float Points { get; set; }
         public int GlobalRank { get; set; }
         public int AllBotCount { get; set; }

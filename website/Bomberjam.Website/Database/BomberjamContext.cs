@@ -39,7 +39,6 @@ namespace Bomberjam.Website.Database
             modelBuilder.Entity<DbGameUser>().HasKey(x => new { GameID = x.GameId, UserID = x.UserId });
 
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GithubId).IsUnique();
-            modelBuilder.Entity<DbUser>().HasIndex(x => x.Email).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.UserName).IsUnique();
             modelBuilder.Entity<DbUser>().HasIndex(x => x.GlobalRank);
             modelBuilder.Entity<DbUser>().HasIndex(x => x.Points);

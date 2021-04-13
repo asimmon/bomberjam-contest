@@ -13,12 +13,11 @@ namespace Bomberjam.Website.Database
         Task<IEnumerable<User>> GetUsersWithCompiledBot();
         Task<User> GetUserByGithubId(int githubId);
         Task<User> GetUserById(Guid id);
-        Task AddUser(int githubId, string email, string username);
+        Task AddUser(int githubId, string username);
         Task UpdateUser(User changedUser);
         Task<ICollection<RankedUser>> GetRankedUsers();
         Task<IEnumerable<User>> GetAllUsers();
         Task<bool> IsUserNameAlreadyUsed(string username);
-        Task<bool> IsUserEmailAlreadyUsed(string email);
         Task UpdateAllUserGlobalRanks(int seasonId);
         Task UpdateAllUserGlobalRanks();
 

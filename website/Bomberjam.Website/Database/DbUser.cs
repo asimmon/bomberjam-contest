@@ -16,9 +16,6 @@ namespace Bomberjam.Website.Database
         [MaxLength(32)]
         public string UserName { get; set; }
 
-        [MaxLength(128)]
-        public string Email { get; set; }
-
         public float Points { get; set; }
 
         public int GlobalRank { get; set; }
