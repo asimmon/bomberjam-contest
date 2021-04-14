@@ -101,6 +101,7 @@ namespace Bomberjam.Website
         private IBomberjamStorage ConfigureBotStorage()
         {
             /*
+#if DEBUG
             var storages = new IBomberjamStorage[]
             {
                 new LocalFileBomberjamStorage(System.IO.Path.GetTempPath()),
@@ -108,6 +109,7 @@ namespace Bomberjam.Website
             };
 
             return new CompositeBomberjamStorage(storages);
+#endif
             //*/
             return new AzureStorageBomberjamStorage(this.Configuration.GetConnectionString("BomberjamStorage"));
         }
