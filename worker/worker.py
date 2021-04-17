@@ -40,6 +40,8 @@ def handle_compile_task(bot_id):
     """Downloads and compiles a bot, then posts the compiled bot archive back through the API"""
     errors = []
 
+    util.rm_everything_owned_in_tmp_and_home_by("bot_compilation")
+
     with tempfile.TemporaryDirectory(dir=TEMP_DIR) as temp_dir:
         try:
             bot_path = backend.download_bot(bot_id, temp_dir, is_compiled=False)
@@ -116,6 +118,7 @@ def handle_compile_task(bot_id):
         finally:
             # Remove files as bot user (Python will clean up tempdir, but we don't necessarily have permissions to clean up files)
             util.rm_as_user("bot_compilation", temp_dir)
+            util.rm_everything_owned_in_tmp_and_home_by("bot_compilation")
 
 
 def setup_participant(player, temp_dir):
@@ -170,6 +173,9 @@ def run_game(game):
             os.chmod(temp_dir, 0o755)
 
             for player_index, player in enumerate(game.players):
+                bot_user = "bot_%s" % player_index
+                util.rm_everything_owned_in_tmp_and_home_by(bot_user)
+
                 bot_command, bot_dir = setup_participant(player, temp_dir)
                 command.append(bot_command)
                 player.bot_dir = bot_dir
@@ -211,6 +217,11 @@ def run_game(game):
 
                 try:
                     util.rm_as_user(bot_user, temp_dir)
+                except:
+                    pass
+
+                try:
+                    util.rm_everything_owned_in_tmp_and_home_by(bot_user)
                 except:
                     pass
 

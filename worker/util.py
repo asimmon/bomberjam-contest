@@ -30,10 +30,20 @@ def give_ownership(top_dir, dir_perms, group):
 
 def rm_as_user(user, directory):
     """Remove a directory tree as the specified user."""
-    subprocess.call(
-        ["sudo", "-H", "-u", user, "-s", "rm", "-rf", directory],
-        stderr=subprocess.DEVNULL,
-        stdout=subprocess.DEVNULL)
+    args = ["sudo", "-H", "-u", user, "-s", "rm", "-rf", directory]
+    subprocess.call(args, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+
+
+def rm_everything_owned_by(user, directory):
+    """Remove everything owned by the specified user excluding the directory itself."""
+    args = ["sudo", "-H", "-u", user, "-s", "find", directory, "-mindepth", "1", "-user", user, "-exec", "rm", "-rf", "{}", ";"]
+    subprocess.call(args, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+
+
+def rm_everything_owned_in_tmp_and_home_by(user):
+    """Remove everything owned by the specified user in /tmp and its /home/<user> directory, excluding these directories."""
+    rm_everything_owned_by(user, "/tmp/")
+    rm_everything_owned_by(user, "/home/%s/" % user)
 
 
 def setup_logging():

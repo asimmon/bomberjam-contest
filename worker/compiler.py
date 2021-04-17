@@ -251,8 +251,8 @@ setup(ext_modules = read_setup_file('setup_exts'), script_args = ['-q', 'build_e
 # Arrays of compiler commands to run for each language.
 comp_args = {
     "C#": [
-        ["dotnet", "restore"],
-        ["dotnet", "build", "--no-restore", "--nologo", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"]
+        ["DOTNET_CLI_TELEMETRY_OPTOUT=1", "DOTNET_NOLOGO=1", "dotnet", "restore"],
+        ["DOTNET_CLI_TELEMETRY_OPTOUT=1", "DOTNET_NOLOGO=1", "dotnet", "build", "--no-restore", "-c", "Release", "-o", "./__dist__/", "MyBot.csproj"]
     ],
     "Java": [
         ["javac", "-cp", "'.:*'", "-encoding", "UTF-8", "-J-Xmx%sm" % MEMORY_LIMIT]
@@ -277,7 +277,7 @@ languages = (
         "C#",
         BOT + ".csproj",
         f"./__dist__/{BOT}.dll",
-        lambda bot_dir: "dotnet ./__dist__/MyBot.dll",
+        lambda bot_dir: "DOTNET_CLI_TELEMETRY_OPTOUT=1 DOTNET_NOLOGO=1 dotnet ./__dist__/MyBot.dll",
         lambda bot_dir: "",
         [f"./__dist__/{BOT}.dll"],
         [
