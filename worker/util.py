@@ -40,10 +40,22 @@ def rm_everything_owned_by(user, directory):
     subprocess.call(args, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
 
+def restore_user_default_profile(user):
+    """Restore ~ default files: .profile, .bashrc and .bash_logout"""
+    home_dir = "/home/%s/" % user
+    args1 = ["sudo", "-H", "-u", user, "-s", "/bin/cp", "/etc/skel/.profile", home_dir]
+    args2 = ["sudo", "-H", "-u", user, "-s", "/bin/cp", "/etc/skel/.bashrc", home_dir]
+    args3 = ["sudo", "-H", "-u", user, "-s", "/bin/cp", "/etc/skel/.bash_logout", home_dir]
+    subprocess.call(args1, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    subprocess.call(args2, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    subprocess.call(args3, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+
+
 def rm_everything_owned_in_tmp_and_home_by(user):
     """Remove everything owned by the specified user in /tmp and its /home/<user> directory, excluding these directories."""
     rm_everything_owned_by(user, "/tmp/")
     rm_everything_owned_by(user, "/home/%s/" % user)
+    restore_user_default_profile(user)
 
 
 def setup_logging():
