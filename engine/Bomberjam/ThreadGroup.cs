@@ -35,7 +35,19 @@ namespace Bomberjam
                 this._watch.Start();
             }
 
-            var thread = new Thread(() => action(state, this._token))
+            void SafeAction(T s, CancellationToken t)
+            {
+                try
+                {
+                    action(s, t);
+                }
+                catch
+                {
+                    // ignored
+                }
+            }
+
+            var thread = new Thread(() => SafeAction(state, this._token))
             {
                 IsBackground = true
             };
@@ -88,25 +100,15 @@ namespace Bomberjam
 
         public void Dispose()
         {
+            if (!this._tokenSource.IsCancellationRequested)
+            {
+                this._tokenSource.Cancel();
+            }
+
             this._tokenSource.Dispose();
 
             if (!this._isCompleted)
             {
-                foreach (var thread in this._threads)
-                {
-                    try
-                    {
-                        if (thread.IsAlive)
-                        {
-                            thread.Interrupt();
-                        }
-                    }
-                    catch
-                    {
-                        // ignored
-                    }
-                }
-
                 this._threads.Clear();
             }
         }

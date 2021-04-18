@@ -216,7 +216,7 @@ namespace Bomberjam
             x.ProcessOutput[x.PlayerId] = playerName;
 
             this.Debug(x, "Sending player ID");
-            x.Process.WriteLine(x.PlayerId.ToString(CultureInfo.InvariantCulture));
+            x.Process.WriteLine(0, x.PlayerId.ToString(CultureInfo.InvariantCulture));
         }
 
         private static string GetDefaultPlayerName(string playerId)
@@ -330,7 +330,7 @@ namespace Bomberjam
         private void ExecuteTick(ThreadState x, CancellationToken threadGroupToken)
         {
             var watch = new Stopwatch();
-            x.Process.WriteLine(x.GameState.ToJson());
+            x.Process.WriteLine(x.GameState.Tick, x.GameState.ToJson());
 
             watch.Start();
             var action = x.Process.ReadLineForTick(x.GameState.Tick, threadGroupToken);
@@ -393,7 +393,7 @@ namespace Bomberjam
 
         private static void SendFinalState(ThreadState x, CancellationToken _)
         {
-            x.Process.WriteLine(x.GameState.ToJson());
+            x.Process.WriteLine(x.GameState.Tick, x.GameState.ToJson());
         }
 
         public void Dispose()
