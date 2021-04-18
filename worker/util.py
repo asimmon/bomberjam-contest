@@ -12,7 +12,7 @@ def get_env_or_default(key, default):
 
 def kill_processes_as(username, process_name=None):
     """Kill all processes of a given name belonging to a given user."""
-    cmd_args = ["sudo", "-H", "-u", username, "-s", "pkill", "-9", "-u", username]
+    cmd_args = ["sudo", "-H", "-u", username, "-s", "/bin/pkill", "-9", "-u", username]
     if process_name is not None:
         cmd_args.append(process_name)
     subprocess.call(cmd_args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -30,13 +30,13 @@ def give_ownership(top_dir, dir_perms, group):
 
 def rm_as_user(user, directory):
     """Remove a directory tree as the specified user."""
-    args = ["sudo", "-H", "-u", user, "-s", "rm", "-rf", directory]
+    args = ["sudo", "-H", "-u", user, "-s", "/bin/rm", "-rf", directory]
     subprocess.call(args, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
 
 def rm_everything_owned_by(user, directory):
     """Remove everything owned by the specified user excluding the directory itself."""
-    args = ["sudo", "-H", "-u", user, "-s", "find", directory, "-mindepth", "1", "-user", user, "-exec", "rm", "-rf", "{}", ";"]
+    args = ["sudo", "-H", "-u", user, "-s", "/bin/find", directory, "-mindepth", "1", "-user", user, "-exec", "/bin/rm", "-rf", "{}", ";"]
     subprocess.call(args, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
 
