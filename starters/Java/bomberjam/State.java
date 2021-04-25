@@ -51,7 +51,7 @@ public class State {
         this.tick = tick;
     }
 
-    public Boolean getIsFinished() {
+    public Boolean isFinished() {
         return isFinished;
     }
 
@@ -107,7 +107,7 @@ public class State {
         this.suddenDeathCountdown = suddenDeathCountdown;
     }
 
-    public Boolean getIsSuddenDeathEnabled() {
+    public Boolean isSuddenDeathEnabled() {
         return isSuddenDeathEnabled;
     }
 
@@ -149,7 +149,7 @@ public class State {
 
     public Player findAlivePlayerAt(int x, int y) {
         for (Player p : this.players.values())
-            if (p.getIsAlive() && p.getX() == x && p.getY() == y)
+            if (p.isAlive() && p.getX() == x && p.getY() == y)
                 return p;
 
         return null;

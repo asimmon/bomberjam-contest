@@ -78,7 +78,7 @@ namespace MyBot
                         // Handle your exceptions per tick
                         logger.Error("Tick " + game.State.Tick + ", exception: " + ex.ToString());
                     }
-                } while (game.MyPlayer.IsAlive);
+                } while (game.MyPlayer.IsAlive && !game.State.IsFinished);
             }
         }
     }

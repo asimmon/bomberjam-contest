@@ -58,5 +58,5 @@ while True:
         # Handle your exceptions per tick
         logger.error('Tick ' + str(game.state.tick) + ', exception: ' + str(ex))
 
-    if not game.my_player.is_alive:
+    if not game.my_player.is_alive or game.state.is_finished:
         break
