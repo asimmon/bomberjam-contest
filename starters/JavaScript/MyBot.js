@@ -71,7 +71,7 @@ const main = async () => {
       // Handle your exceptions per tick
       logger.error('Tick ' + game.state.tick + ', exception: ' + err.toString());
     }
-  } while (game.myPlayer.isAlive);
+  } while (game.myPlayer.isAlive && !game.state.isFinished);
 };
 
 main().catch(console.err).finally(() => {

@@ -106,7 +106,7 @@ public class Player {
         this.bombRange = bombRange;
     }
 
-    public Boolean getIsAlive() {
+    public Boolean isAlive() {
         return isAlive;
     }
 

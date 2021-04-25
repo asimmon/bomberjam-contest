@@ -117,6 +117,7 @@ def handle_compile_task(bot_id):
             backend.send_compilation_result(bot_id, False, language, "\n".join(errors))
         finally:
             # Remove files as bot user (Python will clean up tempdir, but we don't necessarily have permissions to clean up files)
+            util.chmod_recursive("bot_compilation", temp_dir, "755")
             util.rm_as_user("bot_compilation", temp_dir)
             util.rm_everything_owned_in_tmp_and_home_by("bot_compilation")
 

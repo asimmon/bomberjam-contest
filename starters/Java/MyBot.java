@@ -74,7 +74,7 @@ public class MyBot {
                     // Handle your exceptions per tick
                     logger.error("Tick " + game.getState().getTick() + ", exception: " + ex.toString());
                 }
-            } while (game.getMyPlayer().getIsAlive());
+            } while (game.getMyPlayer().isAlive() && !game.getState().isFinished());
         }
     }
 }

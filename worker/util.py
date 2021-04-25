@@ -51,10 +51,23 @@ def restore_user_default_profile(user):
     subprocess.call(args3, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
 
 
+def chmod_recursive(user, directory, permissions):
+    try:
+        args = ["sudo", "-H", "-u", user, "-s", "/bin/find", directory, "-user", user, "-exec", "/bin/chmod", "-R", permissions, "{}", ";"]
+        subprocess.call(args, stderr=subprocess.DEVNULL, stdout=subprocess.DEVNULL)
+    except:
+        pass
+
+
 def rm_everything_owned_in_tmp_and_home_by(user):
     """Remove everything owned by the specified user in /tmp and its /home/<user> directory, excluding these directories."""
+    # Ensure that we can delete user-created files if they were set read-only
+    chmod_recursive(user, "/tmp/", "755")
+    chmod_recursive(user, "/home/%s/" % user, "755")
+
     rm_everything_owned_by(user, "/tmp/")
     rm_everything_owned_by(user, "/home/%s/" % user)
+
     restore_user_default_profile(user)
 
 

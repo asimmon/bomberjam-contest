@@ -215,7 +215,7 @@ class ErrorFilterCompiler(ExternalCompiler):
     def __init__(self, args, separate=False, out_files=[], out_ext=None, stdout_is_error=False, skip_stdout=0, filter_stdout=None, filter_stderr=None):
         ExternalCompiler.__init__(self, args, separate, out_files, out_ext)
         self.stdout_is_error = stdout_is_error
-        self.skip_stdout = skip_stdout;
+        self.skip_stdout = skip_stdout
         if filter_stdout is None:
             self.stdout_re = None
         else:
@@ -259,6 +259,9 @@ comp_args = {
     ],
     "Python": [
         ["python3", "-c", PYTHON_EXT_COMPILER]
+    ],
+    "Go": [
+        ["go", "build", "main"]
     ]
 }
 
@@ -314,6 +317,15 @@ languages = (
             (["*.py"], NoneCompiler("Python")),
             (["setup_exts"], ErrorFilterCompiler(comp_args["Python"][0], separate=True, filter_stderr='-Wstrict-prototypes'))
         ]
+    ),
+    Language(
+        "Go",
+        BOT + ".go",
+        BOT + ".go",
+        lambda bot_dir: "export GOPATH=\"$(pwd)/c8fa0edf210d4609bd88d75ae9e02b16\" && go run main",
+        lambda bot_dir: f"GOPATH={bot_dir}/c8fa0edf210d4609bd88d75ae9e02b16",
+        [],
+        [(["*.go"], NoneCompiler("Go"))]
     )
 )
 
