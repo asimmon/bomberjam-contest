@@ -65,6 +65,7 @@ func main() {
         // 4) Send your action
         action := allActions[rand.Intn(len(allActions))]
         game.SendAction(action)
+        logger.Info("Tick " + strconv.Itoa(game.State.Tick) + ", sent action: " + string(action))
     }
 }
 

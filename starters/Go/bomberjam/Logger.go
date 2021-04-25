@@ -23,7 +23,7 @@ func (l *Logger) Setup(filename string) error {
             return err
         }
         l.file = f
-        l.logger = log.New(f, "", log.Lshortfile|log.LstdFlags)
+        l.logger = log.New(f, "", log.Lmicroseconds)
     }
     return nil
 }
