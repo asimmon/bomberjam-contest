@@ -39,7 +39,7 @@ func main() {
 
         // 3) Analyze the current state and decide what to do
         for x := 0; x < game.State.Width; x++ {
-            for y := 0; y < game.State.Width; y++ {
+            for y := 0; y < game.State.Height; y++ {
                 if tile := game.State.GetTileAt(x, y); tile == bomberjam.TileBlock {
                     // TODO found a block to destroy
                 }
