@@ -1,0 +1,5 @@
+*.log
+*~
+
+bomberjam.exe
+replay.json
