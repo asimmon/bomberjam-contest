@@ -326,6 +326,15 @@ languages = (
         lambda bot_dir: f"GOPATH={bot_dir}/c8fa0edf210d4609bd88d75ae9e02b16",
         [],
         [(["*.go"], NoneCompiler("Go"))]
+    ),
+    Language(
+        "PHP",
+        BOT + ".php",
+        BOT + ".php",
+        lambda bot_dir: "php MyBot.php",
+        lambda bot_dir: "",
+        [],
+        [(["*.php"], NoneCompiler("PHP"))]
     )
 )
 

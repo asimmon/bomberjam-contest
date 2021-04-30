@@ -8,14 +8,15 @@ RUN echo iptables-persistent iptables-persistent/autosave_v4 boolean true | debc
     echo iptables-persistent iptables-persistent/autosave_v6 boolean true | debconf-set-selections && \
     apt-get update && \
     apt-get -y upgrade && \
-    DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl sudo systemd iptables-persistent cgroup-tools apt-transport-https dos2unix
+    DEBIAN_FRONTEND=noninteractive apt-get -y install wget curl sudo systemd iptables-persistent cgroup-tools apt-transport-https dos2unix software-properties-common
 
-## Python 3.8 with pip, Java 8, .NET Core 3.1, .NET Core 5.0, Node.js and Go 1.16.3
+## Python 3.8 with pip, Java 8, .NET Core 3.1, .NET Core 5.0, Node.js, Go 1.16.3 and PHP 8.0
 RUN wget https://packages.microsoft.com/config/ubuntu/20.04/packages-microsoft-prod.deb -O packages-microsoft-prod.deb && \
     dpkg -i packages-microsoft-prod.deb && \
-    curl -sL https://deb.nodesource.com/setup_12.x | bash -
+    curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    add-apt-repository ppa:ondrej/php
 
-RUN apt-get update && apt-get install -y python3 python3-pip openjdk-8-jdk dotnet-sdk-3.1 dotnet-sdk-5.0 nodejs && \
+RUN apt-get update && apt-get install -y python3 python3-pip openjdk-8-jdk dotnet-sdk-3.1 dotnet-sdk-5.0 nodejs php8.0 && \
     wget -c https://golang.org/dl/go1.16.3.linux-amd64.tar.gz -O - | sudo tar -xz -C /usr/local && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/skel/.profile && \
     echo 'export PATH=$PATH:/usr/local/go/bin' >> ~/.profile
