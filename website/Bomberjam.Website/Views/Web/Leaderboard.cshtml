@@ -29,9 +29,21 @@
         <tr>
           <td>@user.GlobalRank</td>
           <td>
-            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">@user.UserName</a>
+            <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
+              <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="avatar-sm" alt="@user.UserName"/>
+              @user.UserName
+            </a>
           </td>
-          <td><span format-points="@user.Points"></span></td>
+          <td>
+            @if (user.HasCompiledBot)
+            {
+              <span format-points="@user.Points"></span>
+            }
+            else
+            {
+              <abbr class="text-muted" title="Has not yet participated in a game"><span format-points="@user.Points"></span></abbr>
+            }
+          </td>
         </tr>
       }
     }

@@ -90,18 +90,18 @@ namespace Bomberjam.Website.Database
             return await this._dbContext.Users
                 .OrderBy(u => u.GlobalRank)
                 .ThenBy(u => u.Created)
-                .Select(u => MapRankedUser(u))
+                .Select(u => new RankedUser
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Points = u.Points,
+                    GlobalRank = u.GlobalRank,
+                    GithubId = u.GithubId,
+                    HasCompiledBot = this._dbContext.Bots.Any(b => b.UserId == u.Id && b.Status == CompilationStatus.CompilationSucceeded)
+                })
                 .ToListAsync()
                 .ConfigureAwait(false);
         }
-
-        private static RankedUser MapRankedUser(DbUser u) => new RankedUser
-        {
-            Id = u.Id,
-            UserName = u.UserName,
-            Points = u.Points,
-            GlobalRank = u.GlobalRank
-        };
 
         public async Task<IEnumerable<User>> GetAllUsers()
         {
