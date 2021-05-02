@@ -32,8 +32,8 @@ namespace Bomberjam
         {
             this._command = command;
 
-            var processFileName = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? "/bin/bash" : "cmd.exe";
-            var processArgs = RuntimeInformation.IsOSPlatform(OSPlatform.Linux) ? $"-c \"{command}\"" : $"/u /q /c \"{command}\"";
+            var processFileName = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? "cmd.exe" : "/bin/bash";
+            var processArgs = RuntimeInformation.IsOSPlatform(OSPlatform.Windows) ? $"/u /q /c \"{command}\"" : $"-c \"{command}\"";
 
             var processStartInfo = new ProcessStartInfo
             {
