@@ -59,7 +59,11 @@ namespace Bomberjam.Website.Database
 
         public async Task<Guid> AddBot(Guid userId)
         {
-            var latestbot = await this._dbContext.Bots.OrderByDescending(b => b.Created).FirstOrDefaultAsync();
+            var latestbot = await this._dbContext.Bots
+                .Where(b => b.UserId == userId)
+                .OrderByDescending(b => b.Created)
+                .FirstOrDefaultAsync()
+                .ConfigureAwait(false);
 
             var dbBot = new DbBot
             {
