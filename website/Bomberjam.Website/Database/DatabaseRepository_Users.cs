@@ -168,7 +168,7 @@ UPDATE [RankedUsers]
 SET [GlobalRank] = [NewGlobalRank]";
 
             var updateAllUserRank = string.Format(updateAllUserRankFormat, seasonId.ToString(CultureInfo.InvariantCulture));
-            var modifiedUserCount = await this._dbContext.Database.ExecuteSqlRawAsync(updateAllUserRank);
+            var modifiedUserCount = await this._dbContext.Database.ExecuteSqlRawAsync(updateAllUserRank).ConfigureAwait(false);
             this._logger.LogInformation($"Updated the global rank of {modifiedUserCount} users");
         }
     }
