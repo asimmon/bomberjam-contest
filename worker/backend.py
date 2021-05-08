@@ -12,6 +12,7 @@ API_BASE_URL = util.get_env_or_default('API_BASE_URL', 'https://localhost:5001/a
 API_AUTH_TOKEN = util.get_env_or_default('API_AUTH_TOKEN', 'yolo')
 API_VERIFY_SSL = util.get_env_or_default('API_VERIFY_SSL', '1') == '1'
 MAX_BOT_UPLOAD_SIZE = int(util.get_env_or_default('MAX_BOT_UPLOAD_SIZE', '104857600'))
+IS_POLLING_VERBOSE = str(util.get_env_or_default('IS_POLLING_VERBOSE', 'True')) == 'True'
 
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
@@ -115,7 +116,8 @@ def send_game_result(game):
 
 def get_next_task(worker_id):
     """Gets either a game run or a compile task from the API"""
-    logging.debug(f"Retrieving the next task to execute for worker {worker_id}...")
+    if IS_POLLING_VERBOSE:
+        logging.debug(f"Retrieving the next task to execute...")
 
     request_url = API_BASE_URL + 'task/next'
     request_headers = {

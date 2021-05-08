@@ -18,21 +18,8 @@ import compiler
 import util
 
 API_POLLING_INTERVAL = int(util.get_env_or_default('API_POLLING_INTERVAL', '60'))
-
 TEMP_DIR = os.getcwd()
-
 BOMBERJAM_EXEC_NAME = 'bomberjam'
-
-COMPILE_ERROR_MESSAGE = """
-Your bot caused unexpected behavior in our servers.
-For our reference, here is the trace of the error:
-"""
-
-UPLOAD_ERROR_MESSAGE = """
-We had some trouble uploading your bot.
-For our reference, here is the trace of the error:
-"""
-
 BOT_COMMAND = "cgexec -g cpu,memory,devices:{cgroup} sudo -Hiu {bot_user} bash -c 'cd \"{bot_dir}\" && ./{runfile}'"
 
 
@@ -90,7 +77,7 @@ def handle_compile_task(bot_id):
                 errors.extend(more_errors)
         except Exception as ex:
             language = "Other"
-            errors = [COMPILE_ERROR_MESSAGE + traceback.format_exc(), str(ex)] + errors
+            errors = ["Compilation error: " + traceback.format_exc(), str(ex)] + errors
             did_compile = False
 
         try:
@@ -113,7 +100,7 @@ def handle_compile_task(bot_id):
 
         except Exception as ex:
             logging.error("Bot did not upload", ex)
-            errors.append(UPLOAD_ERROR_MESSAGE + traceback.format_exc())
+            errors.append("Bot upload error: " + traceback.format_exc())
             backend.send_compilation_result(bot_id, False, language, "\n".join(errors))
         finally:
             # Remove files as bot user (Python will clean up tempdir, but we don't necessarily have permissions to clean up files)
