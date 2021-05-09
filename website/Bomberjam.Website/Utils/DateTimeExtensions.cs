@@ -21,7 +21,7 @@ namespace Bomberjam.Website.Utils
                 < 2 * Minute => "a minute ago",
                 < 45 * Minute => ts.Minutes + " minutes ago",
                 < 90 * Minute => "an hour ago",
-                < 24 * Hour => ts.Hours + " hours ago",
+                < 24 * Hour => Math.Max(2, ts.Hours) + " hours ago",
                 < 48 * Hour => "yesterday",
                 < 30 * Day => ts.Days + " days ago",
                 < 12 * Month => MonthsAgo(ts),
