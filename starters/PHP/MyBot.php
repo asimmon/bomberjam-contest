@@ -258,7 +258,7 @@ do {
 
 function getTypeOfObstacle($elementInPositionToEvaluate, $isABomb, $isAnOpponent)
 {
-	$typeOfObstacle = null;
+	$typeOfObstacle = null; 
 	//end of grid or obstacle
 	if(	$elementInPositionToEvaluate === Constants::TILE_OUT_OF_BOUNDS ){   //end grid
 		$typeOfObstacle = 1;
