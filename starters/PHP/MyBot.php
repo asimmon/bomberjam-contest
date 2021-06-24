@@ -87,7 +87,6 @@ do {
                 }
 				
 				$map[$x][$y] = $tile;
-				
             }
         }
 		
@@ -285,12 +284,17 @@ function runFromBomb($moveAvailable, $typeOfObstacle, $allActions, $allObstacles
 {
 	$obstacleDirections = array_keys($typeOfObstacle, $allObstacles["bomb"]);
 	
-
 	$bombDirection = $obstacleDirections[0];
 
+	//remove bomb direction from available directions
 	unset($moveAvailable[$bombDirection]);
+	
+	//sort direction from less step available to the most steps available
 	asort($moveAvailable);
+
+	//point to direction with more steps available
 	end($moveAvailable);
+	
 	$directionMove = key($moveAvailable);
 
 	//move away from bomb 
