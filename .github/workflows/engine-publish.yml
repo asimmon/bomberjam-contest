@@ -1,6 +1,7 @@
 name: Publish engine and starter kits
 
 on:
+  workflow_dispatch:
   push:
     branches: [ master ]
   pull_request:
