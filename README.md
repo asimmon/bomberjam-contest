@@ -1,6 +1,6 @@
 # Bomberjam
 
-Below are the required steps to run both the website and worker in a local Windows development environment. 
+Bomberjam is now live: https://bomberjam.anthonysimmon.com
 
 ## Website configuration
 
