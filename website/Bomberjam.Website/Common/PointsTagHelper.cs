@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Microsoft.AspNetCore.Razor.TagHelpers;
 
 namespace Bomberjam.Website.Common
@@ -22,12 +23,12 @@ namespace Bomberjam.Website.Common
             {
                 var absPoints = Math.Abs(this.FormatPoints);
                 var sign = this.FormatPoints >= 0 ? "+" : "-";
-                var content = sign + (absPoints / 30f).ToString("0.000");
+                var content = sign + (absPoints / 30f).ToString("0.000", CultureInfo.InvariantCulture);
                 output.Content.SetContent(content);
             }
             else
             {
-                var content = (this.FormatPoints / 30f).ToString("0.000");
+                var content = (this.FormatPoints / 30f).ToString("0.000", CultureInfo.InvariantCulture);
                 output.Content.SetContent(content);
             }
         }

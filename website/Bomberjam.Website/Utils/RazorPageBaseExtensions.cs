@@ -1,6 +1,9 @@
+using System.Linq;
 using Bomberjam.Website.Common;
+using Bomberjam.Website.Configuration;
 using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Bomberjam.Website.Utils
 {
@@ -31,8 +34,8 @@ namespace Bomberjam.Website.Utils
             if (!IsAuthenticated(page, out string githubId))
                 return false;
 
-            var gitHubConfiguration = page.ViewContext?.HttpContext?.RequestServices?.GetService<GitHubConfiguration>();
-            return gitHubConfiguration != null && gitHubConfiguration.AllowedGitHubIds.Contains(githubId);
+            var gitHubConfiguration = page.ViewContext?.HttpContext?.RequestServices?.GetRequiredService<IOptions<GitHubOptions>>();
+            return gitHubConfiguration != null && gitHubConfiguration.Value.Administrators.Contains(githubId);
         }
     }
 }

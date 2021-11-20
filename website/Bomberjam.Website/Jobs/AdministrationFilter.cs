@@ -1,9 +1,10 @@
 using System.Linq;
 using System.Security.Claims;
-using Bomberjam.Website.Common;
+using Bomberjam.Website.Configuration;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Bomberjam.Website.Jobs
 {
@@ -18,15 +19,15 @@ namespace Bomberjam.Website.Jobs
                 return;
             }
 
-            var githubConfiguration = context.HttpContext.RequestServices.GetRequiredService<GitHubConfiguration>();
-            if (githubConfiguration.AllowedGitHubIds.Count == 0)
+            var githubOptions = context.HttpContext.RequestServices.GetRequiredService<IOptions<GitHubOptions>>().Value;
+            if (githubOptions.Administrators.Length == 0)
             {
                 context.Result = new RedirectToActionResult("Index", "Web", new { });
                 return;
             }
 
             var nameIdentifierClaim = context.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            var isAdministrator = nameIdentifierClaim != null && githubConfiguration.AllowedGitHubIds.Contains(nameIdentifierClaim.Value);
+            var isAdministrator = nameIdentifierClaim != null && githubOptions.Administrators.Contains(nameIdentifierClaim.Value);
             if (!isAdministrator)
             {
                 context.Result = new RedirectToActionResult("Index", "Web", new { });

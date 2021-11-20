@@ -21,15 +21,12 @@ namespace Bomberjam.Website.Storage
 
         private void EnsureContainerCreated(string containerName)
         {
-            var blobService = new BlobServiceClient(this._connectionString);
-            var containerClient = blobService.GetBlobContainerClient(containerName);
-            containerClient.CreateIfNotExists();
+            this.CreateClient().GetBlobContainerClient(containerName).CreateIfNotExists();
         }
 
         protected override async Task UploadBot(Guid botId, Stream fileStream, bool isCompiled)
         {
-            var blobService = new BlobServiceClient(this._connectionString);
-            var containerClient = blobService.GetBlobContainerClient(BotsContainerName);
+            var containerClient = this.CreateClient().GetBlobContainerClient(BotsContainerName);
             var blobClient = containerClient.GetBlobClient(MakeBotFileName(botId, isCompiled));
 
             await using (fileStream)
@@ -40,16 +37,14 @@ namespace Bomberjam.Website.Storage
 
         protected override async Task DownloadBotTo(Guid botId, Stream destinationStream, bool isCompiled)
         {
-            var blobService = new BlobServiceClient(this._connectionString);
-            var containerClient = blobService.GetBlobContainerClient(BotsContainerName);
+            var containerClient = this.CreateClient().GetBlobContainerClient(BotsContainerName);
             var blobClient = containerClient.GetBlobClient(MakeBotFileName(botId, isCompiled));
             await blobClient.DownloadToAsync(destinationStream).ConfigureAwait(false);
         }
 
         public override async Task UploadGameResult(Guid botId, Stream fileStream)
         {
-            var blobService = new BlobServiceClient(this._connectionString);
-            var containerClient = blobService.GetBlobContainerClient(GamesContainerName);
+            var containerClient = this.CreateClient().GetBlobContainerClient(GamesContainerName);
             var blobClient = containerClient.GetBlobClient(MakeGameFileName(botId));
 
             await using (fileStream)
@@ -60,10 +55,11 @@ namespace Bomberjam.Website.Storage
 
         public override async Task DownloadGameResultTo(Guid botId, Stream destinationStream)
         {
-            var blobService = new BlobServiceClient(this._connectionString);
-            var containerClient = blobService.GetBlobContainerClient(GamesContainerName);
+            var containerClient = this.CreateClient().GetBlobContainerClient(GamesContainerName);
             var blobClient = containerClient.GetBlobClient(MakeGameFileName(botId));
             await blobClient.DownloadToAsync(destinationStream).ConfigureAwait(false);
         }
+
+        private BlobServiceClient CreateClient() => new BlobServiceClient(this._connectionString);
     }
 }

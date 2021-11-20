@@ -1,36 +1,37 @@
 using System;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Bomberjam.Website.Common;
+using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
+using Microsoft.Extensions.Options;
 
 namespace Bomberjam.Website.Controllers
 {
     public class WebController : BaseBomberjamController<WebController>
     {
-        private readonly GitHubConfiguration _github;
+        private readonly IOptions<GitHubOptions> _githubOptions;
 
-        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger, GitHubConfiguration github)
+        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger, IOptions<GitHubOptions> githubOptions)
             : base(repository, storage, logger)
         {
-            this._github = github;
+            this._githubOptions = githubOptions;
         }
 
         [HttpGet("~/")]
         public IActionResult Index()
         {
-            return this.View(new WebHomeViewModel { StarterKitsArtifactsUrl = this._github.StartKitsArtifactsUrl });
+            return this.View(new WebHomeViewModel { StarterKitDownloadUrl = this._githubOptions.Value.StarterKitDownloadUrl });
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return this.View(new ErrorModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return this.View(new ErrorModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
         }
 
         [HttpGet("~/leaderboard")]
@@ -54,7 +55,7 @@ namespace Bomberjam.Website.Controllers
             return this.View();
         }
 
-        [HttpGet("~/user/{userId}")]
+        [HttpGet("~/user/{userId:guid}")]
         public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
         {
             var user = await this.Repository.GetUserById(userId);

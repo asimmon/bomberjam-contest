@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
+using Bomberjam.Website.Configuration;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -18,7 +20,7 @@ namespace Bomberjam.Website.Authentication
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (this.Options.Secrets.Count == 0)
+            if (this.Options.Secret.Length == 0)
                 return Task.FromResult(AuthenticateResult.NoResult());
 
             if (!this.Request.Headers.TryGetValue(HeaderNames.Authorization, out var authorizationHeaderValues))
@@ -31,8 +33,8 @@ namespace Bomberjam.Website.Authentication
             if (!authorizationHeader.StartsWith(SecretAuthenticationDefaults.AuthenticationScheme, StringComparison.OrdinalIgnoreCase))
                 return Task.FromResult(AuthenticateResult.NoResult());
 
-            var secret = authorizationHeader.Substring(SecretAuthenticationDefaults.AuthenticationScheme.Length).TrimStart();
-            if (!this.Options.Secrets.Contains(secret))
+            var secret = authorizationHeader[SecretAuthenticationDefaults.AuthenticationScheme.Length..].TrimStart();
+            if (!string.Equals(this.Options.Secret, secret, StringComparison.Ordinal))
                 return Task.FromResult(AuthenticateResult.Fail("Invalid authentication secret"));
 
             var claims = new[]

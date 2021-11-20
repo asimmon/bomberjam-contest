@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Bomberjam.Website.Storage
@@ -10,11 +11,11 @@ namespace Bomberjam.Website.Storage
     {
         private readonly IReadOnlyList<IBomberjamStorage> _storages;
 
-        public CompositeBomberjamStorage(IReadOnlyList<IBomberjamStorage> storages)
+        public CompositeBomberjamStorage(params IBomberjamStorage[] storages)
         {
             Debug.Assert(storages != null);
-            Debug.Assert(storages.Count > 0);
-            this._storages = storages;
+            Debug.Assert(storages.Length > 0);
+            this._storages = storages.ToList();
         }
 
         private async Task Wrap(Func<IBomberjamStorage, Task> action)
