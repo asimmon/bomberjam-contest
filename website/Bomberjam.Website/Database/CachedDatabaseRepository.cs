@@ -33,7 +33,7 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.GetUsersWithCompiledBot();
         }
 
-        public Task<User> GetUserByGithubId(int githubId)
+        public Task<User> GetUserByGithubId(string githubId)
         {
             return this._underlyingRepository.GetUserByGithubId(githubId);
         }
@@ -43,7 +43,7 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.GetUserById(id);
         }
 
-        public Task AddUser(int githubId, string username)
+        public Task AddUser(string githubId, string username)
         {
             this._objectCache.Remove(GetRankedUsersKeyFormat);
             return this._underlyingRepository.AddUser(githubId, username);

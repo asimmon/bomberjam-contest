@@ -13,7 +13,7 @@
 
 @if (this.User.IsAuthenticated())
 {
-  var user = Model.Users.FirstOrDefault(u => u.GithubId == this.User.GetGithubId()!.Value);
+  var user = Model.Users.FirstOrDefault(u => u.GithubId == this.User.GetGithubId());
   if (user != null && !string.IsNullOrWhiteSpace(user.Errors))
   {
     <h3>Bot errors</h3>

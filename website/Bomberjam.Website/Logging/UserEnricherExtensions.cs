@@ -21,12 +21,8 @@ namespace Bomberjam.Website.Logging
                 yield return new PropertyEnricher(LogPropertyNames.UserId, userId.Value);
 
             var githubId = httpContext.User.GetGithubId();
-            if (githubId.HasValue)
-                yield return new PropertyEnricher(LogPropertyNames.GithubId, githubId.Value);
-
-            var githubUserName = httpContext.User.GetGithubUserName();
-            if (githubUserName != null)
-                yield return new PropertyEnricher(LogPropertyNames.GithubUsername, githubUserName);
+            if (githubId != null)
+                yield return new PropertyEnricher(LogPropertyNames.GithubId, githubId);
         }
     }
 }

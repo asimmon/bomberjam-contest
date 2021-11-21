@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Globalization;
 using System.Security.Claims;
 using Bomberjam.Website.Authentication;
 
@@ -24,11 +23,9 @@ namespace Bomberjam.Website.Utils
             return Guid.TryParse(userIdStr, out var userId) ? userId : null;
         }
 
-        public static int? GetGithubId(this ClaimsPrincipal principal)
+        public static string GetGithubId(this ClaimsPrincipal principal)
         {
-            if (!IsAuthenticated(principal)) return null;
-            var githubIdStr = principal.FindFirstValue(BomberjamClaimTypes.GithubId);
-            return int.TryParse(githubIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var githubId) ? githubId : null;
+            return IsAuthenticated(principal) ? principal.FindFirstValue(BomberjamClaimTypes.GithubId) ?? string.Empty : string.Empty;
         }
 
         public static string GetGithubUserName(this ClaimsPrincipal principal)

@@ -55,9 +55,9 @@ namespace Bomberjam.Website.Controllers
                 return this.SignOut();
 
             var githubUserName = authResult.Ticket.Principal.FindFirstValue(ClaimTypes.Name);
-            var githubIdStr = authResult.Ticket.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+            var githubId = authResult.Ticket.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
-            if (githubUserName == null || !int.TryParse(githubIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var githubId))
+            if (githubUserName == null || githubId == null)
                 return this.SignOut(errorUri);
 
             User user;
@@ -92,12 +92,12 @@ namespace Bomberjam.Website.Controllers
                 }
             }
 
-            var role = this._githubOptions.Value.Administrators.Contains(githubIdStr) ? BomberjamRoles.Admin : BomberjamRoles.User;
+            var role = this._githubOptions.Value.Administrators.Contains(githubId, StringComparer.Ordinal) ? BomberjamRoles.Admin : BomberjamRoles.User;
 
             var newClaims = new List<Claim>
             {
                 new Claim(BomberjamClaimTypes.UserId, user.Id.ToString("D")),
-                new Claim(BomberjamClaimTypes.GithubId, githubIdStr),
+                new Claim(BomberjamClaimTypes.GithubId, githubId),
                 new Claim(BomberjamClaimTypes.GithubUserName, githubUserName),
                 new Claim(BomberjamClaimTypes.Role, role),
             };

@@ -11,7 +11,8 @@ namespace Bomberjam.Website.Database
 
         public DateTime Updated { get; set; }
 
-        public int GithubId { get; set; }
+        [MaxLength(32)]
+        public string GithubId { get; set; }
 
         [MaxLength(32)]
         public string UserName { get; set; }

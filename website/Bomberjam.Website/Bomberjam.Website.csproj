@@ -40,11 +40,6 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <Compile Remove="Migrations\20211121040457_Initial.cs" />
-    <Compile Remove="Migrations\20211121040457_Initial.Designer.cs" />
-  </ItemGroup>
-
   <Target Name="DeleteNodeModulesDirectory" BeforeTargets="BuildFrontend" Condition=" '$(OS)' != 'Windows_NT' ">
     <RemoveDir Directories="$(ProjectDir)node_modules" />
   </Target>

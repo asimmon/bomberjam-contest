@@ -38,10 +38,10 @@ namespace Bomberjam.Website.Controllers
         protected Task<User> GetAuthenticatedUser()
         {
             var githubId = this.User.GetGithubId();
-            if (!githubId.HasValue)
+            if (githubId == null)
                 throw new Exception("Could not retrieve GitHub name identifier claim from authentication result");
 
-            return this.Repository.GetUserByGithubId(githubId.Value);
+            return this.Repository.GetUserByGithubId(githubId);
         }
         protected static string[] GetAllErrors(ModelStateDictionary modelState)
         {

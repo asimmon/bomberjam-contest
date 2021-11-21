@@ -30,7 +30,7 @@ namespace Bomberjam.Website.Database
                 .ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task<User> GetUserByGithubId(int githubId)
+        public async Task<User> GetUserByGithubId(string githubId)
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.GithubId == githubId).ConfigureAwait(false);
             if (dbUser == null)
@@ -61,7 +61,7 @@ namespace Bomberjam.Website.Database
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
 
-        public async Task AddUser(int githubId, string username)
+        public async Task AddUser(string githubId, string username)
         {
             this._dbContext.Users.Add(new DbUser
             {

@@ -11,9 +11,9 @@ namespace Bomberjam.Website.Database
         Task<ITransaction> CreateTransaction();
 
         Task<IEnumerable<User>> GetUsersWithCompiledBot();
-        Task<User> GetUserByGithubId(int githubId);
+        Task<User> GetUserByGithubId(string githubId);
         Task<User> GetUserById(Guid id);
-        Task AddUser(int githubId, string username);
+        Task AddUser(string githubId, string username);
         Task UpdateUser(User changedUser);
         Task<ICollection<RankedUser>> GetRankedUsers();
         Task<IEnumerable<User>> GetAllUsers();

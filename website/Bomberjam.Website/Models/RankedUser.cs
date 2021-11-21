@@ -8,7 +8,7 @@ namespace Bomberjam.Website.Models
         public string UserName { get; set; }
         public float Points { get; set; }
         public int GlobalRank { get; set; }
-        public int GithubId { get; set; }
+        public string GithubId { get; set; }
         public bool HasCompiledBot { get; set; }
     }
 }
