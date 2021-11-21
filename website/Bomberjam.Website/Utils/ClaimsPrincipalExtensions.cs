@@ -1,4 +1,7 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Globalization;
+using System.Security.Claims;
+using Bomberjam.Website.Authentication;
 
 namespace Bomberjam.Website.Utils
 {
@@ -9,35 +12,28 @@ namespace Bomberjam.Website.Utils
             return principal.Identity?.IsAuthenticated ?? false;
         }
 
-        public static bool TryGetGitHubUserName(this ClaimsPrincipal principal, out string githubUserName)
+        public static bool IsAdministrator(this ClaimsPrincipal principal)
         {
-            githubUserName = principal.FindFirstValue(ClaimTypes.Name);
-            return githubUserName != null;
+            return IsAuthenticated(principal) && principal.IsInRole(BomberjamRoles.Admin);
         }
 
-        public static bool TryGetGitHubId(this ClaimsPrincipal principal, out string githubId)
+        public static Guid? GetUserId(this ClaimsPrincipal principal)
         {
-            var githubIdStr = principal.FindFirstValue(ClaimTypes.NameIdentifier);
-            if (githubIdStr != null && int.TryParse(githubIdStr, out _))
-            {
-                githubId = githubIdStr;
-                return true;
-            }
-
-            githubId = null;
-            return false;
+            if (!IsAuthenticated(principal)) return null;
+            var userIdStr = principal.FindFirstValue(BomberjamClaimTypes.UserId);
+            return Guid.TryParse(userIdStr, out var userId) ? userId : null;
         }
 
-        public static bool TryGetGitHubId(this ClaimsPrincipal principal, out int githubId)
+        public static int? GetGithubId(this ClaimsPrincipal principal)
         {
-            if (TryGetGitHubId(principal, out string githubIdStr))
-            {
-                githubId = int.Parse(githubIdStr);
-                return true;
-            }
+            if (!IsAuthenticated(principal)) return null;
+            var githubIdStr = principal.FindFirstValue(BomberjamClaimTypes.GithubId);
+            return int.TryParse(githubIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var githubId) ? githubId : null;
+        }
 
-            githubId = -1;
-            return false;
+        public static string GetGithubUserName(this ClaimsPrincipal principal)
+        {
+            return IsAuthenticated(principal) ? principal.FindFirstValue(BomberjamClaimTypes.GithubUserName) ?? string.Empty : string.Empty;
         }
     }
 }

@@ -1,24 +1,38 @@
 using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.RegularExpressions;
 using AspNet.Security.OAuth.GitHub;
+using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Common;
+using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Bomberjam.Website.Utils;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Bomberjam.Website.Controllers
 {
     public class AuthenticationController : BaseBomberjamController<AuthenticationController>
     {
-        public AuthenticationController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AuthenticationController> logger)
+        private readonly IOptions<GitHubOptions> _githubOptions;
+
+        public AuthenticationController(
+            IBomberjamRepository repository,
+            IBomberjamStorage storage,
+            IOptions<GitHubOptions> githubOptions,
+            ILogger<AuthenticationController> logger)
             : base(repository, storage, logger)
         {
+            this._githubOptions = githubOptions;
         }
 
         [HttpGet("~/signin")]
@@ -40,15 +54,17 @@ namespace Bomberjam.Website.Controllers
             if (authResult.Ticket == null)
                 return this.SignOut();
 
-            if (!authResult.Ticket.Principal.TryGetGitHubUserName(out var githubUserName) ||
-                !authResult.Ticket.Principal.TryGetGitHubId(out int githubId))
-            {
+            var githubUserName = authResult.Ticket.Principal.FindFirstValue(ClaimTypes.Name);
+            var githubIdStr = authResult.Ticket.Principal.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            if (githubUserName == null || !int.TryParse(githubIdStr, NumberStyles.Integer, CultureInfo.InvariantCulture, out var githubId))
                 return this.SignOut(errorUri);
-            }
+
+            User user;
 
             try
             {
-                await this.Repository.GetUserByGithubId(githubId);
+                user = await this.Repository.GetUserByGithubId(githubId);
             }
             catch (EntityNotFound)
             {
@@ -63,6 +79,8 @@ namespace Bomberjam.Website.Controllers
                         await this.Repository.UpdateAllUserGlobalRanks();
                         await transaction.CommitAsync();
                     }
+
+                    user = await this.Repository.GetUserByGithubId(githubId);
                 }
                 catch (Exception)
                 {
@@ -74,6 +92,20 @@ namespace Bomberjam.Website.Controllers
                 }
             }
 
+            var role = this._githubOptions.Value.Administrators.Contains(githubIdStr) ? BomberjamRoles.Admin : BomberjamRoles.User;
+
+            var newClaims = new List<Claim>
+            {
+                new Claim(BomberjamClaimTypes.UserId, user.Id.ToString("D")),
+                new Claim(BomberjamClaimTypes.GithubId, githubIdStr),
+                new Claim(BomberjamClaimTypes.GithubUserName, githubUserName),
+                new Claim(BomberjamClaimTypes.Role, role),
+            };
+
+            var newIdentity = new ClaimsIdentity(newClaims, authResult.Ticket.AuthenticationScheme, BomberjamClaimTypes.UserId, BomberjamClaimTypes.Role);
+            var newPrincipal = new ClaimsPrincipal(newIdentity);
+
+            await this.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal);
             return this.RedirectToAction("Index", "Account");
         }
 

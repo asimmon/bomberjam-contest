@@ -3,6 +3,7 @@ using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Jobs;
+using Bomberjam.Website.Logging;
 using Bomberjam.Website.Setup;
 using Bomberjam.Website.Storage;
 using Bomberjam.Website.Utils;
@@ -121,13 +122,14 @@ namespace Bomberjam.Website
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseUserEnricher();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapHangfireDashboard(new DashboardOptions
                 {
-                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(githubOptions) }
+                    Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
                 });
             });
 

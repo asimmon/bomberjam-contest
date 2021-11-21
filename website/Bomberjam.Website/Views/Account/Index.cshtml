@@ -33,7 +33,7 @@
 <h2>Your bots</h2>
 
 @{
-  var isAdministrator = this.IsAuthenticatedAdministrator();
+  var isAdministrator = this.User.IsAdministrator();
   var colspan = isAdministrator ? 5 : 4;
 }
 

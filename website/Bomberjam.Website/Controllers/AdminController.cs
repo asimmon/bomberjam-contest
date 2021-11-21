@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Database;
-using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Microsoft.AspNetCore.Authorization;
@@ -12,9 +12,8 @@ using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
 {
-    [Authorize]
     [Route("~/admin")]
-    [AdministrationFilter]
+    [Authorize(Roles = BomberjamRoles.Admin)]
     public class AdminController : BaseBomberjamController<AdminController>
     {
         public AdminController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AdminController> logger)
