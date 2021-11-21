@@ -62,6 +62,7 @@ namespace Bomberjam.Website.Controllers
             user.UserName = viewModel.UserName;
             user.Organization = viewModel.Organization;
             await this.Repository.UpdateUser(user);
+            this.Logger.LogInformation("User {UserId} changed it username: {UserName} and organization: {Organization}", user.Id, user.UserName, user.Organization);
 
             return this.RedirectToAction("Index", "Account");
         }
@@ -97,13 +98,16 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
             }
 
+            Guid newBotId;
             using (var transaction = await this.Repository.CreateTransaction())
             {
-                var newBotId = await this.Repository.AddBot(user.Id);
+                newBotId = await this.Repository.AddBot(user.Id);
                 await this.Storage.UploadBotSourceCode(newBotId, viewModel.BotFile.OpenReadStream());
                 await this.Repository.AddCompilationTask(newBotId);
                 await transaction.CommitAsync();
             }
+
+            this.Logger.LogInformation("User {UserId} submitted a new bot {BotId}, is compiled: {IsCompiled}", user.Id, newBotId, false);
 
             return this.RedirectToAction("Index", "Account");
         }
@@ -169,6 +173,8 @@ namespace Bomberjam.Website.Controllers
 
             if (bot.UserId != user.Id)
                 return this.Forbid("This bot does not belong to you");
+
+            this.Logger.LogInformation("User {UserId} downloads its bot {BotId}", user.Id, botId);
 
             return this.PushFileStream(MediaTypeNames.Application.Zip, $"bot-{botId:D}.zip", async responseStream =>
             {

@@ -41,6 +41,7 @@ namespace Bomberjam.Website.Controllers
             if (this.User.IsAuthenticated())
                 return this.RedirectToAction("Index", "Account");
 
+            this.Logger.LogDebug("Redirecting to github for signin");
             var redirectUri = this.Url.Action("SignInGithub", "Authentication");
             return this.Challenge(new AuthenticationProperties { RedirectUri = redirectUri }, GitHubAuthenticationDefaults.AuthenticationScheme);
         }
@@ -65,6 +66,7 @@ namespace Bomberjam.Website.Controllers
             try
             {
                 user = await this.Repository.GetUserByGithubId(githubId);
+                this.Logger.LogInformation("User {UserId} signed in", user.Id);
             }
             catch (EntityNotFound)
             {
@@ -81,6 +83,7 @@ namespace Bomberjam.Website.Controllers
                     }
 
                     user = await this.Repository.GetUserByGithubId(githubId);
+                    this.Logger.LogInformation("Created new user {UserId}", user.Id);
                 }
                 catch (Exception)
                 {
@@ -139,9 +142,14 @@ namespace Bomberjam.Website.Controllers
 
         private IActionResult SignOut(string redirectUri)
         {
-            return this.User.IsAuthenticated()
-                ? base.SignOut(new AuthenticationProperties { RedirectUri = redirectUri }, CookieAuthenticationDefaults.AuthenticationScheme)
-                : this.Redirect(redirectUri);
+            if (this.User.IsAuthenticated())
+            {
+                var userId = this.User.GetUserId();
+                this.Logger.LogInformation("Signing out user {UserId}", userId);
+                return base.SignOut(new AuthenticationProperties { RedirectUri = redirectUri }, CookieAuthenticationDefaults.AuthenticationScheme);
+            }
+
+            return this.Redirect(redirectUri);
         }
     }
 }

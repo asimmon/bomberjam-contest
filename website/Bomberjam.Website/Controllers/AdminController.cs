@@ -31,11 +31,17 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("start-new-season")]
         public async Task<IActionResult> StartNewSeason()
         {
+            var actualSeason = await this.Repository.GetCurrentSeason();
+            this.Logger.LogInformation("Closing current season {SeasonId} with name {SeasonName}", actualSeason.Id, actualSeason.Name);
+
             using (var transaction = await this.Repository.CreateTransaction())
             {
                 await this.Repository.StartNewSeason();
                 await transaction.CommitAsync();
             }
+
+            var newSeason = await this.Repository.GetCurrentSeason();
+            this.Logger.LogInformation("Starting new season {SeasonId} with name {SeasonName}", newSeason.Id, newSeason.Name);
 
             return this.RedirectToAction("Index", "Admin");
         }
@@ -69,7 +75,7 @@ namespace Bomberjam.Website.Controllers
 
             await this.Repository.AddGameTask(fetchedUsers, GameOrigin.OnDemand);
 
-            this.Logger.Log(LogLevel.Information, "Manually queued one match with users: " + string.Join(", ", selectedUserIds));
+            this.Logger.LogInformation("Manually queued one match with users: {UserIds}", string.Join(", ", selectedUserIds));
 
             var successViewModel = await this.GetAdminIndexViewModelWithSuccess("Game queued for users: " + string.Join(", ", fetchedUsers.Select(u => u.UserName)));
             return this.View("Index", successViewModel);
@@ -86,17 +92,17 @@ namespace Bomberjam.Website.Controllers
 
         private Task<AdminIndexViewModel> GetAdminIndexViewModel()
         {
-            return GetAdminIndexViewModel(null, null);
+            return this.GetAdminIndexViewModel(null, null);
         }
 
         private Task<AdminIndexViewModel> GetAdminIndexViewModelWithError(string errorMessage = null)
         {
-            return GetAdminIndexViewModel(errorMessage, null);
+            return this.GetAdminIndexViewModel(errorMessage, null);
         }
 
         private Task<AdminIndexViewModel> GetAdminIndexViewModelWithSuccess(string successMessage = null)
         {
-            return GetAdminIndexViewModel(null, successMessage);
+            return this.GetAdminIndexViewModel(null, successMessage);
         }
     }
 }
