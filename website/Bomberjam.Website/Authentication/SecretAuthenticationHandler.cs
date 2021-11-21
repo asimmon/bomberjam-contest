@@ -20,7 +20,8 @@ namespace Bomberjam.Website.Authentication
 
         protected override Task<AuthenticateResult> HandleAuthenticateAsync()
         {
-            if (this.Options.Secret.Length == 0)
+            var requiredSecret = this.OptionsMonitor.CurrentValue.Secret;
+            if (requiredSecret.Length == 0)
                 return Task.FromResult(AuthenticateResult.NoResult());
 
             if (!this.Request.Headers.TryGetValue(HeaderNames.Authorization, out var authorizationHeaderValues))
@@ -34,7 +35,7 @@ namespace Bomberjam.Website.Authentication
                 return Task.FromResult(AuthenticateResult.NoResult());
 
             var secret = authorizationHeader[SecretAuthenticationDefaults.AuthenticationScheme.Length..].TrimStart();
-            if (!string.Equals(this.Options.Secret, secret, StringComparison.Ordinal))
+            if (!string.Equals(requiredSecret, secret, StringComparison.Ordinal))
                 return Task.FromResult(AuthenticateResult.Fail("Invalid authentication secret"));
 
             var claims = new[]
