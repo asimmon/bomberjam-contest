@@ -51,6 +51,7 @@ namespace Bomberjam.Website.Database
 
         public Task UpdateUser(User changedUser)
         {
+            this._objectCache.Remove(GetRankedUsersKeyFormat);
             return this._underlyingRepository.UpdateUser(changedUser);
         }
 

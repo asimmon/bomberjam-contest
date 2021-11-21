@@ -55,6 +55,7 @@ namespace Bomberjam.Website.Database
             Updated = dbUser.Updated,
             GithubId = dbUser.GithubId,
             UserName = dbUser.UserName,
+            Organization = dbUser.Organization,
             Points = dbUser.Points,
             GlobalRank = dbUser.GlobalRank
         };
@@ -67,6 +68,7 @@ namespace Bomberjam.Website.Database
             {
                 GithubId = githubId,
                 UserName = username ?? string.Empty,
+                Organization = string.Empty,
                 Points = Constants.InitialPoints
             });
 
@@ -82,6 +84,8 @@ namespace Bomberjam.Website.Database
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
                 dbUser.UserName = changedUser.UserName;
 
+            dbUser.Organization = changedUser.Organization ?? string.Empty;
+
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
 
@@ -94,6 +98,7 @@ namespace Bomberjam.Website.Database
                 {
                     Id = u.Id,
                     UserName = u.UserName,
+                    Organization = u.Organization,
                     Points = u.Points,
                     GlobalRank = u.GlobalRank,
                     GithubId = u.GithubId,
@@ -109,13 +114,14 @@ namespace Bomberjam.Website.Database
                 from u in this._dbContext.Users
                 join b in this._dbContext.Bots on u.Id equals b.UserId into innerJoin
                 from leftJoin in innerJoin.DefaultIfEmpty()
-                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Created, u.Updated, u.GlobalRank }
+                group leftJoin by new { u.Id, u.UserName, u.Organization, u.GithubId, u.Points, u.Created, u.Updated, u.GlobalRank }
                 into grouped
                 orderby grouped.Key.Created descending
                 select new User
                 {
                     Id = grouped.Key.Id,
                     UserName = grouped.Key.UserName,
+                    Organization = grouped.Key.Organization,
                     GithubId = grouped.Key.GithubId,
                     Points = grouped.Key.Points,
                     GlobalRank = grouped.Key.GlobalRank,

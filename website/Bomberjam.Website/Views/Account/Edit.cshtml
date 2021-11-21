@@ -18,6 +18,15 @@
         <span asp-validation-for="UserName" class="invalid-feedback"></span>
       </div>
 
+      <div class="form-group">
+        <label asp-for="Organization"></label>
+        <input asp-for="Organization" value="@Model.Organization" class="form-control" aria-describedby="organizationHelp">
+        <small id="organizationHelp" class="form-text text-muted">
+          Your company, your school, etc.
+        </small>
+        <span asp-validation-for="Organization" class="invalid-feedback"></span>
+      </div>
+
       <button class="btn btn-lg btn-success my-4" type="submit">Save</button>
     </form>
   </div>

@@ -5,6 +5,7 @@ namespace Bomberjam.Website.Models
     public class AccountEditViewModel
     {
         private string _userName;
+        private string _organization;
 
         public AccountEditViewModel()
         {
@@ -13,6 +14,7 @@ namespace Bomberjam.Website.Models
         public AccountEditViewModel(User user)
         {
             this.UserName = user.UserName;
+            this.Organization = user.Organization;
         }
 
         [Required]
@@ -23,7 +25,15 @@ namespace Bomberjam.Website.Models
         public string UserName
         {
             get => this._userName;
-            set => this._userName = value?.Trim();
+            set => this._userName = value?.Trim() ?? string.Empty;
+        }
+
+        [StringLength(32)]
+        [Display(Name = "Organization")]
+        public string Organization
+        {
+            get => this._organization;
+            set => this._organization = value?.Trim() ?? string.Empty;
         }
     }
 }

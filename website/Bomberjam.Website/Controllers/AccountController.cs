@@ -60,6 +60,7 @@ namespace Bomberjam.Website.Controllers
             }
 
             user.UserName = viewModel.UserName;
+            user.Organization = viewModel.Organization;
             await this.Repository.UpdateUser(user);
 
             return this.RedirectToAction("Index", "Account");
