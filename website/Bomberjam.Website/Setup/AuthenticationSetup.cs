@@ -37,7 +37,7 @@ namespace Bomberjam.Website.Setup
         {
             options.ClientId = this._githubOptions.Value.ClientId;
             options.ClientSecret = this._githubOptions.Value.ClientSecret;
-            options.CallbackPath = "/signin-github-callback";
+            options.CallbackPath = this._githubOptions.Value.CallbackPath;
         }
     }
 }

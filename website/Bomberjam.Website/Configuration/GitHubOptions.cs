@@ -12,6 +12,9 @@ namespace Bomberjam.Website.Configuration
         public string ClientSecret { get; set; } = string.Empty;
 
         [Required]
+        public string CallbackPath { get; set; } = string.Empty;
+
+        [Required]
         [NotEmpty]
         public string[] Administrators { get; set; } = Array.Empty<string>();
 

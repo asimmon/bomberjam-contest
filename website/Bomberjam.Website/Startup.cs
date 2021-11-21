@@ -2,7 +2,6 @@ using System.IO;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
-using Bomberjam.Website.Infrastructure;
 using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Setup;
 using Bomberjam.Website.Storage;
@@ -32,6 +31,7 @@ namespace Bomberjam.Website
 
         public void ConfigureServices(IServiceCollection services)
         {
+            // options & configuration
             services.AddOptionsAndValidate<SecretAuthenticationOptions>(this._configuration.GetSection("SecretAuthentication"));
             services.AddOptionsAndValidate<ConnectionStringOptions>(this._configuration.GetSection("ConnectionStrings"));
             services.AddOptionsAndValidate<GoogleAnalyticsOptions>(this._configuration.GetSection("GoogleAnalytics"));
@@ -41,41 +41,39 @@ namespace Bomberjam.Website
             services.ConfigureOptions<MvcSetup>();
             services.ConfigureOptions<AuthenticationSetup>();
 
+            // mvc
             var mvcBuilder = services.AddMvc();
-            if (this._environment.IsLocalOrDevelopment())
+            if (this._environment.IsDevelopment())
                 mvcBuilder.AddRazorRuntimeCompilation();
 
             services.AddResponseCompression();
-
             services.AddAuthentication().AddCookie().AddGitHub().AddSecret();
-
-            // custom services
             services.AddScoped<PushFileStreamResultExecutor>();
 
-            services.AddSingleton(serviceProvider =>
-            {
-                var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
-                return new AzureStorageBomberjamStorage(scopedConnectionStrings.Value.BomberjamStorage);
-            });
-
-            services.AddSingleton<IBomberjamStorage>(serviceProvider =>
-            {
-                var scopedEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
-                var blobStorage = serviceProvider.GetRequiredService<AzureStorageBomberjamStorage>();
-
-                if (!scopedEnvironment.IsLocal())
-                    return blobStorage;
-
-                var tempStorage = new LocalFileBomberjamStorage(Path.GetTempPath());
-                return new CompositeBomberjamStorage(tempStorage, blobStorage);
-            });
-
+            // database
             services.AddDbContext<BomberjamContext>((serviceProvider, builder) =>
             {
                 var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
                 var sqlBuilder = builder.UseSqlServer(scopedConnectionStrings.Value.BomberjamContext);
-                if (this._environment.IsLocalOrDevelopment())
+                if (this._environment.IsDevelopment())
                     sqlBuilder.EnableSensitiveDataLogging();
+            });
+
+            if (this._environment.IsDevelopment())
+                services.AddDatabaseDeveloperPageExceptionFilter();
+
+            // repo & storage
+            services.AddSingleton<IBomberjamStorage>(serviceProvider =>
+            {
+                var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
+                var blobStorage = new AzureStorageBomberjamStorage(scopedConnectionStrings.Value.BomberjamStorage);
+
+                var scopedEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
+                if (!scopedEnvironment.IsDevelopment())
+                    return blobStorage;
+
+                var tempStorage = new LocalFileBomberjamStorage(Path.GetTempPath());
+                return new CompositeBomberjamStorage(tempStorage, blobStorage);
             });
 
             services.AddSingleton<IObjectCache, ObjectCache>();
@@ -87,6 +85,7 @@ namespace Bomberjam.Website
                 return new CachedDatabaseRepository(repository, objectCache);
             });
 
+            // jobs
             services.AddHangfire((serviceProvider, builder) =>
             {
                 var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
@@ -98,7 +97,7 @@ namespace Bomberjam.Website
 
             services.AddHangfireServer();
 
-            // Google Analytics
+            // telemetry
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
         }
 
@@ -109,6 +108,7 @@ namespace Bomberjam.Website
             if (this._environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {
@@ -116,17 +116,9 @@ namespace Bomberjam.Website
                 app.UseHsts();
             }
 
-            // Required to serve files with no extension in the .well-known folder
-            var options = new StaticFileOptions
-            {
-                ServeUnknownFileTypes = true
-            };
-
             app.UseHttpsRedirection();
-            app.UseStaticFiles(options);
-
+            app.UseStaticFiles();
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
 

@@ -28,6 +28,7 @@ namespace Bomberjam.Website.Controllers
             return this.View(new WebHomeViewModel { StarterKitDownloadUrl = this._githubOptions.Value.StarterKitDownloadUrl });
         }
 
+        [HttpGet("~/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

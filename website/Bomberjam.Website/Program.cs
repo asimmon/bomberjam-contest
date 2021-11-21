@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
-using Serilog.Events;
 
 namespace Bomberjam.Website
 {
@@ -22,19 +21,14 @@ namespace Bomberjam.Website
 
         private static void UseSerilog(HostBuilderContext context, ILoggingBuilder builder)
         {
-            builder.ClearProviders();
-
-            var serilogBuilder = new LoggerConfiguration()
-                .MinimumLevel.Debug()
-                .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-                .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext()
-                .WriteTo.Console();
+                .WriteTo.Console()
+                .CreateLogger();
 
-            var logger = serilogBuilder.CreateLogger();
-
-            Log.Logger = logger;
-            builder.AddSerilog(logger);
+            builder.ClearProviders();
+            builder.AddSerilog(Log.Logger);
         }
 
         private static void UseStartup(IWebHostBuilder webBuilder)
