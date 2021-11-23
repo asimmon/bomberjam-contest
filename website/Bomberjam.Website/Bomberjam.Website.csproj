@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\engine\Bomberjam.Common\Bomberjam.Common.csproj" />
+    <ProjectReference Include="..\..\common\Bomberjam.Common\Bomberjam.Common.csproj" />
   </ItemGroup>
 
   <ItemGroup>

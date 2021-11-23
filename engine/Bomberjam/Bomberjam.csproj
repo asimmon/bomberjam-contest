@@ -27,8 +27,8 @@
   <ItemGroup>
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Bomberjam.Common\Bomberjam.Common.csproj" />
+    <ProjectReference Include="..\..\common\Bomberjam.Common\Bomberjam.Common.csproj" />
   </ItemGroup>
 </Project>

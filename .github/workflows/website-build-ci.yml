@@ -1,0 +1,30 @@
+name: Website build CI
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'common/**/*'
+      - 'website/**/*'
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'common/**/*'
+      - 'website/**/*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./website/Bomberjam.Website
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 6.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore --configuration Release

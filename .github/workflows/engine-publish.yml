@@ -5,11 +5,13 @@ on:
   push:
     branches: [ master ]
     paths:
+      - 'common/**/*'
       - 'engine/**/*'
       - 'starters/**/*'
   pull_request:
     branches: [ master ]
     paths:
+      - 'common/**/*'
       - 'engine/**/*'
       - 'starters/**/*'
 

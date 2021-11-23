@@ -47,11 +47,11 @@ RUN useradd -m -U bot_0 && \
 WORKDIR /home/worker/
 
 COPY ["engine/Bomberjam/", "engine/Bomberjam/"]
-COPY ["engine/Bomberjam.Common/", "engine/Bomberjam.Common/"]
+COPY ["common/Bomberjam.Common/", "common/Bomberjam.Common/"]
 RUN dotnet publish --nologo -c Release -r linux-x64 engine/Bomberjam/Bomberjam.csproj -o . && \
     chmod 0500 bomberjam && \
     chown worker:worker bomberjam && \
-    rm -rf engine/
+    rm -rf engine/ common/
 
 COPY --chown=worker:worker ["worker/*.py", "worker/requirements.txt", "./"]
 RUN pip3 install -r requirements.txt && \
