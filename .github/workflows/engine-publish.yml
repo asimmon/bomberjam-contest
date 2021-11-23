@@ -4,8 +4,14 @@ on:
   workflow_dispatch:
   push:
     branches: [ master ]
+    paths:
+      - 'engine/**/*'
+      - 'starters/**/*'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'engine/**/*'
+      - 'starters/**/*'
 
 jobs:
   publish:
