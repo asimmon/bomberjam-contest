@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Bomberjam.Common
 {
+    [SuppressMessage("Trimming", "IL2026", Justification = "We use [DynamicDependency] to explicitly declare dependencies")]
     public class State
     {
         [JsonIgnore]
@@ -39,6 +41,7 @@ namespace Bomberjam.Common
         [JsonPropertyName("isSuddenDeathEnabled")]
         public bool IsSuddenDeathEnabled { get; set; }
 
+        [DynamicDependency(DynamicallyAccessedMemberTypes.All, "System.Collections.Queue", "mscorlib")]
         public string ToJson()
         {
             return JsonSerializer.Serialize(this, Constants.DefaultJsonSerializerOptions);

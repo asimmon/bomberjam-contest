@@ -43,7 +43,7 @@ jobs:
 
     - name: Publish engine
       working-directory: ./engine/Bomberjam
-      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/engine/
+      run: dotnet publish --self-contained -c Release -r ${{ matrix.rid }} -o ./dist/engine/
 
     - name: Copy starter kits
       run: cp -r ./starters ./engine/Bomberjam/dist/
