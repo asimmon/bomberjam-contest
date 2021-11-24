@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Bomberjam.Website.Github;
 
 namespace Bomberjam.Website.Storage
 {
@@ -9,6 +10,7 @@ namespace Bomberjam.Website.Storage
     {
         private const string BotsContainerName = "bots";
         private const string GamesContainerName = "games";
+        private const string StartersContainerName = "starters";
 
         private readonly string _connectionString;
 
@@ -17,6 +19,7 @@ namespace Bomberjam.Website.Storage
             this._connectionString = connectionString;
             this.EnsureContainerCreated(BotsContainerName);
             this.EnsureContainerCreated(GamesContainerName);
+            this.EnsureContainerCreated(StartersContainerName);
         }
 
         private void EnsureContainerCreated(string containerName)
@@ -57,6 +60,24 @@ namespace Bomberjam.Website.Storage
         {
             var containerClient = this.CreateClient().GetBlobContainerClient(GamesContainerName);
             var blobClient = containerClient.GetBlobClient(MakeGameFileName(botId));
+            await blobClient.DownloadToAsync(destinationStream).ConfigureAwait(false);
+        }
+
+        public override async Task UploadStarter(StarterOs os, Stream fileStream)
+        {
+            var containerClient = this.CreateClient().GetBlobContainerClient(StartersContainerName);
+            var blobClient = containerClient.GetBlobClient(MakeStarterFileName(os));
+
+            await using (fileStream)
+            {
+                await blobClient.UploadAsync(fileStream, true).ConfigureAwait(false);
+            }
+        }
+
+        public override async Task DownloadStarter(StarterOs os, Stream destinationStream)
+        {
+            var containerClient = this.CreateClient().GetBlobContainerClient(StartersContainerName);
+            var blobClient = containerClient.GetBlobClient(MakeStarterFileName(os));
             await blobClient.DownloadToAsync(destinationStream).ConfigureAwait(false);
         }
 

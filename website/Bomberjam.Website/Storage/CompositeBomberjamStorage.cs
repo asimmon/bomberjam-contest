@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Bomberjam.Website.Github;
 
 namespace Bomberjam.Website.Storage
 {
@@ -69,6 +70,16 @@ namespace Bomberjam.Website.Storage
         public async Task DownloadGameResultTo(Guid botId, Stream destinationStream)
         {
             await this.Wrap(storage => storage.DownloadGameResultTo(botId, destinationStream)).ConfigureAwait(false);
+        }
+
+        public async Task UploadStarter(StarterOs os, Stream fileStream)
+        {
+            await this.Wrap(storage => storage.UploadStarter(os, fileStream)).ConfigureAwait(false);
+        }
+
+        public async Task DownloadStarter(StarterOs os, Stream destinationStream)
+        {
+            await this.Wrap(storage => storage.DownloadStarter(os, destinationStream)).ConfigureAwait(false);
         }
     }
 }

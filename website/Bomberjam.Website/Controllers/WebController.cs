@@ -1,32 +1,58 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Bomberjam.Website.Common;
-using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Github;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
-using Microsoft.Extensions.Options;
+using Bomberjam.Website.Utils;
 
 namespace Bomberjam.Website.Controllers
 {
     public class WebController : BaseBomberjamController<WebController>
     {
-        private readonly IOptions<GitHubOptions> _githubOptions;
+        private static readonly Dictionary<StarterOs, string> StarterNamesByOs = new Dictionary<StarterOs, string>
+        {
+            [StarterOs.Windows] = "bomberjam-windows.zip",
+            [StarterOs.Linux] = "bomberjam-linux.zip",
+            [StarterOs.MacOs] = "bomberjam-macos.zip",
+        };
 
-        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger, IOptions<GitHubOptions> githubOptions)
+        private readonly IGithubArtifactManager _artifacts;
+
+        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, IGithubArtifactManager artifacts, ILogger<WebController> logger)
             : base(repository, storage, logger)
         {
-            this._githubOptions = githubOptions;
+            this._artifacts = artifacts;
         }
 
         [HttpGet("~/")]
         public IActionResult Index()
         {
-            return this.View(new WebHomeViewModel { StarterKitDownloadUrl = this._githubOptions.Value.StarterKitDownloadUrl });
+            return this.View(new WebHomeViewModel());
         }
+
+        [HttpGet("~/download-windows")]
+        public IActionResult DownloadBomberjamWindows() => this.DownloadBomberjam(StarterOs.Windows);
+
+        [HttpGet("~/download-linux")]
+        public IActionResult DownloadBomberjamLinux() => this.DownloadBomberjam(StarterOs.Linux);
+
+        [HttpGet("~/download-macos")]
+        public IActionResult DownloadBomberjamMacos() => this.DownloadBomberjam(StarterOs.MacOs);
+
+        private IActionResult DownloadBomberjam(StarterOs os) => this.PushFileStream(MediaTypeNames.Application.Zip, StarterNamesByOs[os], async responseStream =>
+        {
+            await using (responseStream)
+            {
+                await this._artifacts.DownloadTo(os, responseStream);
+            }
+        });
 
         [HttpGet("~/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

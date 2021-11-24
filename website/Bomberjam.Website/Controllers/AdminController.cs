@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Github;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Microsoft.AspNetCore.Authorization;
@@ -16,9 +18,12 @@ namespace Bomberjam.Website.Controllers
     [Authorize(Roles = BomberjamRoles.Admin)]
     public class AdminController : BaseBomberjamController<AdminController>
     {
-        public AdminController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<AdminController> logger)
+        private readonly IGithubArtifactManager _artifacts;
+
+        public AdminController(IBomberjamRepository repository, IBomberjamStorage storage, IGithubArtifactManager artifacts, ILogger<AdminController> logger)
             : base(repository, storage, logger)
         {
+            this._artifacts = artifacts;
         }
 
         [HttpGet]
@@ -26,6 +31,14 @@ namespace Bomberjam.Website.Controllers
         {
             var viewModel = await this.GetAdminIndexViewModel();
             return this.View(viewModel);
+        }
+
+        [HttpGet("update-starters")]
+        public async Task<IActionResult> UpdateStarters()
+        {
+            await this._artifacts.Initialize(CancellationToken.None);
+            var viewModel = await this.GetAdminIndexViewModel(successMessage: "Updated starters successfully");
+            return this.View("Index", viewModel);
         }
 
         [HttpGet("start-new-season")]
@@ -53,7 +66,7 @@ namespace Bomberjam.Website.Controllers
             var selectedUserIds = new HashSet<Guid>(users.Where(u => u.IsSelected).Select(u => u.Id));
             if (selectedUserIds.Count != 4)
             {
-                var errorViewModel = await this.GetAdminIndexViewModelWithError("You need to select exactly four users");
+                var errorViewModel = await this.GetAdminIndexViewModel(errorMessage: "You need to select exactly four users");
                 return this.View("Index", errorViewModel);
             }
 
@@ -66,7 +79,7 @@ namespace Bomberjam.Website.Controllers
 
                 if (bots.All(b => b.Status != CompilationStatus.CompilationSucceeded))
                 {
-                    var errorViewModel = await this.GetAdminIndexViewModelWithError($"User {user.UserName} does not have a compiled bot yet");
+                    var errorViewModel = await this.GetAdminIndexViewModel(errorMessage: $"User {user.UserName} does not have a compiled bot yet");
                     return this.View("Index", errorViewModel);
                 }
 
@@ -77,32 +90,17 @@ namespace Bomberjam.Website.Controllers
 
             this.Logger.LogInformation("Manually queued one match with users: {UserIds}", string.Join(", ", selectedUserIds));
 
-            var successViewModel = await this.GetAdminIndexViewModelWithSuccess("Game queued for users: " + string.Join(", ", fetchedUsers.Select(u => u.UserName)));
+            var successViewModel = await this.GetAdminIndexViewModel(successMessage: "Game queued for users: " + string.Join(", ", fetchedUsers.Select(u => u.UserName)));
             return this.View("Index", successViewModel);
         }
 
-        private async Task<AdminIndexViewModel> GetAdminIndexViewModel(string errorMessage, string successMessage)
+        private async Task<AdminIndexViewModel> GetAdminIndexViewModel(string errorMessage = "", string successMessage = "")
         {
             var workers = await this.Repository.GetWorkers(10).ConfigureAwait(false);
             var users = await this.Repository.GetAllUsers().ConfigureAwait(false);
             var seasons = await this.Repository.GetSeasons().ConfigureAwait(false);
 
             return new AdminIndexViewModel(workers, seasons, users.OrderBy(u => u.GlobalRank), errorMessage, successMessage);
-        }
-
-        private Task<AdminIndexViewModel> GetAdminIndexViewModel()
-        {
-            return this.GetAdminIndexViewModel(null, null);
-        }
-
-        private Task<AdminIndexViewModel> GetAdminIndexViewModelWithError(string errorMessage = null)
-        {
-            return this.GetAdminIndexViewModel(errorMessage, null);
-        }
-
-        private Task<AdminIndexViewModel> GetAdminIndexViewModelWithSuccess(string successMessage = null)
-        {
-            return this.GetAdminIndexViewModel(null, successMessage);
         }
     }
 }

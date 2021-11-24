@@ -19,6 +19,13 @@ namespace Bomberjam.Website.Configuration
         public string[] Administrators { get; set; } = Array.Empty<string>();
 
         [Required]
-        public string StarterKitDownloadUrl { get; set; } = string.Empty;
+        public string ArtifactsUsername { get; set; } = string.Empty;
+
+        [Required]
+        public string ArtifactsPassword { get; set; } = string.Empty;
+
+        [Required]
+        [Range(1, int.MaxValue)]
+        public int ArtifactsWorkflowId { get; set; }
     }
 }

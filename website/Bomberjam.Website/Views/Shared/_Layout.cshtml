@@ -1,5 +1,4 @@
 ﻿@using Bomberjam.Website.Utils
-@using Bomberjam.Website.Authentication
 @{
   var pageTitlePrefix = this.ViewData["Title"] is string prefix ? prefix + " | " : "";
   var pageTitle = pageTitlePrefix + "Bomberjam";
@@ -17,6 +16,14 @@
   <link rel="icon" type="image/png" sizes="32x32" href="@Url.ContentAbsolute(this.Context, "~/favicon-32x32.png")">
   <link rel="icon" type="image/png" sizes="192x192" href="@Url.ContentAbsolute(this.Context, "~/favicon-192x192.png")">
   <link rel="apple-touch-icon" sizes="180x180" href="@Url.ContentAbsolute(this.Context, "~/apple-touch-icon.png")">
+  <script>
+    if (navigator && navigator.appVersion && document.documentElement.classList) {
+      if (navigator.appVersion.indexOf("Win") !== -1) document.documentElement.classList.add('os-windows');
+      else if (navigator.appVersion.indexOf("Mac") !== -1) document.documentElement.classList.add('os-macos');
+      else if (navigator.appVersion.indexOf("X11") !== -1) document.documentElement.classList.add('os-linux');
+      else if (navigator.appVersion.indexOf("Linux") !== -1) document.documentElement.classList.add('os-linux');
+    }
+  </script>
   <link rel="stylesheet" href="~/dist/bundle.css" asp-append-version="true"/>
 </head>
 <body>

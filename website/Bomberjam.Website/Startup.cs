@@ -1,7 +1,9 @@
-using System.IO;
+using System;
+using System.Net.Http.Headers;
 using Bomberjam.Website.Authentication;
 using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Github;
 using Bomberjam.Website.Jobs;
 using Bomberjam.Website.Logging;
 using Bomberjam.Website.Setup;
@@ -68,13 +70,16 @@ namespace Bomberjam.Website
             {
                 var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
                 var blobStorage = new AzureStorageBomberjamStorage(scopedConnectionStrings.Value.BomberjamStorage);
+                return blobStorage;
 
+                /*
                 var scopedEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
                 if (!scopedEnvironment.IsDevelopment())
                     return blobStorage;
 
-                var tempStorage = new LocalFileBomberjamStorage(Path.GetTempPath());
+                var tempStorage = new LocalFileBomberjamStorage(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
                 return new CompositeBomberjamStorage(tempStorage, blobStorage);
+                //*/
             });
 
             services.AddSingleton<IObjectCache, ObjectCache>();
@@ -100,6 +105,18 @@ namespace Bomberjam.Website
 
             // telemetry
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
+
+            // github artifacts downloader
+            services.AddHttpClient(nameof(GithubArtifactManager), (container, client) =>
+            {
+                var options = container.GetRequiredService<IOptions<GitHubOptions>>();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+                client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Bomberjam", productVersion: null));
+                client.DefaultRequestHeaders.Authorization = new BasicAuthenticationHeaderValue(options.Value.ArtifactsUsername, options.Value.ArtifactsPassword);
+            });
+
+            services.AddSingleton<IGithubArtifactManager, GithubArtifactManager>();
+            services.AddHostedService<DownloadGithubArtifactsOnStartup>();
         }
 
         public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, IOptions<GitHubOptions> githubOptions, IOptions<JobOptions> jobOptions)

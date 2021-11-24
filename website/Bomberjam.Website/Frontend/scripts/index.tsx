@@ -77,15 +77,6 @@ onDocumentReady(() => {
 
   }, false);
 
-  // Render the React game viewer app
-  const visualizerEl = document.getElementById('visualizer');
-  if (visualizerEl) {
-    render(<Application gameId={visualizerEl.dataset['gameId'] ?? ''}/>, visualizerEl);
-  }
-
-  // Syntax highlighting
-  handleHighlighting();
-
   // Adding confirmation alerts on buttons
   document.addEventListener('click', evt => {
     const el = evt.target as HTMLElement;
@@ -95,4 +86,90 @@ onDocumentReady(() => {
       }
     }
   });
+
+  // Bootstrap downdowns
+  const openedDropdowns: HTMLElement[] = [];
+  document.addEventListener('click', evt => {
+    const el = evt.target as HTMLElement;
+    if (el && 'toggle' in el.dataset && el.parentElement?.classList.contains('btn-group') && el.nextElementSibling?.classList.contains('dropdown-menu')) {
+      const btnCaret = el;
+      const btnGroup = el.parentElement;
+      const btnDropdown = el.nextElementSibling;
+
+      if (btnGroup.classList.contains('show')) {
+        btnGroup.classList.remove('show');
+        btnDropdown.classList.remove('show');
+        btnCaret.setAttribute('aria-expanded', 'false');
+        const idx = openedDropdowns.indexOf(btnCaret);
+        if (idx >= 0) openedDropdowns.splice(idx, 1);
+      } else {
+        btnGroup.classList.add('show');
+        btnDropdown.classList.add('show');
+        btnCaret.setAttribute('aria-expanded', 'true');
+        openedDropdowns.push(btnCaret);
+      }
+
+      evt.preventDefault();
+    } else {
+      for (let openedDropdown of openedDropdowns) {
+        const btnGroup = openedDropdown.parentElement;
+        const btnDropdown = openedDropdown.nextElementSibling;
+
+        if (btnGroup && btnDropdown) {
+          btnGroup.classList.remove('show');
+          btnDropdown.classList.remove('show');
+          openedDropdown.setAttribute('aria-expanded', 'false');
+        }
+      }
+      openedDropdowns.length = 0;
+    }
+  });
+
+  // Show current OS download link first
+  const currentOs = [...document.documentElement.classList]
+    .filter(x => /^os-(windows|linux|macos)$/.test(x))
+    .map(x => x.split('-')[1])
+    [0];
+
+  if (currentOs) {
+    const downloadBtnGroups = document.querySelectorAll<HTMLElement>('.btn-group.downloads');
+    for (let i = 0; i < downloadBtnGroups.length; i++) {
+      const allBtns = [...downloadBtnGroups[i].querySelectorAll<HTMLAnchorElement>('a.download')];
+
+      if (allBtns.length === 3) {
+        const primaryBtn = allBtns.find(x => x.classList.contains('btn'));
+        const secondaryBtns = allBtns.filter(x => x !== primaryBtn);
+
+        if (primaryBtn && secondaryBtns.length === 2) {
+          const primaryClass = 'download-' + currentOs;
+          const sortedBtns = allBtns.sort((a, b) => {
+            if (a.classList.contains(primaryClass)) return -1;
+            if (b.classList.contains(primaryClass)) return 1;
+            return 0;
+          });
+
+          const sortedAnchorAttrs = sortedBtns.map(x => ({
+            href: x.href,
+            innerHTML: x.innerHTML
+          }));
+
+          primaryBtn.href = sortedAnchorAttrs[0].href;
+          primaryBtn.innerHTML = sortedAnchorAttrs[0].innerHTML;
+          secondaryBtns[0].href = sortedAnchorAttrs[1].href;
+          secondaryBtns[0].innerHTML = sortedAnchorAttrs[1].innerHTML;
+          secondaryBtns[1].href = sortedAnchorAttrs[2].href;
+          secondaryBtns[1].innerHTML = sortedAnchorAttrs[2].innerHTML;
+        }
+      }
+    }
+  }
+
+  // Render the React game viewer app
+  const visualizerEl = document.getElementById('visualizer');
+  if (visualizerEl) {
+    render(<Application gameId={visualizerEl.dataset['gameId'] ?? ''}/>, visualizerEl);
+  }
+
+  // Syntax highlighting
+  handleHighlighting();
 });
