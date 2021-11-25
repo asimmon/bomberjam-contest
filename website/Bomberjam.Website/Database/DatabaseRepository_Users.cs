@@ -62,7 +62,7 @@ namespace Bomberjam.Website.Database
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
 
-        public async Task AddUser(string githubId, string username)
+        public async Task<User> AddUser(string githubId, string username)
         {
             this._dbContext.Users.Add(new DbUser
             {
@@ -73,6 +73,8 @@ namespace Bomberjam.Website.Database
             });
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            return await this.GetUserByGithubId(githubId);
         }
 
         public async Task UpdateUser(User changedUser)

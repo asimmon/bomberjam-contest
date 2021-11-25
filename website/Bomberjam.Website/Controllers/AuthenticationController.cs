@@ -74,12 +74,11 @@ namespace Bomberjam.Website.Controllers
                     using (var transaction = await this.Repository.CreateTransaction())
                     {
                         var userName = await this.GetUniqueUserName(githubUserName);
-                        await this.Repository.AddUser(githubId, userName);
+                        user = await this.Repository.AddUser(githubId, userName);
                         await this.Repository.UpdateAllUserGlobalRanks();
                         await transaction.CommitAsync();
                     }
 
-                    user = await this.Repository.GetUserByGithubId(githubId);
                     this.Logger.LogInformation("Created new user {UserId}", user.Id);
                 }
                 catch (Exception)

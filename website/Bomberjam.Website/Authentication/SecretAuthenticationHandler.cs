@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
@@ -40,7 +39,7 @@ namespace Bomberjam.Website.Authentication
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.Email, Constants.ApiPrincipalFakeEmail)
+                new Claim(BomberjamClaimTypes.UserId, "ca6f0ee1-ec44-4a30-b754-49ed10b5e62d"),
             };
 
             var identity = new ClaimsIdentity(claims, this.Scheme.Name);

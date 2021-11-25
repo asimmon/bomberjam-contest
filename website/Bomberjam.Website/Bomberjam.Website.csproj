@@ -38,6 +38,8 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+    <None Remove="RandomBot.zip" Condition=" '$(Configuration)' == 'Debug' " />
+    <EmbeddedResource Include="RandomBot.zip" Condition=" '$(Configuration)' == 'Debug' " />
   </ItemGroup>
 
   <Target Name="DeleteNodeModulesDirectory" BeforeTargets="BuildFrontend" Condition=" '$(OS)' != 'Windows_NT' ">

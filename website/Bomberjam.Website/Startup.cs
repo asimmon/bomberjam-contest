@@ -117,6 +117,7 @@ namespace Bomberjam.Website
 
             services.AddSingleton<IGithubArtifactManager, GithubArtifactManager>();
             services.AddHostedService<DownloadGithubArtifactsOnStartup>();
+            services.AddHostedService<AddDebugUsersOnStartup>();
         }
 
         public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, IOptions<GitHubOptions> githubOptions, IOptions<JobOptions> jobOptions)
