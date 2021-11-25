@@ -32,27 +32,27 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/")]
-        public IActionResult Index()
+        public IActionResult Index() => this.View();
+
+        [HttpGet("~/download/{os}")]
+        public IActionResult Download(StarterOs? os) => os.HasValue ? this.View(new DownloadModel(os.Value)) : this.RedirectToAction("Index");
+
+        [HttpGet("~/download/bomberjam-{os}.zip")]
+        public IActionResult StartDownload(StarterOs? os)
         {
-            return this.View(new WebHomeViewModel());
-        }
-
-        [HttpGet("~/download-windows")]
-        public IActionResult DownloadBomberjamWindows() => this.DownloadBomberjam(StarterOs.Windows);
-
-        [HttpGet("~/download-linux")]
-        public IActionResult DownloadBomberjamLinux() => this.DownloadBomberjam(StarterOs.Linux);
-
-        [HttpGet("~/download-macos")]
-        public IActionResult DownloadBomberjamMacos() => this.DownloadBomberjam(StarterOs.MacOs);
-
-        private IActionResult DownloadBomberjam(StarterOs os) => this.PushFileStream(MediaTypeNames.Application.Zip, StarterNamesByOs[os], async responseStream =>
-        {
-            await using (responseStream)
+            if (!os.HasValue)
             {
-                await this._artifacts.DownloadTo(os, responseStream);
+                return this.RedirectToAction("Index");
             }
-        });
+
+            return this.PushFileStream(MediaTypeNames.Application.Zip, StarterNamesByOs[os.Value], async responseStream =>
+            {
+                await using (responseStream)
+                {
+                    await this._artifacts.DownloadTo(os.Value, responseStream);
+                }
+            });
+        }
 
         [HttpGet("~/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -77,10 +77,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/viewer")]
-        public IActionResult Viewer()
-        {
-            return this.View();
-        }
+        public IActionResult Viewer() => this.View();
 
         [HttpGet("~/user/{userId:guid}")]
         public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
@@ -137,4 +134,6 @@ namespace Bomberjam.Website.Controllers
             return this.View();
         }
     }
+
+    public record DownloadModel(StarterOs Os);
 }
