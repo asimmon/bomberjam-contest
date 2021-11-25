@@ -94,5 +94,6 @@
 </div>
 
 <script src="~/dist/bundle.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
