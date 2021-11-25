@@ -133,6 +133,12 @@ namespace Bomberjam.Website.Controllers
         {
             return this.View();
         }
+
+        [HttpGet("~/access-denied")]
+        public IActionResult AccessDenied()
+        {
+            return this.View();
+        }
     }
 
     public record DownloadModel(StarterOs Os);

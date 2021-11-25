@@ -27,10 +27,5 @@ namespace Bomberjam.Website.Utils
         {
             return IsAuthenticated(principal) ? principal.FindFirstValue(BomberjamClaimTypes.GithubId) ?? string.Empty : string.Empty;
         }
-
-        public static string GetGithubUserName(this ClaimsPrincipal principal)
-        {
-            return IsAuthenticated(principal) ? principal.FindFirstValue(BomberjamClaimTypes.GithubUserName) ?? string.Empty : string.Empty;
-        }
     }
 }

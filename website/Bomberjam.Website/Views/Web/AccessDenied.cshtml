@@ -1,0 +1,16 @@
+﻿@using Bomberjam.Website.Utils
+
+<div class="jumbotron">
+  <h2>Access denied</h2>
+
+  <p class="mt-4">
+    @if (this.User.IsAuthenticated())
+    {
+      <text>You need to <a asp-controller="Authentication" asp-action="SignIn">sign in again</a> to access this page.</text>
+    }
+    else
+    {
+      <text>You need to be <a asp-controller="Authentication" asp-action="SignIn">logged in</a> to access this page.</text>
+    }
+  </p>
+</div>

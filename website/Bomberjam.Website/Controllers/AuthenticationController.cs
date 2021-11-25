@@ -38,9 +38,6 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("~/signin")]
         public IActionResult SignIn()
         {
-            if (this.User.IsAuthenticated())
-                return this.RedirectToAction("Index", "Account");
-
             this.Logger.LogDebug("Redirecting to github for signin");
             var redirectUri = this.Url.Action("SignInGithub", "Authentication");
             return this.Challenge(new AuthenticationProperties { RedirectUri = redirectUri }, GitHubAuthenticationDefaults.AuthenticationScheme);
