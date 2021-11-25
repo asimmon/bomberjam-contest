@@ -1,7 +1,7 @@
 @import 'variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootswatch/dist/darkly/bootswatch';
-@import '~highlight.js/scss/zenburn';
+@import '~highlight.js/scss/stackoverflow-dark';
 
 @import 'visualizer';
 
@@ -68,6 +68,9 @@ img.avatar-sm {
   @extend .rounded;
   max-height: 20px;
   max-width: 20px;
+  height: 20px;
+  width: 20px;
+  background-color: $body-bg;
 }
 
 .code-sample {

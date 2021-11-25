@@ -31,7 +31,7 @@
           <td>@user.GlobalRank</td>
           <td>
             <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
-              <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="avatar-sm" alt="@user.UserName"/>
+              <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="avatar-sm" alt="@user.UserName" loading="lazy"/>
               @user.UserName
             </a>
           </td>

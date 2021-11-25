@@ -56,7 +56,7 @@ export const ViewerWithControls = (props: VisualizerProps) => {
           setIsStarted(true);
           setIsPlaying(true);
         });
-      } catch (err) {
+      } catch (err: any) {
         props.onError(typeof err === 'string' ? err : err.toString());
       }
     }

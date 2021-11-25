@@ -90,7 +90,7 @@ class AnimatedSpritePool {
   }
 
   public free(sprite: AnimatedSprite): void {
-    this.getUnderlyingPool(sprite.textures).free(sprite);
+    this.getUnderlyingPool(sprite.textures as Texture[]).free(sprite);
   }
 
   private getUnderlyingPool(textures: Texture[]): SpritePool<AnimatedSprite> {
