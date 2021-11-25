@@ -30,32 +30,29 @@ namespace Bomberjam.Website.Controllers
         {
             var user = await this.GetAuthenticatedUser();
             var bots = await this.Repository.GetBots(user.Id);
-            return this.View("Index", new AccountReadViewModel(user, bots));
-        }
-
-        [HttpGet("edit")]
-        public async Task<IActionResult> Edit()
-        {
-            var user = await this.GetAuthenticatedUser();
-            return this.View("Edit", new AccountEditViewModel(user));
+            return this.View("Index", new AccountReadWriteViewModel(user, bots));
         }
 
         [HttpPost("edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(AccountEditViewModel viewModel)
+        public async Task<IActionResult> Edit(AccountWriteViewModel viewModel)
         {
-            if (!this.ModelState.IsValid)
-                return this.View("Edit", viewModel);
-
             var user = await this.GetAuthenticatedUser();
+
+            if (!this.ModelState.IsValid)
+            {
+                var bots = await this.Repository.GetBots(user.Id);
+                return this.View("Index", new AccountReadWriteViewModel(user, bots, viewModel));
+            }
 
             if (!string.Equals(viewModel.UserName, user.UserName, StringComparison.OrdinalIgnoreCase))
             {
                 var isUserNameAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(viewModel.UserName);
                 if (isUserNameAlreadyUsed)
                 {
-                    this.ModelState.AddModelError<AccountEditViewModel>(vm => vm.UserName, "This username is already used");
-                    return this.View("Edit", viewModel);
+                    var bots = await this.Repository.GetBots(user.Id);
+                    this.ModelState.AddModelError<AccountWriteViewModel>(vm => vm.UserName, "This username is already used");
+                    return this.View("Index", new AccountReadWriteViewModel(user, bots, viewModel));
                 }
             }
 

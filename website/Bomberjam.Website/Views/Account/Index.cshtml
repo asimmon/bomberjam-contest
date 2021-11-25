@@ -1,5 +1,5 @@
 ﻿@using Bomberjam.Website.Utils
-@model AccountReadViewModel
+@model AccountReadWriteViewModel
 
 @{
   ViewData["Title"] = "Account";
@@ -7,28 +7,52 @@
 }
 
 <div class="jumbotron">
-  <h1>Welcome @Model.User.UserName!</h1>
+  <div class="row justify-content-between">
+    <div class="col-md-5">
+      <form asp-controller="Account" asp-action="Edit" method="post">
+        <div class="form-group">
+          <label asp-for="UserName"></label>
+          <input asp-for="UserName" value="@Model.UserName" class="form-control form-control-sm" aria-describedby="userNameHelp">
+          <small id="userNameHelp" class="form-text text-muted">
+            Username can only contain letters and digits from 2 to 32 characters. Spaces are not allowed.
+          </small>
+          <span asp-validation-for="UserName" class="invalid-feedback"></span>
+        </div>
 
-  <ul>
-    <li>Your rank is <strong>#@Model.User.GlobalRank</strong></li>
-    <li>You have <strong><span format-points="@Model.User.Points"></span></strong> points</li>
-    <li>Your organization: @Model.User.Organization</li>
-    <li>Click <a asp-controller="Account" asp-action="Edit">here</a> to change your username</li>
-    <li>Click <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id">here</a> to see your game history</li>
-  </ul>
+        <div class="form-group">
+          <label asp-for="Organization"></label>
+          <input asp-for="Organization" value="@Model.Organization" class="form-control form-control-sm" aria-describedby="organizationHelp">
+          <small id="organizationHelp" class="form-text text-muted">
+            Your company, your school, etc.
+          </small>
+          <span asp-validation-for="Organization" class="invalid-feedback"></span>
+        </div>
 
-  <p class="lead mt-4 mb-0">
-    <a asp-controller="Account" asp-action="Submit" class="btn btn-lg btn-success">
-      @if (Model.Bots.Count == 0)
-      {
-        <text>Upload a bot</text>
-      }
-      else
-      {
-        <text>Upload another bot</text>
-      }
-    </a>
-  </p>
+        <button class="btn btn-success my-4" type="submit">Save changes</button>
+      </form>
+    </div>
+
+    <div class="col-md-5 mt-4">
+      <ul>
+        <li>Your rank is <strong>#@Model.User.GlobalRank</strong></li>
+        <li>You have <strong><span format-points="@Model.User.Points"></span></strong> points</li>
+        <li>Click <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@Model.User.Id">here</a> to see your game history</li>
+      </ul>
+
+      <p class="lead mt-4 mb-0">
+        <a asp-controller="Account" asp-action="Submit" class="btn btn-lg btn-success">
+          @if (Model.Bots.Count == 0)
+          {
+            <text>Upload a bot</text>
+          }
+          else
+          {
+            <text>Upload another bot</text>
+          }
+        </a>
+      </p>
+    </div>
+  </div>
 </div>
 
 <h2>Your bots</h2>

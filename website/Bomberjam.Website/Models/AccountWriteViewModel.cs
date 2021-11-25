@@ -2,16 +2,22 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Bomberjam.Website.Models
 {
-    public class AccountEditViewModel
+    public class AccountWriteViewModel
     {
         private string _userName;
         private string _organization;
 
-        public AccountEditViewModel()
+        public AccountWriteViewModel()
         {
         }
 
-        public AccountEditViewModel(User user)
+        public AccountWriteViewModel(AccountWriteViewModel writeViewModel)
+        {
+            this.UserName = writeViewModel.UserName;
+            this.Organization = writeViewModel.Organization;
+        }
+
+        public AccountWriteViewModel(User user)
         {
             this.UserName = user.UserName;
             this.Organization = user.Organization;
