@@ -19,26 +19,23 @@
   </p>
 </div>
 
-@if (Model.ShowWhatsNext)
-{
-  <h2>What's next?</h2>
+<h2>What's next?</h2>
 
-  <ol class="mt-4">
-    <li><a asp-controller="Web" asp-action="Learn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
-    @if (!User.IsAuthenticated())
-    {
-      <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
-    }
-    <li>Upload your bot source code as a single zip file</li>
-  </ol>
+<ol class="mt-4">
+  <li><a asp-controller="Web" asp-action="Learn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
+  @if (!User.IsAuthenticated())
+  {
+    <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
+  }
+  <li>Upload your bot source code as a single zip file</li>
+</ol>
 
-  <div class="embed-responsive embed-responsive-16by9 shadow border border-dark">
-    <video autoplay controls loop muted>
-      <source src="~/assets/upload_bot.mp4" type="video/mp4">
-      Sorry, your browser doesn't support embedded videos.
-    </video>
-  </div>
-}
+<div class="embed-responsive embed-responsive-16by9 shadow border border-dark">
+  <video autoplay controls loop muted>
+    <source src="~/assets/upload_bot.mp4" type="video/mp4">
+    Sorry, your browser doesn't support embedded videos.
+  </video>
+</div>
 
 @section Scripts {
   <script>window.setTimeout(() => document.getElementById('download-form').submit(), 1)</script>
