@@ -36,6 +36,13 @@ namespace Bomberjam.Website.Controllers
             return this.View(viewModel);
         }
 
+        [HttpGet("update-ranks")]
+        public async Task<IActionResult> UpdateRanks()
+        {
+            await this.Repository.UpdateAllUserGlobalRanks();
+            return this.RedirectToAction("Index");
+        }
+
         [HttpGet("update-starters")]
         public async Task<IActionResult> UpdateStarters()
         {
