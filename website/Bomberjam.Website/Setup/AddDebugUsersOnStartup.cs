@@ -7,16 +7,28 @@ using Bomberjam.Website.Database;
 using Bomberjam.Website.Storage;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Setup
 {
     public class AddDebugUsersOnStartup : BackgroundService
     {
+#if DEBUG
+        private const bool IsDebug = true;
+#else
+        private const bool IsDebug = false;
+#endif
+
         private readonly IServiceProvider _serviceProvider;
 
         public AddDebugUsersOnStartup(IServiceProvider serviceProvider)
         {
             this._serviceProvider = serviceProvider;
+        }
+
+        private static bool CanSeedDevelopmentData(IHostEnvironment environment)
+        {
+            return environment.IsDevelopment() && IsDebug;
         }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -27,15 +39,21 @@ namespace Bomberjam.Website.Setup
                 if (!environment.IsDevelopment())
                     return;
 
-                var repository = scope.ServiceProvider.GetRequiredService<IBomberjamRepository>();
-                var storage = scope.ServiceProvider.GetRequiredService<IBomberjamStorage>();
+                if (CanSeedDevelopmentData(environment))
+                {
+                    var logger = scope.ServiceProvider.GetRequiredService<ILogger<AddDebugUsersOnStartup>>();
+                    logger.LogInformation("Seeding data for development environment");
 
-                await AddUser("36072624", "Minty", repository, storage);
-                await AddUser("9208753", "Kalmera", repository, storage);
-                await AddUser("26142591", "Pandarf", repository, storage);
-                await AddUser("5122918", "Falgar", repository, storage);
+                    var repository = scope.ServiceProvider.GetRequiredService<IBomberjamRepository>();
+                    var storage = scope.ServiceProvider.GetRequiredService<IBomberjamStorage>();
 
-                await repository.UpdateAllUserGlobalRanks();
+                    await AddUser("36072624", "Minty", repository, storage);
+                    await AddUser("9208753", "Kalmera", repository, storage);
+                    await AddUser("26142591", "Pandarf", repository, storage);
+                    await AddUser("5122918", "Falgar", repository, storage);
+
+                    await repository.UpdateAllUserGlobalRanks();
+                }
             }
         }
 

@@ -10,6 +10,7 @@ using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Controllers
@@ -19,11 +20,13 @@ namespace Bomberjam.Website.Controllers
     public class AdminController : BaseBomberjamController<AdminController>
     {
         private readonly IGithubArtifactManager _artifacts;
+        private readonly IHostEnvironment _environment;
 
-        public AdminController(IBomberjamRepository repository, IBomberjamStorage storage, IGithubArtifactManager artifacts, ILogger<AdminController> logger)
+        public AdminController(IBomberjamRepository repository, IBomberjamStorage storage, IGithubArtifactManager artifacts, ILogger<AdminController> logger, IHostEnvironment environment)
             : base(repository, storage, logger)
         {
             this._artifacts = artifacts;
+            this._environment = environment;
         }
 
         [HttpGet]
@@ -100,7 +103,7 @@ namespace Bomberjam.Website.Controllers
             var users = await this.Repository.GetAllUsers().ConfigureAwait(false);
             var seasons = await this.Repository.GetSeasons().ConfigureAwait(false);
 
-            return new AdminIndexViewModel(workers, seasons, users.OrderBy(u => u.GlobalRank), errorMessage, successMessage);
+            return new AdminIndexViewModel(workers, seasons, users.OrderBy(u => u.GlobalRank), this._environment.EnvironmentName, errorMessage, successMessage);
         }
     }
 }
