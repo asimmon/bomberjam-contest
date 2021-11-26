@@ -35,7 +35,27 @@ namespace Bomberjam.Website.Controllers
         public IActionResult Index() => this.View();
 
         [HttpGet("~/download/{os}")]
-        public IActionResult Download(StarterOs? os) => os.HasValue ? this.View(new DownloadModel(os.Value)) : this.RedirectToAction("Index");
+        public async Task<IActionResult> Download(StarterOs? os)
+        {
+            if (!os.HasValue)
+            {
+                return this.RedirectToAction("Index");
+            }
+
+            bool showWhatsNext;
+
+            if (this.User.GetUserId() is { } userId)
+            {
+                var botsCount = await this.Repository.GetBotsCount(userId);
+                showWhatsNext = botsCount == 0;
+            }
+            else
+            {
+                showWhatsNext = true;
+            }
+
+            return this.View(new DownloadModel(os.Value, showWhatsNext: showWhatsNext));
+        }
 
         [HttpGet("~/download/bomberjam-{os}.zip")]
         public IActionResult StartDownload(StarterOs? os)
@@ -140,6 +160,4 @@ namespace Bomberjam.Website.Controllers
             return this.View();
         }
     }
-
-    public record DownloadModel(StarterOs Os);
 }
