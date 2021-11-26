@@ -3,6 +3,10 @@
 @import '~bootswatch/dist/darkly/bootswatch';
 @import '~highlight.js/scss/stackoverflow-dark';
 
+.btn-xl {
+  @include button-size($btn-padding-y-xl, $btn-padding-x-xl, $btn-font-size-xl, $btn-line-height-xl, $btn-border-radius-xl);
+}
+
 @import 'visualizer';
 
 #page-wrapper {
