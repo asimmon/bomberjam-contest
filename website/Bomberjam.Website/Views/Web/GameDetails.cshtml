@@ -11,9 +11,9 @@
 
 <div id="visualizer" data-game-id="@Model.Id" class="mt-4"></div>
 
-@if (this.IsAuthenticated(out int githubId))
+@if (this.User.IsAuthenticated())
 {
-  var user = Model.Users.FirstOrDefault(u => u.GithubId == githubId);
+  var user = Model.Users.FirstOrDefault(u => u.GithubId == this.User.GetGithubId());
   if (user != null && !string.IsNullOrWhiteSpace(user.Errors))
   {
     <h3>Bot errors</h3>

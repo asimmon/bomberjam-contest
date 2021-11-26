@@ -19,6 +19,7 @@
     <tr>
       <th>Rank</th>
       <th>User</th>
+      <th>Organization</th>
       <th>Points</th>
     </tr>
     </thead>
@@ -30,10 +31,11 @@
           <td>@user.GlobalRank</td>
           <td>
             <a asp-controller="Web" asp-action="UserDetails" asp-route-userId="@user.Id">
-              <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="avatar-sm" alt="@user.UserName"/>
+              <img src="https://avatars.githubusercontent.com/u/@user.GithubId?s=20" class="avatar-sm" alt="@user.UserName" loading="lazy"/>
               @user.UserName
             </a>
           </td>
+          <td>@user.Organization</td>
           <td>
             @if (user.HasCompiledBot)
             {
@@ -49,7 +51,7 @@
     }
     @if (Model.Users.Count == 0)
     {
-      <tr><td class="text-center" colspan="3">Ranked players will appear here when there will be at least one game</td></tr>
+      <tr><td class="text-center" colspan="4">Ranked players will appear here when there will be at least one game</td></tr>
     }
     </tbody>
   </table>

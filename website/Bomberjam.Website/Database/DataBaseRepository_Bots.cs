@@ -11,6 +11,11 @@ namespace Bomberjam.Website.Database
 {
     public partial class DatabaseRepository
     {
+        public async Task<int> GetBotsCount(Guid userId)
+        {
+            return await this._dbContext.Bots.CountAsync(b => b.UserId == userId).ConfigureAwait(false);
+        }
+
         public async Task<IEnumerable<Bot>> GetBots(Guid userId, int? max)
         {
             var selectQuery =

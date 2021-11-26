@@ -1,10 +1,20 @@
-name: Worker Docker Build CI
+name: Worker Docker build CI
 
 on:
   push:
     branches: [ master ]
+    paths:
+      - 'common/**/*'
+      - 'engine/**/*'
+      - 'worker/**/*'
+      - 'worker.Dockerfile'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'common/**/*'
+      - 'engine/**/*'
+      - 'worker/**/*'
+      - 'worker.Dockerfile'
 
 jobs:
   build:

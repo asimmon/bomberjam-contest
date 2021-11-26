@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
@@ -32,6 +33,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("bot/{botId}/download")]
         public IActionResult DownloadBot(Guid botId, [FromQuery(Name = "compiled")] bool isCompiled)
         {
+            this.Logger.LogInformation("Downloading bot {BotId}, is compiled: {IsCompiled}", botId, isCompiled);
+
             return this.PushFileStream(MediaTypeNames.Application.Zip, $"bot-{botId:D}.zip", async responseStream =>
             {
                 await using (responseStream)
@@ -52,6 +55,7 @@ namespace Bomberjam.Website.Controllers
         [RequestSizeLimit(Constants.CompiledBotMaxUploadSize)]
         public async Task<IActionResult> UploadCompiledBot(Guid botId)
         {
+            this.Logger.LogInformation("Uploading bot {BotId}, is compiled: {IsCompiled}", botId, true);
             await this.Storage.UploadCompiledBot(botId, this.Request.Body);
             return this.Ok();
         }
@@ -71,6 +75,7 @@ namespace Bomberjam.Website.Controllers
             bot.Errors = RemoveDuplicateLines(compilationResult.Errors ?? string.Empty);
 
             await this.Repository.UpdateBot(bot);
+            this.Logger.LogInformation("Changing bot {BotId} status to {CompilationStatus}", bot.Id, bot.Status);
 
             // Immediately enqueue a testing game task on success
             if (bot.Status == CompilationStatus.CompilationSucceeded)
@@ -81,6 +86,7 @@ namespace Bomberjam.Website.Controllers
                 if (match != null)
                 {
                     await this.Repository.AddGameTask(match.Users, GameOrigin.TestingPurpose);
+                    this.Logger.LogInformation("Queuing a new {GameOrigin} game", GameOrigin.TestingPurpose);
                 }
             }
 
@@ -105,6 +111,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("task/{taskId}")]
         public async Task<IActionResult> GetTask(Guid taskId)
         {
+            this.Logger.LogDebug("Retrieving task {TaskId}", taskId);
+
             try
             {
                 var task = await this.Repository.GetTask(taskId);
@@ -119,6 +127,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("task/next")]
         public async Task<IActionResult> GetNextTask()
         {
+            this.Logger.LogDebug("Retrieving next task");
+
             QueuedTask task;
 
             await GetNextTaskMutex.WaitAsync();
@@ -154,6 +164,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("task/{taskId}/started")]
         public async Task<IActionResult> MarkTaskAsStarted(Guid taskId)
         {
+            this.Logger.LogInformation("Task {TaskId} has started", taskId);
+
             try
             {
                 using (var transaction = await this.Repository.CreateTransaction())
@@ -173,6 +185,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("task/{taskId}/finished")]
         public async Task<IActionResult> MarkTaskAsFinished(Guid taskId)
         {
+            this.Logger.LogInformation("Task {TaskId} has finished", taskId);
+
             try
             {
                 using (var transaction = await this.Repository.CreateTransaction())
@@ -193,6 +207,8 @@ namespace Bomberjam.Website.Controllers
         [HttpGet("game/{gameId}")]
         public IActionResult GetGameWithStreaming(Guid gameId)
         {
+            this.Logger.LogInformation("Downloading game {GameId}", gameId);
+
             return this.PushFileStream(MediaTypeNames.Application.Json, $"game-{gameId:D}.json", async responseStream =>
             {
                 await using (responseStream)
@@ -203,6 +219,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpPost("game")]
+        [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
         public async Task<IActionResult> AddGameResult([FromBody] ApiGameResult gameResult)
         {
             if (!this.ModelState.IsValid)
@@ -245,6 +262,7 @@ namespace Bomberjam.Website.Controllers
 
                     var currentSeason = await this.Repository.GetCurrentSeason();
                     var gameId = await this.Repository.AddGame(gameHistory.Summary, gameResult.Origin, currentSeason.Id);
+                    this.Logger.LogInformation("Added new game result {GameId}", gameId);
 
                     if (gameResult.Origin == GameOrigin.RankedMatchmaking)
                     {
@@ -266,6 +284,8 @@ namespace Bomberjam.Website.Controllers
 
         private async Task<GameHistory> ComputeNewUserPoints(GameHistory gameHistory)
         {
+            this.Logger.LogInformation("Computing new user points");
+
             var users = new Dictionary<string, User>();
 
             foreach (var (playerId, player) in gameHistory.Summary.Players)
@@ -293,6 +313,7 @@ namespace Bomberjam.Website.Controllers
             return gameHistory;
         }
 
+        [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
         private static MemoryStream SerializeGameHistoryToJsonStream(GameHistory gh)
         {
             var memoryStream = new MemoryStream();

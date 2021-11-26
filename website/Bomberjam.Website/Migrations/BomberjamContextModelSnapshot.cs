@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Bomberjam.Website.Migrations
 {
     [DbContext(typeof(BomberjamContext))]
@@ -15,9 +17,10 @@ namespace Bomberjam.Website.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .UseIdentityColumns()
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.3");
+                .HasAnnotation("ProductVersion", "6.0.0")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("Bomberjam.Website.Database.DbBot", b =>
                 {
@@ -189,7 +192,8 @@ namespace Bomberjam.Website.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<DateTime>("Updated")
                         .HasColumnType("datetime2");
@@ -241,11 +245,16 @@ namespace Bomberjam.Website.Migrations
                     b.Property<DateTime>("Created")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("GithubId")
-                        .HasColumnType("int");
+                    b.Property<string>("GithubId")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<int>("GlobalRank")
                         .HasColumnType("int");
+
+                    b.Property<string>("Organization")
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)");
 
                     b.Property<float>("Points")
                         .HasColumnType("real");
@@ -260,7 +269,8 @@ namespace Bomberjam.Website.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("GithubId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[GithubId] IS NOT NULL");
 
                     b.HasIndex("GlobalRank");
 

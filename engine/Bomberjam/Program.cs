@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
@@ -30,6 +31,7 @@ namespace Bomberjam
             }
         }
 
+        [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
         private static GameConfiguration GetRequestedConfiguration(string? nullableConfigPath)
         {
             if (nullableConfigPath?.Trim() is { } configPath && configPath.Length > 0)

@@ -1,0 +1,42 @@
+﻿@using Bomberjam.Website.Utils
+@model DownloadModel
+
+<div class="jumbotron">
+  <h1 class="h2">Downloading the Bomberjam starter kit for @Model.Os.ToDisplayString()...</h1>
+
+  <p class="mt-4">
+    If your download doesn't start after 30 seconds,
+    <a asp-controller="Web" asp-action="StartDownload" asp-route-os="@Model.Os">click here to download manually</a>.
+  </p>
+
+  <form class="d-none" id="download-form" asp-controller="Web" asp-action="StartDownload" asp-route-os="@Model.Os" method="get">
+    <input type="submit" />
+  </form>
+
+  <p class="mt-3">
+    You can also download the starter kits directly from our
+    <a href="https://github.com/asimmon/bomberjam-contest/actions/workflows/engine-publish.yml">GitHub build artifacts <i class="fas fa-external-link-alt fa-xs"></i></a>.
+  </p>
+</div>
+
+<h2>What's next?</h2>
+
+<ol class="mt-4">
+  <li><a asp-controller="Web" asp-action="Learn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
+  @if (!User.IsAuthenticated())
+  {
+    <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
+  }
+  <li>Upload your bot source code as a single zip file</li>
+</ol>
+
+<div class="embed-responsive embed-responsive-16by9 shadow border border-dark">
+  <video autoplay controls loop muted>
+    <source src="~/assets/upload_bot.mp4" type="video/mp4">
+    Sorry, your browser doesn't support embedded videos.
+  </video>
+</div>
+
+@section Scripts {
+  <script>window.setTimeout(() => document.getElementById('download-form').submit(), 1)</script>
+}

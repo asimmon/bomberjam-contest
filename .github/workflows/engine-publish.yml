@@ -4,8 +4,16 @@ on:
   workflow_dispatch:
   push:
     branches: [ master ]
+    paths:
+      - 'common/**/*'
+      - 'engine/**/*'
+      - 'starters/**/*'
   pull_request:
     branches: [ master ]
+    paths:
+      - 'common/**/*'
+      - 'engine/**/*'
+      - 'starters/**/*'
 
 jobs:
   publish:
@@ -24,10 +32,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Setup .NET 5
+    - name: Setup .NET 6
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 5.0.x
+        dotnet-version: 6.0.x
 
     - name: Restore nuget packages
       working-directory: ./engine/Bomberjam
@@ -35,7 +43,7 @@ jobs:
 
     - name: Publish engine
       working-directory: ./engine/Bomberjam
-      run: dotnet publish -c Release -r ${{ matrix.rid }} -o ./dist/engine/
+      run: dotnet publish --self-contained -c Release -r ${{ matrix.rid }} -o ./dist/engine/
 
     - name: Copy starter kits
       run: cp -r ./starters ./engine/Bomberjam/dist/

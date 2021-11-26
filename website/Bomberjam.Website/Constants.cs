@@ -11,8 +11,6 @@ namespace Bomberjam.Website
         public const int BotSourceCodeMaxUploadSize = 25 * 1024 * 1024;
         public const int CompiledBotMaxUploadSize = 100 * 1024 * 1024;
 
-        public const string ApiPrincipalFakeEmail = "api@bomberjam.com";
-
         public static readonly Random Rng = new Random();
     }
 }

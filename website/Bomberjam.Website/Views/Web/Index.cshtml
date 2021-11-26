@@ -7,15 +7,37 @@
   </h1>
 
   <p class="lead mt-4">
-    Write your bot using one of six languages (<abbr title=".NET Core 3.1 and .NET 5">C#</abbr>, <abbr title="Go 1.16.3">Go</abbr>, <abbr title="Java 8">Java</abbr>, <abbr title="Node.js 12">JavaScript</abbr>, <abbr title="Python 3.8">Python</abbr> and <abbr title="PHP 8.0">PHP</abbr>) and fight against other players to reach the first place in the <a asp-controller="Web" asp-action="Leaderboard">leaderboard</a>.
+    Write your bot using one of six languages (<abbr title=".NET Core 3.1, .NET 5 and .NET 6">C#</abbr>, <abbr title="Go 1.16.3">Go</abbr>, <abbr title="Java 8">Java</abbr>, <abbr title="Node.js 12">JavaScript</abbr>, <abbr title="Python 3.8">Python</abbr> and <abbr title="PHP 8.0">PHP</abbr>) and fight against other players to reach the first place in the <a asp-controller="Web" asp-action="Leaderboard">leaderboard</a>.
   </p>
 
-  <p class="lead mt-4 mb-0">
-    <a href="@Model.StarterKitsArtifactsUrl" class="btn btn-lg btn-primary">
-      Download the starter kit from GitHub <i class="fas fa-external-link-alt fa-xs"></i><br/>
-      <small class=""><em>(You need to be signed into GitHub to download the build artifacts)</em></small>
-    </a>
-  </p>
+  <div class="lead mt-5 mb-0 text-center">
+    <div class="btn-group downloads">
+      <a id="btn-download" class="btn btn-xl btn-primary download download-windows" asp-controller="Web" asp-action="Download" asp-route-os="Windows">
+        Download the starter kit for Windows
+        <i class="fab fa-windows"></i>
+      </a>
+      <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-expanded="false">
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item download download-linux" asp-controller="Web" asp-action="Download" asp-route-os="Linux">
+          Download the starter kit for Linux
+          <i class="fab fa-linux"></i>
+        </a>
+        <a class="dropdown-item download download-macos" asp-controller="Web" asp-action="Download" asp-route-os="MacOs">
+          Download the starter kit for macOS
+          <i class="fab fa-apple"></i>
+        </a>
+      </div>
+    </div>
+
+    <p class="mt-2">
+      <small>
+        or download the starter kits directly from
+        <a href="https://github.com/asimmon/bomberjam-contest/actions/workflows/engine-publish.yml">GitHub build artifacts <i class="fas fa-external-link-alt fa-xs"></i></a>
+      </small>
+    </p>
+  </div>
 </div>
 
 <div class="row mt-5">
@@ -27,10 +49,16 @@
       One player can get points by destroying blocks, hitting another player and being the last player alive.
     </p>
 
+    <script>
+    function download() {
+      document.getElementById('btn-download').click();
+    }
+    </script>
+
     <ol class="mt-4">
-      <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
-      <li><a href="@Model.StarterKitsArtifactsUrl">Download <i class="fas fa-external-link-alt fa-xs"></i></a> the latest starter kit on GitHub</li>
+      <li><a href="javascript:download()">Download</a> the developer starter kit</li>
       <li><a asp-controller="Web" asp-action="Learn">Learn</a> the game mechanics and <strong>write</strong> your bot</li>
+      <li><a asp-controller="Authentication" asp-action="SignIn">Sign in</a> with your GitHub account</li>
       <li>Upload your bot source code as a single zip file</li>
       <li>We will compile your bot and tell you if something went wrong</li>
       <li>We will periodically schedule games and update your score</li>
@@ -38,7 +66,7 @@
   </div>
 
   <div class="col-12 col-sm-10 col-lg-5 col-md-5 offset-sm-1 offset-md-0 order-1.order-md-2">
-    <div class="embed-responsive embed-responsive-746by648">
+    <div class="embed-responsive embed-responsive-746by648 shadow border border-dark">
       <video autoplay loop muted>
         <source src="~/assets/demo.mp4" type="video/mp4">
         Sorry, your browser doesn't support embedded videos.
@@ -100,7 +128,7 @@
 <div>
   <p>
     We use <strong>Ubuntu 20.04 Docker containers</strong> to compile / package your bot as well as running the games. It means that your code must be compatible with Ubuntu 20.04.
-    The container comes with <strong>.NET 5</strong>, <strong>.NET Core 3.1</strong>, <strong>Go 1.16.3</strong>, <strong>Node.js 12</strong>, <strong>Java 8</strong>, <strong>Python 3.8</strong> and <strong>PHP 8.0</strong> pre-installed.
+    The container comes with <strong>.NET 6</strong>, <strong>.NET 5</strong>, <strong>.NET Core 3.1</strong>, <strong>Go 1.16.3</strong>, <strong>Node.js 12</strong>, <strong>Java 8</strong>, <strong>Python 3.8</strong> and <strong>PHP 8.0</strong> pre-installed.
   </p>
 
   <p>

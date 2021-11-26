@@ -1,143 +1,133 @@
+using System;
+using System.Net.Http.Headers;
 using Bomberjam.Website.Authentication;
-using Bomberjam.Website.Common;
+using Bomberjam.Website.Configuration;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Github;
 using Bomberjam.Website.Jobs;
+using Bomberjam.Website.Logging;
+using Bomberjam.Website.Setup;
 using Bomberjam.Website.Storage;
 using Bomberjam.Website.Utils;
 using Hangfire;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Razor.TagHelpers;
-using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace Bomberjam.Website
 {
     public class Startup
     {
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
+
         public Startup(IConfiguration configuration, IWebHostEnvironment environment)
         {
-            this.Configuration = configuration;
-            this.Environment = environment;
+            this._configuration = configuration;
+            this._environment = environment;
         }
-
-        private IConfiguration Configuration { get; }
-
-        private IWebHostEnvironment Environment { get; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddRouting();
-            services.AddMvc();
-            services.AddScoped<PushFileStreamResultExecutor>();
-            services.AddSingleton(new GitHubConfiguration(this.Configuration));
+            // options & configuration
+            services.AddOptionsAndValidate<SecretAuthenticationOptions>(this._configuration.GetSection("SecretAuthentication"));
+            services.AddOptionsAndValidate<ConnectionStringOptions>(this._configuration.GetSection("ConnectionStrings"));
+            services.AddOptionsAndValidate<GoogleAnalyticsOptions>(this._configuration.GetSection("GoogleAnalytics"));
+            services.AddOptionsAndValidate<GitHubOptions>(this._configuration.GetSection("GitHub"));
+            services.AddOptionsAndValidate<JobOptions>(this._configuration.GetSection("Jobs"));
 
-            services.AddResponseCompression(opts =>
+            services.ConfigureOptions<MvcSetup>();
+            services.ConfigureOptions<AuthenticationSetup>();
+
+            // mvc
+            var mvcBuilder = services.AddMvc();
+            if (this._environment.IsDevelopment())
+                mvcBuilder.AddRazorRuntimeCompilation();
+
+            services.AddResponseCompression();
+            services.AddAuthentication().AddCookie().AddGitHub().AddSecret();
+            services.AddScoped<PushFileStreamResultExecutor>();
+
+            // database
+            services.AddDbContext<BomberjamContext>((serviceProvider, builder) =>
             {
-                opts.EnableForHttps = true;
+                var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
+                var sqlBuilder = builder.UseSqlServer(scopedConnectionStrings.Value.BomberjamContext);
+                if (this._environment.IsDevelopment())
+                    sqlBuilder.EnableSensitiveDataLogging();
             });
 
-            _ = this.Environment.IsDevelopment()
-                ? services.AddControllersWithViews().AddRazorRuntimeCompilation()
-                : services.AddControllersWithViews();
+            if (this._environment.IsDevelopment())
+                services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.Configure<FormOptions>(x => x.MultipartBodyLengthLimit = Constants.GeneralMaxUploadSize);
-            services.Configure<KestrelServerOptions>(x => x.Limits.MaxRequestBodySize = Constants.GeneralMaxUploadSize);
+            // repo & storage
+            services.AddSingleton<IBomberjamStorage>(serviceProvider =>
+            {
+                var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
+                var blobStorage = new AzureStorageBomberjamStorage(scopedConnectionStrings.Value.BomberjamStorage);
+                return blobStorage;
 
-            this.ConfigureAuthentication(services);
+                /*
+                var scopedEnvironment = serviceProvider.GetRequiredService<IHostEnvironment>();
+                if (!scopedEnvironment.IsDevelopment())
+                    return blobStorage;
 
-            var botStorage = this.ConfigureBotStorage();
-            services.AddSingleton(botStorage);
-
-            var dbConnStr = this.Configuration.GetConnectionString("BomberjamContext");
-
-            this.ConfigureDatabase(services, dbConnStr);
+                var tempStorage = new LocalFileBomberjamStorage(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile));
+                return new CompositeBomberjamStorage(tempStorage, blobStorage);
+                //*/
+            });
 
             services.AddSingleton<IObjectCache, ObjectCache>();
             services.AddScoped<DatabaseRepository>();
-            services.AddScoped<IBomberjamRepository, CachedDatabaseRepository>(container =>
+            services.AddScoped<IBomberjamRepository>(container =>
             {
-                var repository = container.GetService<DatabaseRepository>();
-                var objectCache = container.GetService<IObjectCache>();
+                var repository = container.GetRequiredService<DatabaseRepository>();
+                var objectCache = container.GetRequiredService<IObjectCache>();
                 return new CachedDatabaseRepository(repository, objectCache);
             });
 
-            ConfigureHangfire(services, dbConnStr);
-
-            // Google Analytics
-            services.Configure<GoogleAnalyticsOptions>(options => Configuration.GetSection("GoogleAnalytics").Bind(options));
-            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
-        }
-
-        private void ConfigureDatabase(IServiceCollection services, string dbConnStr) => services.AddDbContext<BomberjamContext>(options =>
-        {
-            var dbBuilder = options.UseSqlServer(dbConnStr);
-
-            if (this.Environment.IsDevelopment())
+            // jobs
+            services.AddHangfire((serviceProvider, builder) =>
             {
-                dbBuilder.EnableSensitiveDataLogging();
-            }
-        });
-
-        private static void ConfigureHangfire(IServiceCollection services, string dbConnStr)
-        {
-            services.AddHangfire(config =>
-            {
-                config.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+                var scopedConnectionStrings = serviceProvider.GetRequiredService<IOptions<ConnectionStringOptions>>();
+                builder.SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
                     .UseSimpleAssemblyNameTypeSerializer()
                     .UseRecommendedSerializerSettings()
-                    .UseSqlServerStorage(dbConnStr);
+                    .UseSqlServerStorage(scopedConnectionStrings.Value.BomberjamContext);
             });
 
             services.AddHangfireServer();
-        }
 
-        private IBomberjamStorage ConfigureBotStorage()
-        {
-#if DEBUG
-            //*
-            var storages = new IBomberjamStorage[]
+            // telemetry
+            services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
+
+            // github artifacts downloader
+            services.AddHttpClient(nameof(GithubArtifactManager), (container, client) =>
             {
-                new LocalFileBomberjamStorage(System.IO.Path.GetTempPath()),
-                new AzureStorageBomberjamStorage(this.Configuration.GetConnectionString("BomberjamStorage"))
-            };
+                var options = container.GetRequiredService<IOptions<GitHubOptions>>();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
+                client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Bomberjam", productVersion: null));
+                client.DefaultRequestHeaders.Authorization = new BasicAuthenticationHeaderValue(options.Value.ArtifactsUsername, options.Value.ArtifactsPassword);
+            });
 
-            return new CompositeBomberjamStorage(storages);
-            //*/
-#endif
-            return new AzureStorageBomberjamStorage(this.Configuration.GetConnectionString("BomberjamStorage"));
+            services.AddSingleton<IGithubArtifactManager, GithubArtifactManager>();
+            services.AddHostedService<DownloadGithubArtifactsOnStartup>();
+            services.AddHostedService<AddDebugUsersOnStartup>();
         }
 
-        private void ConfigureAuthentication(IServiceCollection services)
-        {
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.LoginPath = "/signin";
-                    options.LogoutPath = "/signout";
-                })
-                .AddGitHub(options =>
-                {
-                    options.ClientId = this.Configuration["GitHub:ClientId"];
-                    options.ClientSecret = this.Configuration["GitHub:ClientSecret"];
-                    options.CallbackPath = "/signin-github-callback";
-                })
-                .AddSecret(this.Configuration["SecretAuth:Secret"]);
-        }
-
-        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, ILogger<Startup> logger, GitHubConfiguration gitHubConfiguration)
+        public void Configure(IApplicationBuilder app, IRecurringJobManager recurringJobs, IOptions<GitHubOptions> githubOptions, IOptions<JobOptions> jobOptions)
         {
             app.UseResponseCompression();
 
-            if (this.Environment.IsDevelopment())
+            if (this._environment.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                app.UseMigrationsEndPoint();
             }
             else
             {
@@ -145,37 +135,24 @@ namespace Bomberjam.Website
                 app.UseHsts();
             }
 
-            // Required to serve files with no extension in the .well-known folder
-            var options = new StaticFileOptions
-            {
-                ServeUnknownFileTypes = true
-            };
-
             app.UseHttpsRedirection();
-            app.UseStaticFiles(options);
-
+            app.UseStaticFiles();
             app.UseRouting();
-
             app.UseAuthentication();
             app.UseAuthorization();
+            app.UseUserEnricher();
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapDefaultControllerRoute();
                 endpoints.MapHangfireDashboard(new DashboardOptions
                 {
-                    Authorization = new[] { new HangfireDashboardAuthorizationFilter(gitHubConfiguration) }
+                    Authorization = new[] { new HangfireDashboardAuthorizationFilter() }
                 });
             });
 
-            var matchmakingCronExpr = this.Configuration["JobCrons:Matchmaking"];
-            var orphanedTasksCronExpr = this.Configuration["JobCrons:OrphanedTasks"];
-
-            logger.Log(LogLevel.Information, "Matchmaking cron expression: " + matchmakingCronExpr);
-            logger.Log(LogLevel.Information, "Orphaned tasks cron expression: " + orphanedTasksCronExpr);
-
-            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), matchmakingCronExpr);
-            recurringJobs.AddOrUpdate<OrphanedTaskFixingJob>("orphanedTasks", job => job.Run(), orphanedTasksCronExpr);
+            recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), jobOptions.Value.Matchmaking);
+            recurringJobs.AddOrUpdate<OrphanedTaskFixingJob>("orphanedTasks", job => job.Run(), jobOptions.Value.OrphanedTasks);
         }
     }
 }

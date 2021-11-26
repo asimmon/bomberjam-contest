@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Exe</OutputType>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
@@ -27,8 +27,8 @@
   <ItemGroup>
     <PackageReference Include="Mono.Options" Version="6.6.0.161" />
   </ItemGroup>
-  
+
   <ItemGroup>
-    <ProjectReference Include="..\Bomberjam.Common\Bomberjam.Common.csproj" />
+    <ProjectReference Include="..\..\common\Bomberjam.Common\Bomberjam.Common.csproj" />
   </ItemGroup>
 </Project>

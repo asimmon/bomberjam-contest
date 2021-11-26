@@ -1,36 +1,66 @@
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Net.Mime;
 using System.Threading.Tasks;
 using Bomberjam.Website.Common;
 using Bomberjam.Website.Database;
+using Bomberjam.Website.Github;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
+using Bomberjam.Website.Utils;
 
 namespace Bomberjam.Website.Controllers
 {
     public class WebController : BaseBomberjamController<WebController>
     {
-        private readonly GitHubConfiguration _github;
+        private static readonly Dictionary<StarterOs, string> StarterNamesByOs = new Dictionary<StarterOs, string>
+        {
+            [StarterOs.Windows] = "bomberjam-windows.zip",
+            [StarterOs.Linux] = "bomberjam-linux.zip",
+            [StarterOs.MacOs] = "bomberjam-macos.zip",
+        };
 
-        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, ILogger<WebController> logger, GitHubConfiguration github)
+        private readonly IGithubArtifactManager _artifacts;
+
+        public WebController(IBomberjamRepository repository, IBomberjamStorage storage, IGithubArtifactManager artifacts, ILogger<WebController> logger)
             : base(repository, storage, logger)
         {
-            this._github = github;
+            this._artifacts = artifacts;
         }
 
         [HttpGet("~/")]
-        public IActionResult Index()
+        public IActionResult Index() => this.View();
+
+        [HttpGet("~/download/{os}")]
+        public IActionResult Download(StarterOs? os) => os.HasValue
+            ? this.View(new DownloadModel(os.Value))
+            : this.RedirectToAction("Index");
+
+        [HttpGet("~/download/bomberjam-{os}.zip")]
+        public IActionResult StartDownload(StarterOs? os)
         {
-            return this.View(new WebHomeViewModel { StarterKitsArtifactsUrl = this._github.StartKitsArtifactsUrl });
+            if (!os.HasValue)
+            {
+                return this.RedirectToAction("Index");
+            }
+
+            return this.PushFileStream(MediaTypeNames.Application.Zip, StarterNamesByOs[os.Value], async responseStream =>
+            {
+                await using (responseStream)
+                {
+                    await this._artifacts.DownloadTo(os.Value, responseStream);
+                }
+            });
         }
 
+        [HttpGet("~/error")]
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
-            return this.View(new ErrorModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            return this.View(new ErrorModel { RequestId = Activity.Current?.Id ?? this.HttpContext.TraceIdentifier });
         }
 
         [HttpGet("~/leaderboard")]
@@ -49,12 +79,9 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpGet("~/viewer")]
-        public IActionResult Viewer()
-        {
-            return this.View();
-        }
+        public IActionResult Viewer() => this.View();
 
-        [HttpGet("~/user/{userId}")]
+        [HttpGet("~/user/{userId:guid}")]
         public async Task<IActionResult> UserDetails(Guid userId, [FromQuery(Name = "season")] int? seasonId, int page = 1)
         {
             var user = await this.Repository.GetUserById(userId);
@@ -105,6 +132,12 @@ namespace Bomberjam.Website.Controllers
 
         [HttpGet("~/learn")]
         public IActionResult Learn()
+        {
+            return this.View();
+        }
+
+        [HttpGet("~/access-denied")]
+        public IActionResult AccessDenied()
         {
             return this.View();
         }

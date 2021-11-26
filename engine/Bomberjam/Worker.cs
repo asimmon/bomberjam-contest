@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -74,6 +75,7 @@ namespace Bomberjam
             this.SaveHistoryOutput();
         }
 
+        [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
         private void SaveHistoryOutput()
         {
             if (this._opts.Output is { Directory: { } parentDir } file)

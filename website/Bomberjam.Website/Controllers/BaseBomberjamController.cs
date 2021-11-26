@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Bomberjam.Website.Database;
 using Bomberjam.Website.Models;
 using Bomberjam.Website.Storage;
+using Bomberjam.Website.Utils;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Logging;
@@ -36,26 +37,12 @@ namespace Bomberjam.Website.Controllers
 
         protected Task<User> GetAuthenticatedUser()
         {
-            if (!this.TryGetNameIdentifierClaim(out var githubId))
-            {
+            var githubId = this.User.GetGithubId();
+            if (githubId == null)
                 throw new Exception("Could not retrieve GitHub name identifier claim from authentication result");
-            }
 
             return this.Repository.GetUserByGithubId(githubId);
         }
-
-        protected bool TryGetNameIdentifierClaim(out int nameIdentifier)
-        {
-            var nameIdentifierClaim = this.HttpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-            if (nameIdentifierClaim != null && int.TryParse(nameIdentifierClaim.Value, out nameIdentifier))
-            {
-                return true;
-            }
-
-            nameIdentifier = -1;
-            return false;
-        }
-
         protected static string[] GetAllErrors(ModelStateDictionary modelState)
         {
             return modelState.Values.SelectMany(x => x.Errors).Select(x => x.ErrorMessage).ToArray();

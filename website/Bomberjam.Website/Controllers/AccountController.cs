@@ -30,37 +30,36 @@ namespace Bomberjam.Website.Controllers
         {
             var user = await this.GetAuthenticatedUser();
             var bots = await this.Repository.GetBots(user.Id);
-            return this.View("Index", new AccountReadViewModel(user, bots));
-        }
-
-        [HttpGet("edit")]
-        public async Task<IActionResult> Edit()
-        {
-            var user = await this.GetAuthenticatedUser();
-            return this.View("Edit", new AccountEditViewModel(user));
+            return this.View("Index", new AccountReadWriteViewModel(user, bots));
         }
 
         [HttpPost("edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(AccountEditViewModel viewModel)
+        public async Task<IActionResult> Edit(AccountWriteViewModel viewModel)
         {
-            if (!this.ModelState.IsValid)
-                return this.View("Edit", viewModel);
-
             var user = await this.GetAuthenticatedUser();
+
+            if (!this.ModelState.IsValid)
+            {
+                var bots = await this.Repository.GetBots(user.Id);
+                return this.View("Index", new AccountReadWriteViewModel(user, bots, viewModel));
+            }
 
             if (!string.Equals(viewModel.UserName, user.UserName, StringComparison.OrdinalIgnoreCase))
             {
                 var isUserNameAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(viewModel.UserName);
                 if (isUserNameAlreadyUsed)
                 {
-                    this.ModelState.AddModelError<AccountEditViewModel>(vm => vm.UserName, "This username is already used");
-                    return this.View("Edit", viewModel);
+                    var bots = await this.Repository.GetBots(user.Id);
+                    this.ModelState.AddModelError<AccountWriteViewModel>(vm => vm.UserName, "This username is already used");
+                    return this.View("Index", new AccountReadWriteViewModel(user, bots, viewModel));
                 }
             }
 
             user.UserName = viewModel.UserName;
+            user.Organization = viewModel.Organization;
             await this.Repository.UpdateUser(user);
+            this.Logger.LogInformation("User {UserId} changed it username: {UserName} and organization: {Organization}", user.Id, user.UserName, user.Organization);
 
             return this.RedirectToAction("Index", "Account");
         }
@@ -96,13 +95,16 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Submit", viewModel);
             }
 
+            Guid newBotId;
             using (var transaction = await this.Repository.CreateTransaction())
             {
-                var newBotId = await this.Repository.AddBot(user.Id);
+                newBotId = await this.Repository.AddBot(user.Id);
                 await this.Storage.UploadBotSourceCode(newBotId, viewModel.BotFile.OpenReadStream());
                 await this.Repository.AddCompilationTask(newBotId);
                 await transaction.CommitAsync();
             }
+
+            this.Logger.LogInformation("User {UserId} submitted a new bot {BotId}, is compiled: {IsCompiled}", user.Id, newBotId, false);
 
             return this.RedirectToAction("Index", "Account");
         }
@@ -168,6 +170,8 @@ namespace Bomberjam.Website.Controllers
 
             if (bot.UserId != user.Id)
                 return this.Forbid("This bot does not belong to you");
+
+            this.Logger.LogInformation("User {UserId} downloads its bot {BotId}", user.Id, botId);
 
             return this.PushFileStream(MediaTypeNames.Application.Zip, $"bot-{botId:D}.zip", async responseStream =>
             {

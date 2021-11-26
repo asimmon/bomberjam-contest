@@ -1,7 +1,11 @@
 @import 'variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootswatch/dist/darkly/bootswatch';
-@import '~highlight.js/scss/zenburn';
+@import '~highlight.js/scss/stackoverflow-dark';
+
+.btn-xl {
+  @include button-size($btn-padding-y-xl, $btn-padding-x-xl, $btn-font-size-xl, $btn-line-height-xl, $btn-border-radius-xl);
+}
 
 @import 'visualizer';
 
@@ -68,6 +72,9 @@ img.avatar-sm {
   @extend .rounded;
   max-height: 20px;
   max-width: 20px;
+  height: 20px;
+  width: 20px;
+  background-color: $body-bg;
 }
 
 .code-sample {
@@ -83,4 +90,26 @@ img.avatar-sm {
 
 .badge-sm {
   font-size: 50%;
+}
+
+@each $color, $value in $theme-colors {
+  @keyframes pulse-#{$color} {
+    0% {
+    }
+    40% {
+      box-shadow: 0 0 0 24px rgba($value, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba($value, 0);
+    }
+  }
+
+  .btn-pulse-#{$color} {
+    box-shadow: 0 0 0 0 rgba($value, .5);
+    animation: pulse-#{$color} 3s infinite;
+
+    &:hover {
+      animation: none;
+    }
+  }
 }

@@ -30,7 +30,7 @@ namespace Bomberjam.Website.Database
                 .ToListAsync().ConfigureAwait(false);
         }
 
-        public async Task<User> GetUserByGithubId(int githubId)
+        public async Task<User> GetUserByGithubId(string githubId)
         {
             var dbUser = await this._dbContext.Users.FirstOrDefaultAsync(u => u.GithubId == githubId).ConfigureAwait(false);
             if (dbUser == null)
@@ -55,22 +55,26 @@ namespace Bomberjam.Website.Database
             Updated = dbUser.Updated,
             GithubId = dbUser.GithubId,
             UserName = dbUser.UserName,
+            Organization = dbUser.Organization,
             Points = dbUser.Points,
             GlobalRank = dbUser.GlobalRank
         };
 
         private static User MapUser(DbUser dbUser) => MapUser<User>(dbUser);
 
-        public async Task AddUser(int githubId, string username)
+        public async Task<User> AddUser(string githubId, string username)
         {
             this._dbContext.Users.Add(new DbUser
             {
                 GithubId = githubId,
                 UserName = username ?? string.Empty,
+                Organization = string.Empty,
                 Points = Constants.InitialPoints
             });
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
+
+            return await this.GetUserByGithubId(githubId);
         }
 
         public async Task UpdateUser(User changedUser)
@@ -81,6 +85,8 @@ namespace Bomberjam.Website.Database
 
             if (!string.IsNullOrWhiteSpace(changedUser.UserName))
                 dbUser.UserName = changedUser.UserName;
+
+            dbUser.Organization = changedUser.Organization ?? string.Empty;
 
             await this._dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
@@ -94,6 +100,7 @@ namespace Bomberjam.Website.Database
                 {
                     Id = u.Id,
                     UserName = u.UserName,
+                    Organization = u.Organization,
                     Points = u.Points,
                     GlobalRank = u.GlobalRank,
                     GithubId = u.GithubId,
@@ -109,13 +116,14 @@ namespace Bomberjam.Website.Database
                 from u in this._dbContext.Users
                 join b in this._dbContext.Bots on u.Id equals b.UserId into innerJoin
                 from leftJoin in innerJoin.DefaultIfEmpty()
-                group leftJoin by new { u.Id, u.UserName, u.GithubId, u.Points, u.Created, u.Updated, u.GlobalRank }
+                group leftJoin by new { u.Id, u.UserName, u.Organization, u.GithubId, u.Points, u.Created, u.Updated, u.GlobalRank }
                 into grouped
                 orderby grouped.Key.Created descending
                 select new User
                 {
                     Id = grouped.Key.Id,
                     UserName = grouped.Key.UserName,
+                    Organization = grouped.Key.Organization,
                     GithubId = grouped.Key.GithubId,
                     Points = grouped.Key.Points,
                     GlobalRank = grouped.Key.GlobalRank,

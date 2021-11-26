@@ -89,7 +89,7 @@ export const PlayerRow = (props: PlayerRowProps) => {
       } else {
         setLatency(NA);
       }
-    } catch (err) {
+    } catch (err: any) {
       setErrorMessage(typeof err === 'string' ? err : err.toString());
       setScore(NA);
       setLatency(NA);

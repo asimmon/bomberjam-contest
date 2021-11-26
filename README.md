@@ -23,7 +23,6 @@ Check `appsettings.json` for required parameters. They can be set as environment
 * `GitHub__ClientId`: GitHub OAuth app client ID that redirects to https://localhost:5001/signin-github-callback
 * `GitHub__ClientSecret`: GitHub OAuth app client secret that redirects to https://localhost:5001/signin-github-callback
 * `GitHub__Administrators`: Comma-separated list of GitHub ID administrators
-* `GitHub__StarterKitsArtifactsUrl`: An URL where to download the starter kits
 * `SecretAuth__Secret`: A secret token that will be used by the worker to communicate with the website API
 * `ConnectionStrings__BomberjamContext`: SQL Server database connection string
 * `ConnectionStrings__BomberjamStorage`: Azure Storage connection string, used for bots and game replays storage

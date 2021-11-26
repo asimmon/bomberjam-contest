@@ -67,7 +67,7 @@ export const GameFileLoader = (props: GameFileLoaderProps) => {
       const sleepPromise = sleep(1000);
       const [gameHistory] = await Promise.all([gameHistoryPromise, sleepPromise]);
       return props.onLoaded(gameHistory);
-    } catch (err) {
+    } catch (err: any) {
       return props.onError(err.toString());
     }
   };
