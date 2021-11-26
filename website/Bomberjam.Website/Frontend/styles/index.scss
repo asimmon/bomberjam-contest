@@ -91,3 +91,25 @@ img.avatar-sm {
 .badge-sm {
   font-size: 50%;
 }
+
+@each $color, $value in $theme-colors {
+  @keyframes pulse-#{$color} {
+    0% {
+    }
+    40% {
+      box-shadow: 0 0 0 24px rgba($value, 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgba($value, 0);
+    }
+  }
+
+  .btn-pulse-#{$color} {
+    box-shadow: 0 0 0 0 rgba($value, .5);
+    animation: pulse-#{$color} 3s infinite;
+
+    &:hover {
+      animation: none;
+    }
+  }
+}

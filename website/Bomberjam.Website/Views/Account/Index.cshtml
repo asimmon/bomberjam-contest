@@ -63,7 +63,7 @@
     <h2>Your bots</h2>
   </div>
   <div class="col text-right">
-    <a asp-controller="Account" asp-action="Submit" class="btn btn-lg btn-success">
+    <a asp-controller="Account" asp-action="Submit" class="btn btn-lg btn-success@(Model.Bots.Count == 0 ? " btn-pulse-success" : "")">
       @(Model.Bots.Count == 0 ? "Upload a bot" : "Upload another bot")
     </a>
   </div>

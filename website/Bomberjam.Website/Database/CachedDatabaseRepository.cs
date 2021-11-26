@@ -13,6 +13,7 @@ namespace Bomberjam.Website.Database
         private const string GetSeasonsKeyFormat = "GetSeasons";
         private const string GetRankedUsersKeyFormat = "GetRankedUsers";
         private const string GetGameKeyFormat = "GetGame_{0}";
+        private const string GetBotsCountKeyFormat = "GetBotsCount_{0}";
 
         private readonly IBomberjamRepository _underlyingRepository;
         private readonly IObjectCache _objectCache;
@@ -85,6 +86,14 @@ namespace Bomberjam.Website.Database
             return this._underlyingRepository.UpdateAllUserGlobalRanks();
         }
 
+        public Task<int> GetBotsCount(Guid userId)
+        {
+            return this._objectCache.GetOrSetAsync(string.Format(GetBotsCountKeyFormat, userId), () =>
+            {
+                return this._underlyingRepository.GetBotsCount(userId);
+            });
+        }
+
         public Task<IEnumerable<Bot>> GetBots(Guid userId, int? max = null)
         {
             return this._underlyingRepository.GetBots(userId, max);
@@ -97,6 +106,7 @@ namespace Bomberjam.Website.Database
 
         public Task<Guid> AddBot(Guid userId)
         {
+            this._objectCache.Remove(string.Format(GetBotsCountKeyFormat, userId));
             return this._underlyingRepository.AddBot(userId);
         }
 

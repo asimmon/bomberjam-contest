@@ -21,6 +21,7 @@ namespace Bomberjam.Website.Database
         Task UpdateAllUserGlobalRanks(int seasonId);
         Task UpdateAllUserGlobalRanks();
 
+        Task<int> GetBotsCount(Guid userId);
         Task<IEnumerable<Bot>> GetBots(Guid userId, int? max = null);
         Task<Bot> GetBot(Guid botId);
         Task<Guid> AddBot(Guid userId);
