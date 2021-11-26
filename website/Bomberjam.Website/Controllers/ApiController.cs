@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
@@ -218,6 +219,7 @@ namespace Bomberjam.Website.Controllers
         }
 
         [HttpPost("game")]
+        [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
         public async Task<IActionResult> AddGameResult([FromBody] ApiGameResult gameResult)
         {
             if (!this.ModelState.IsValid)
@@ -311,6 +313,7 @@ namespace Bomberjam.Website.Controllers
             return gameHistory;
         }
 
+        [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
         private static MemoryStream SerializeGameHistoryToJsonStream(GameHistory gh)
         {
             var memoryStream = new MemoryStream();

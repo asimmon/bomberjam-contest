@@ -1,9 +1,11 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Bomberjam.Common
 {
+    [SuppressMessage("Trimming", "IL2026", Justification = "We don't dynamically load dependencies")]
     public class State
     {
         [JsonIgnore]
