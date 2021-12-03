@@ -214,6 +214,7 @@ namespace Bomberjam.Website.Database
         {
             this._objectCache.Remove(GetCurrentSeasonKeyFormat);
             this._objectCache.Remove(GetSeasonsKeyFormat);
+            this._objectCache.Remove(GetRankedUsersKeyFormat);
 
             return this._underlyingRepository.StartNewSeason();
         }

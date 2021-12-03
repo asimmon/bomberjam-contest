@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Serilog;
@@ -21,12 +22,19 @@ namespace Bomberjam.Website
 
         private static void UseSerilog(HostBuilderContext context, ILoggingBuilder builder)
         {
-            Log.Logger = new LoggerConfiguration()
+            var loggerBuilder = new LoggerConfiguration()
                 .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext()
-                .WriteTo.Console()
-                .CreateLogger();
+                .WriteTo.Console();
 
+            var logzioToken = context.Configuration.GetValue<string>("LogzioToken");
+            if (!string.IsNullOrWhiteSpace(logzioToken))
+            {
+                var logzioListenerUrl = "https://listener.logz.io:8071/?type=app&token=" + logzioToken;
+                loggerBuilder = loggerBuilder.WriteTo.LogzIoDurableHttp(logzioListenerUrl);
+            }
+
+            Log.Logger = loggerBuilder.CreateLogger();
             builder.ClearProviders();
             builder.AddSerilog(Log.Logger);
         }
