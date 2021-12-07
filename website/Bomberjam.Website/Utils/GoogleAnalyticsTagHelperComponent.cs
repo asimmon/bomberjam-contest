@@ -7,27 +7,23 @@ namespace Bomberjam.Website.Utils
 {
     public class GoogleAnalyticsTagHelperComponent : TagHelperComponent
     {
-        private readonly IOptions<GoogleAnalyticsOptions> _googleAnalyticsOptions;
+        private readonly IOptions<TelemetryOptions> _telemetryOptions;
 
-        public GoogleAnalyticsTagHelperComponent(IOptions<GoogleAnalyticsOptions> googleAnalyticsOptions)
+        public GoogleAnalyticsTagHelperComponent(IOptions<TelemetryOptions> telemetryOptions)
         {
-            this._googleAnalyticsOptions = googleAnalyticsOptions;
+            this._telemetryOptions = telemetryOptions;
         }
 
         public override void Process(TagHelperContext context, TagHelperOutput output)
         {
-            if (string.Equals(output.TagName, "head", StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(output.TagName, "head", StringComparison.OrdinalIgnoreCase) && this._telemetryOptions.Value.GoogleAnalytics is { Length: > 0 } trackingCode)
             {
-                var trackingCode = this._googleAnalyticsOptions.Value.TrackingCode;
-                if (!string.IsNullOrEmpty(trackingCode))
-                {
-                    output.PostContent
-                        .AppendHtml("<script async src='https://www.googletagmanager.com/gtag/js?id=")
-                        .AppendHtml(trackingCode)
-                        .AppendHtml("'></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','")
-                        .AppendHtml(trackingCode)
-                        .AppendHtml("');</script>");
-                }
+                output.PostContent
+                    .AppendHtml("<script async src='https://www.googletagmanager.com/gtag/js?id=")
+                    .AppendHtml(trackingCode)
+                    .AppendHtml("'></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','")
+                    .AppendHtml(trackingCode)
+                    .AppendHtml("');</script>");
             }
         }
     }

@@ -37,7 +37,7 @@ namespace Bomberjam.Website
             // options & configuration
             services.AddOptionsAndValidate<SecretAuthenticationOptions>(this._configuration.GetSection("SecretAuthentication"));
             services.AddOptionsAndValidate<ConnectionStringOptions>(this._configuration.GetSection("ConnectionStrings"));
-            services.AddOptionsAndValidate<GoogleAnalyticsOptions>(this._configuration.GetSection("GoogleAnalytics"));
+            services.AddOptionsAndValidate<TelemetryOptions>(this._configuration.GetSection("Telemetry"));
             services.AddOptionsAndValidate<GitHubOptions>(this._configuration.GetSection("GitHub"));
             services.AddOptionsAndValidate<JobOptions>(this._configuration.GetSection("Jobs"));
 
@@ -105,6 +105,7 @@ namespace Bomberjam.Website
 
             // telemetry
             services.AddTransient<ITagHelperComponent, GoogleAnalyticsTagHelperComponent>();
+            services.AddTransient<ITagHelperComponent, HotjarTagHelperComponent>();
 
             // github artifacts downloader
             services.AddHttpClient(nameof(GithubArtifactManager), (container, client) =>
