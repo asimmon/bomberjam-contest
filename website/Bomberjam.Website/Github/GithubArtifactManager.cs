@@ -82,7 +82,6 @@ namespace Bomberjam.Website.Github
 
         public async Task DownloadTo(StarterOs os, Stream stream)
         {
-            this._logger.LogDebug("Downloading {StarterOs} starter", os);
             await this._tcs.Task;
             await this._storage.DownloadStarter(os, stream);
         }

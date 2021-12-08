@@ -47,6 +47,9 @@ namespace Bomberjam.Website.Controllers
                 return this.RedirectToAction("Index");
             }
 
+            var userId = this.User.GetUserId() ?? Constants.AnonymousUserId;
+            this.Logger.LogInformation("Downloading {StarterOs} starter for user {UserId}", os, userId);
+
             return this.PushFileStream(MediaTypeNames.Application.Zip, StarterNamesByOs[os.Value], async responseStream =>
             {
                 await using (responseStream)
