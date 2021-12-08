@@ -66,7 +66,7 @@ namespace Bomberjam.Website.Controllers
             user.Organization = viewModel.Organization;
             await this.Repository.UpdateUser(user);
             this.Logger.LogInformation(
-                "User {UserId} changed it username from {PreviousUserName} to {UserName} and organization from {PreviousOrganization} to {PreviousUserName}",
+                "User {UserId} changed it username from {PreviousUserName} to {UserName} and organization from {PreviousOrganization} to {Organization}",
                 user.Id, previousUserName, user.UserName, previousOrganization, user.Organization);
 
             return this.RedirectToAction("Index", "Account");
