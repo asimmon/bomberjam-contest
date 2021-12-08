@@ -79,7 +79,7 @@ namespace Bomberjam.Website.Controllers
                         await transaction.CommitAsync();
                     }
 
-                    this.Logger.LogInformation("Created new user {UserId}", user.Id);
+                    this.Logger.LogInformation("Created user {UserId} with username {UserName} (original username {PreviousUserName})", user.Id, user.UserName, githubUserName);
                 }
                 catch (Exception)
                 {

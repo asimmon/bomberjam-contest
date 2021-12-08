@@ -45,7 +45,10 @@ namespace Bomberjam.Website.Controllers
                 return this.View("Index", new AccountReadWriteViewModel(user, bots, viewModel));
             }
 
-            if (!string.Equals(viewModel.UserName, user.UserName, StringComparison.OrdinalIgnoreCase))
+            if (string.Equals(viewModel.UserName, user.UserName, StringComparison.Ordinal) && string.Equals(viewModel.Organization, user.Organization, StringComparison.Ordinal))
+                return this.RedirectToAction("Index", "Account");
+
+            if (!string.Equals(viewModel.UserName, user.UserName, StringComparison.Ordinal))
             {
                 var isUserNameAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(viewModel.UserName);
                 if (isUserNameAlreadyUsed)
@@ -56,10 +59,15 @@ namespace Bomberjam.Website.Controllers
                 }
             }
 
+            var previousUserName = user.UserName;
+            var previousOrganization = user.Organization;
+
             user.UserName = viewModel.UserName;
             user.Organization = viewModel.Organization;
             await this.Repository.UpdateUser(user);
-            this.Logger.LogInformation("User {UserId} changed it username: {UserName} and organization: {Organization}", user.Id, user.UserName, user.Organization);
+            this.Logger.LogInformation(
+                "User {UserId} changed it username from {PreviousUserName} to {UserName} and organization from {PreviousOrganization} to {PreviousUserName}",
+                user.Id, previousUserName, user.UserName, previousOrganization, user.Organization);
 
             return this.RedirectToAction("Index", "Account");
         }
