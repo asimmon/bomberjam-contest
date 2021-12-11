@@ -108,15 +108,16 @@ namespace Bomberjam.Website.Controllers
             return this.RedirectToAction("Index", "Account");
         }
 
-        private static readonly Regex UserNameRegex = new Regex("^[a-zA-Z0-9]{2,32}$", RegexOptions.Compiled);
+        private static readonly Regex InvalidUserNameCharsRegex = new Regex("[^a-zA-Z0-9]", RegexOptions.Compiled);
 
         private async Task<string> GetUniqueUserName(string githubUserName)
         {
-            if (UserNameRegex.IsMatch(githubUserName))
+            var sanitizedUserName = InvalidUserNameCharsRegex.Replace(githubUserName, string.Empty);
+            if (sanitizedUserName.Length >= 2)
             {
-                var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(githubUserName).ConfigureAwait(false);
+                var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(sanitizedUserName).ConfigureAwait(false);
                 if (!isAlreadyUsed)
-                    return githubUserName;
+                    return sanitizedUserName;
             }
 
             while (true)
