@@ -13,3 +13,16 @@ services:
       - IS_POLLING_VERBOSE=False
     deploy:
       replicas: 1
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    restart: unless-stopped
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite_data:/data
+
+volumes:
+  azurite_data:
