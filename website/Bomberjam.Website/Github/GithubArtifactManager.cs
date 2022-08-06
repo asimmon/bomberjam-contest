@@ -31,7 +31,6 @@ namespace Bomberjam.Website.Github
         private readonly GitHubOptions _githubOptions;
         private readonly IBomberjamStorage _storage;
         private readonly ILogger<GithubArtifactManager> _logger;
-        private readonly TaskCompletionSource _tcs;
 
         public GithubArtifactManager(IOptions<GitHubOptions> githubOptions, IHttpClientFactory httpClientFactory, IBomberjamStorage storage, ILogger<GithubArtifactManager> logger)
         {
@@ -39,7 +38,6 @@ namespace Bomberjam.Website.Github
             this._httpClient = httpClientFactory.CreateClient(nameof(GithubArtifactManager));
             this._storage = storage;
             this._githubOptions = githubOptions.Value;
-            this._tcs = new TaskCompletionSource();
         }
 
         public async Task Initialize(CancellationToken cancellationToken)
@@ -70,8 +68,6 @@ namespace Bomberjam.Website.Github
 
             await Task.WhenAll(tasks);
             this._logger.LogInformation("Workflow run {LastWorkflowRun} artifacts have been downloaded and cached in memory", run.Id);
-
-            this._tcs.TrySetResult();
         }
 
         private async Task DownloadAndCacheArtifactBytes(Artifact artifact, StarterOs os, CancellationToken cancellationToken)
@@ -82,7 +78,6 @@ namespace Bomberjam.Website.Github
 
         public async Task DownloadTo(StarterOs os, Stream stream)
         {
-            await this._tcs.Task;
             await this._storage.DownloadStarter(os, stream);
         }
 
