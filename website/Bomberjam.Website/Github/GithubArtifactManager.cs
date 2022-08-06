@@ -101,7 +101,7 @@ namespace Bomberjam.Website.Github
             }
         }
 
-        private async Task<IReadOnlyList<Artifact>> GetWorkflowRunArtifacts(int runId, CancellationToken cancellationToken)
+        private async Task<IReadOnlyList<Artifact>> GetWorkflowRunArtifacts(long runId, CancellationToken cancellationToken)
         {
             const string requestUriFormat = "https://api.github.com/repos/asimmon/bomberjam-contest/actions/runs/{0}/artifacts";
             var page = await this._httpClient.GetFromJsonAsync<ArtifactPage>(string.Format(requestUriFormat, runId), cancellationToken);
@@ -124,10 +124,10 @@ namespace Bomberjam.Website.Github
         private sealed class WorkflowRun
         {
             [JsonPropertyName("id")]
-            public int Id { get; set; }
+            public long Id { get; set; }
 
             [JsonPropertyName("workflow_id")]
-            public int WorkflowId { get; set; }
+            public long WorkflowId { get; set; }
         }
 
         private sealed class ArtifactPage
