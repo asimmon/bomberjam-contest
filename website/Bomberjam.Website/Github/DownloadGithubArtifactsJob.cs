@@ -1,27 +1,26 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace Bomberjam.Website.Github
 {
-    public sealed class DownloadGithubArtifactsOnStartup : BackgroundService
+    public sealed class DownloadGithubArtifactsJob
     {
         private readonly IGithubArtifactManager _downloader;
         private readonly ILogger _logger;
 
-        public DownloadGithubArtifactsOnStartup(IGithubArtifactManager downloader, ILogger<DownloadGithubArtifactsOnStartup> logger)
+        public DownloadGithubArtifactsJob(IGithubArtifactManager downloader, ILogger<DownloadGithubArtifactsJob> logger)
         {
             this._downloader = downloader;
             this._logger = logger;
         }
 
-        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        public async Task Run()
         {
             try
             {
-                await this._downloader.Initialize(stoppingToken);
+                await this._downloader.Initialize(CancellationToken.None);
             }
             catch (Exception ex)
             {

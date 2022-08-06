@@ -3,6 +3,7 @@
 
 # Files that should always be normalized and converted to native line
 # endings on checkout.
+*.cs text
 *.js text
 *.json text
 *.ts text

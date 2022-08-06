@@ -7,7 +7,7 @@ namespace Bomberjam.Website.Jobs
 {
     public sealed class OrphanedTaskFixingJob
     {
-        public OrphanedTaskFixingJob(IBomberjamRepository repository, ILogger<MatchmakingJob> logger)
+        public OrphanedTaskFixingJob(IBomberjamRepository repository, ILogger<OrphanedTaskFixingJob> logger)
         {
             this.Repository = repository;
             this.Logger = logger;
@@ -15,7 +15,7 @@ namespace Bomberjam.Website.Jobs
 
         private IBomberjamRepository Repository { get; }
 
-        private ILogger<MatchmakingJob> Logger { get; }
+        private ILogger<OrphanedTaskFixingJob> Logger { get; }
 
         public async Task Run()
         {

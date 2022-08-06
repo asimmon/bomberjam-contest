@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Bomberjam.Website.Common;
@@ -22,7 +23,7 @@ namespace Bomberjam.Website.Jobs
         {
             this._sortedUsers = users.OrderBy(u => u.Points).ToList();
             var indexes = Enumerable.Range(0, this._sortedUsers.Count).ToList();
-            indexes.Shuffle(Constants.Rng);
+            indexes.Shuffle(Random.Shared);
             this._indexes = indexes;
             this._userMatchCount = new Dictionary<User, int>();
         }

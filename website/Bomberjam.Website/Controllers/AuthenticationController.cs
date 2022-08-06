@@ -122,7 +122,7 @@ namespace Bomberjam.Website.Controllers
 
             while (true)
             {
-                var randomUserName = "Player" + Constants.Rng.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
+                var randomUserName = "Player" + Random.Shared.Next(100000, 999999).ToString(CultureInfo.InvariantCulture);
                 var isAlreadyUsed = await this.Repository.IsUserNameAlreadyUsed(randomUserName).ConfigureAwait(false);
                 if (!isAlreadyUsed)
                     return randomUserName;

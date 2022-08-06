@@ -117,7 +117,6 @@ namespace Bomberjam.Website
             });
 
             services.AddSingleton<IGithubArtifactManager, GithubArtifactManager>();
-            services.AddHostedService<DownloadGithubArtifactsOnStartup>();
             services.AddHostedService<AddDebugUsersOnStartup>();
         }
 
@@ -154,6 +153,7 @@ namespace Bomberjam.Website
 
             recurringJobs.AddOrUpdate<MatchmakingJob>("matchmaking", job => job.Run(), jobOptions.Value.Matchmaking);
             recurringJobs.AddOrUpdate<OrphanedTaskFixingJob>("orphanedTasks", job => job.Run(), jobOptions.Value.OrphanedTasks);
+            recurringJobs.AddOrUpdate<DownloadGithubArtifactsJob>("githubArtifacts", job => job.Run(), jobOptions.Value.GithubArtifacts);
         }
     }
 }

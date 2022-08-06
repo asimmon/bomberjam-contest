@@ -9,5 +9,8 @@ namespace Bomberjam.Website.Configuration
 
         [Required]
         public string OrphanedTasks { get; set; } = string.Empty;
+
+        [Required]
+        public string GithubArtifacts { get; set; } = string.Empty;
     }
 }
