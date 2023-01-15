@@ -20,6 +20,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - name: Build the worker Docker image
       run: docker build . --no-cache --file worker.Dockerfile --tag bomberjam-worker:$(date +%s)
