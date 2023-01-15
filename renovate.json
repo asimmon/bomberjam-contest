@@ -6,10 +6,9 @@
     "config:base",
     ":disableMajorUpdates",
     ":rebaseStalePrs",
-    ":npm",
-    ":docker",
-    "docker:disableMajor", 
-    "preview:dockerCompose"
+    "preview:dockerCompose",
+    ":pinDependencies",
+    ":pinDevDependencies"
   ],
   "enabledManagers": [
     "npm",
@@ -24,8 +23,8 @@
   "branchConcurrentLimit": 0,
   "dependencyDashboardTitle": "Renovate dependency dashboard",
   "dependencyDashboardLabels": ["renovate"],
-  "npm": {
-    "extends": [":pinDependencies", ":pinDevDependencies"]
+  "lockFileMaintenance": {
+    "enabled": true
   },
   "github-actions": {
     "ignorePresets": [":disableMajorUpdates"]
