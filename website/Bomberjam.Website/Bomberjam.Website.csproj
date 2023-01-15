@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="AspNet.Security.OAuth.GitHub" Version="6.0.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
+    <PackageReference Include="GSoft.ComponentModel.DataAnnotations" Version="1.0.0" />
     <PackageReference Include="Hangfire.AspNetCore" Version="1.7.27" />
     <PackageReference Include="Hangfire.Core" Version="1.7.27" />
     <PackageReference Include="Hangfire.SqlServer" Version="1.7.27" />

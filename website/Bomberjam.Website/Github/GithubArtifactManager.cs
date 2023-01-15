@@ -28,7 +28,7 @@ namespace Bomberjam.Website.Github
         };
 
         private readonly HttpClient _httpClient;
-        private readonly GitHubOptions _githubOptions;
+        private readonly GitHubOptions _options;
         private readonly IBomberjamStorage _storage;
         private readonly ILogger<GithubArtifactManager> _logger;
 
@@ -37,11 +37,17 @@ namespace Bomberjam.Website.Github
             this._logger = logger;
             this._httpClient = httpClientFactory.CreateClient(nameof(GithubArtifactManager));
             this._storage = storage;
-            this._githubOptions = githubOptions.Value;
+            this._options = githubOptions.Value;
         }
 
         public async Task Initialize(CancellationToken cancellationToken)
         {
+            if (string.IsNullOrEmpty(this._options.ArtifactsUsername) || string.IsNullOrEmpty(this._options.ArtifactsPassword))
+            {
+                this._logger.LogInformation("Workflow artifacts download skipped because GitHub credentials are missing");
+                return;
+            }
+
             this._logger.LogInformation("Finding last workflow run");
             var run = await this.FindLastSuccessfulWorkflowRun(cancellationToken);
             this._logger.LogInformation("Last workflow run is {LastWorkflowRun}", run.Id);
@@ -95,7 +101,7 @@ namespace Bomberjam.Website.Github
                 if (page.Runs.Count == 0)
                     throw new InvalidOperationException("Could not find a successful run after fetching all the pages");
 
-                var run = page.Runs.FirstOrDefault(x => x.WorkflowId == this._githubOptions.ArtifactsWorkflowId);
+                var run = page.Runs.FirstOrDefault(x => x.WorkflowId == this._options.ArtifactsWorkflowId);
                 if (run != null)
                     return run;
             }

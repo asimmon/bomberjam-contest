@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using GSoft.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Authentication;
 
 namespace Bomberjam.Website.Configuration

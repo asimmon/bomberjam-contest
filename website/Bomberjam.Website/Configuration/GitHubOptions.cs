@@ -1,5 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
+using GSoft.ComponentModel.DataAnnotations;
 
 namespace Bomberjam.Website.Configuration
 {
@@ -18,13 +20,10 @@ namespace Bomberjam.Website.Configuration
         [NotEmpty]
         public string[] Administrators { get; set; } = Array.Empty<string>();
 
-        [Required]
-        public string ArtifactsUsername { get; set; } = string.Empty;
+        public string ArtifactsUsername { get; set; }
 
-        [Required]
-        public string ArtifactsPassword { get; set; } = string.Empty;
+        public string ArtifactsPassword { get; set; }
 
-        [Required]
         [Range(1, int.MaxValue)]
         public int ArtifactsWorkflowId { get; set; }
     }

@@ -35,11 +35,11 @@ namespace Bomberjam.Website
         public void ConfigureServices(IServiceCollection services)
         {
             // options & configuration
-            services.AddOptionsAndValidate<SecretAuthenticationOptions>(this._configuration.GetSection("SecretAuthentication"));
-            services.AddOptionsAndValidate<ConnectionStringOptions>(this._configuration.GetSection("ConnectionStrings"));
-            services.AddOptionsAndValidate<TelemetryOptions>(this._configuration.GetSection("Telemetry"));
-            services.AddOptionsAndValidate<GitHubOptions>(this._configuration.GetSection("GitHub"));
-            services.AddOptionsAndValidate<JobOptions>(this._configuration.GetSection("Jobs"));
+            services.AddOptions<SecretAuthenticationOptions>().BindConfiguration("SecretAuthentication").ValidateDataAnnotations().ValidateOnStart();
+            services.AddOptions<ConnectionStringOptions>().BindConfiguration("ConnectionStrings").ValidateDataAnnotations().ValidateOnStart();
+            services.AddOptions<TelemetryOptions>().BindConfiguration("Telemetry").ValidateDataAnnotations().ValidateOnStart();
+            services.AddOptions<GitHubOptions>().BindConfiguration("GitHub").ValidateDataAnnotations().ValidateOnStart();
+            services.AddOptions<JobOptions>().BindConfiguration("Jobs").ValidateDataAnnotations().ValidateOnStart();
 
             services.ConfigureOptions<MvcSetup>();
             services.ConfigureOptions<AuthenticationSetup>();
@@ -113,7 +113,11 @@ namespace Bomberjam.Website
                 var options = container.GetRequiredService<IOptions<GitHubOptions>>();
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/vnd.github.v3+json"));
                 client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("Bomberjam", productVersion: null));
-                client.DefaultRequestHeaders.Authorization = new BasicAuthenticationHeaderValue(options.Value.ArtifactsUsername, options.Value.ArtifactsPassword);
+
+                if (!string.IsNullOrEmpty(options.Value.ArtifactsUsername) && !string.IsNullOrEmpty(options.Value.ArtifactsPassword))
+                {
+                    client.DefaultRequestHeaders.Authorization = new BasicAuthenticationHeaderValue(options.Value.ArtifactsUsername, options.Value.ArtifactsPassword);
+                }
             });
 
             services.AddSingleton<IGithubArtifactManager, GithubArtifactManager>();

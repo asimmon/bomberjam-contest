@@ -1,11 +1,15 @@
 version: "3"
+
 services:
   worker:
-    image: asimmon/bomberjam-worker:latest
-    restart: unless-stopped
+    build:
+      context: ./
+      dockerfile: worker.Dockerfile
+    restart: on-failure
     privileged: true
     init: true
     environment:
+      # - API_BASE_URL=http://website/api/
       - API_BASE_URL=https://host.docker.internal:5001/api/
       - API_AUTH_TOKEN=TODO
       - API_POLLING_INTERVAL=5
@@ -14,9 +18,24 @@ services:
     deploy:
       replicas: 1
 
+#  website:
+#    build:
+#      context: ./
+#      dockerfile: website.Dockerfile
+#    restart: on-failure
+#    ports:
+#      - "5000:80"
+#      - "5001:443"
+#    environment:
+#      - DOTNET_ENVIRONMENT=Development
+#      - CONNECTIONSTRINGS__BOMBERJAMCONTEXT=Server=sqlserver,1433; Database=master; User=sa; Password=L0c@lh0st!; Encrypt=True; TrustServerCertificate=True
+#      - CONNECTIONSTRINGS__BOMBERJAMSTORAGE=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;
+#      - GITHUB__CLIENTID=TODO
+#      - GITHUB__CLIENTSECRET=TODO
+
   azurite:
     image: mcr.microsoft.com/azure-storage/azurite:latest
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - "10000:10000"
       - "10001:10001"
@@ -24,5 +43,18 @@ services:
     volumes:
       - azurite_data:/data
 
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2019-GA-ubuntu-16.04
+    restart: on-failure
+    environment:
+      - SA_PASSWORD=L0c@lh0st!
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
 volumes:
   azurite_data:
+  sqlserver_data:
