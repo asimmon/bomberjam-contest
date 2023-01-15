@@ -1,0 +1,20 @@
+name: Renovate
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  renovate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Renovate
+        shell: bash
+        run: npx renovate $GITHUB_REPOSITORY
+        env:
+          RENOVATE_CONFIG_FILE: "renovate.json"
+          RENOVATE_GIT_AUTHOR: "Renovate Bot <bot@renovateapp.com>"
+          RENOVATE_TOKEN: ${{ secrets.RENOVATE_TOKEN }}
+          LOG_LEVEL: "debug"
