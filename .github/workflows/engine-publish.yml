@@ -32,10 +32,10 @@ jobs:
             rid: osx-x64
     
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
 
     - name: Setup .NET 6
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
 
@@ -51,7 +51,7 @@ jobs:
       run: cp -r ./starters ./engine/Bomberjam/dist/
 
     - name: Upload artifacts
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v3
       with:
         name: bomberjam-starter-kits-${{ matrix.rid }}
         path: ./engine/Bomberjam/dist/
