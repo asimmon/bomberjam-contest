@@ -24,6 +24,12 @@
   "branchConcurrentLimit": 0,
   "dependencyDashboardTitle": "Renovate dependency dashboard",
   "dependencyDashboardLabels": ["renovate"],
+  "npm": {
+    "extends": [":pinDependencies", ":pinDevDependencies"]
+  },
+  "github-actions": {
+    "ignorePresets": [":disableMajorUpdates"]
+  },
   "packageRules": [
     {
       "matchManagers": ["npm"],
@@ -39,8 +45,7 @@
     },
     {
       "matchManagers": ["github-actions"],
-      "groupName": "GitHub actions dependencies",
-      "ignorePresets": [":disableMajorUpdates"]
+      "groupName": "GitHub actions dependencies"
     }
   ]
 }
